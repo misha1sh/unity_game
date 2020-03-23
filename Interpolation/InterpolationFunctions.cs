@@ -1,0 +1,41 @@
+﻿using UnityEngine;
+
+namespace Interpolation {
+    public static class InterpolationFunctions {
+        public static float CubicHermiteSpline(float start, float stop, float m0, float m1, float t) {
+            return (2*t*t*t - 3*t*t + 1) * start + (t*t*t - 2*t*t + t)*m0 + (-2*t*t*t + 3*t*t) * stop + (t*t*t - t*t) * m1;
+        }
+
+        public static float CubicHermiteSpline3(float p0, float p1, float p2, float dt01, float t) {
+            var m0 = Mathf.Atan2(p1 - p0, dt01);
+            var m1 = Mathf.Atan2(p2 - p1, 1);
+            return CubicHermiteSpline(p1, p2, m0, m1, t);
+        }
+
+        
+        public static Vector3 Lerp3Points(Vector3 p0, Vector3 p1, Vector3 p2, float dt01, float t) {
+            float x = CubicHermiteSpline3(p0.x, p1.x, p2.x, dt01, t);
+            float y = CubicHermiteSpline3(p0.y, p1.y, p2.y, dt01, t);
+            float z = CubicHermiteSpline3(p0.z, p1.z, p2.z, dt01, t);
+            return new Vector3(x, y, z);
+        }
+
+        public static Vector3 InterpolatePosition(Vector3 lastlastPosition, Vector3 lastPosition, Vector3 nextPosition, 
+            float coef) {
+            return (Lerp3Points(lastlastPosition, lastPosition, nextPosition, 
+                        1,
+                        coef)
+                    +
+                    Vector3.Lerp(lastPosition, nextPosition, coef)) 
+                   / 2;
+        }
+
+        public static Quaternion InterpolateRotation(Quaternion lastRotation, Quaternion nextRotation, float coef) {
+            return Quaternion.Lerp(lastRotation, nextRotation, coef);
+        }
+
+        public static float InterpolateFloat(float last, float next, float coef) {
+            return (next - last) * coef + last;
+        }
+    }
+}
