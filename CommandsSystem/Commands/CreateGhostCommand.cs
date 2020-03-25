@@ -8,8 +8,6 @@ namespace CommandsSystem.Commands
     [Serializable]
     public class CreateGhostCommand : Command<CreateGhostCommand>
     {
-        public override CommandType type() => CommandType.CreateGhostCommand;
-
         public int id;
       /*  public CharacterState 
         public CreateGhostCommand() {

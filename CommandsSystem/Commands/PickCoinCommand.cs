@@ -6,8 +6,6 @@ namespace CommandsSystem.Commands {
     [Serializable]
     public class PickCoinCommand : Command<PickCoinCommand>
     {
-        public override CommandType type() => CommandType.PickCoinCommand;
-        
         public int player;
         public int coin;
 

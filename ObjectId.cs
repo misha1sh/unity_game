@@ -12,6 +12,8 @@ public class ObjectID: MonoBehaviour
     private static Dictionary<int, int> UnityIDtoObjectID = new Dictionary<int, int>();
 
 
+    
+    
     public static void StoreObject(GameObject gameObject, int id)
     {
         Assert.IsFalse(IDToObject.ContainsKey(id), "ID already exists");
@@ -41,5 +43,17 @@ public class ObjectID: MonoBehaviour
         int id = GetID(gameObject);
         Assert.IsTrue(IDToObject.Remove(id));
         Assert.IsTrue(UnityIDtoObjectID.Remove(gameObject.GetInstanceID()));
+    }
+
+    public static string ToString() {
+        var text = "";
+        foreach (var id_obj in IDToObject) {
+            var id = id_obj.Key;
+            var go = id_obj.Value.Target as GameObject;
+            var unityid = (go).GetInstanceID();
+            text += $"{go.name}#{unityid} -- {id}\n";
+        }
+
+        return text;
     }
 }

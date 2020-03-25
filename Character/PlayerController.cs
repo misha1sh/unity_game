@@ -62,6 +62,9 @@ public class PlayerController : MonoBehaviour
        pos = camera.transform.rotation * pos;
        pos.y = 0;
        target.TargetRotation = pos;
+
+
+       target.Action1 = Input.GetMouseButtonDown(0);
 //       var rot = Input.mousePosition;
 //       target.TargetRotation = 
     }

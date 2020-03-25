@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using System.IO;
+using GameDevWare.Serialization;
 
 namespace CommandsSystem
 {
@@ -11,13 +9,11 @@ namespace CommandsSystem
     {
         public abstract void Run();
 
-
-
         public override string ToString()
         {
-            return MessagePack.MessagePackSerializer.SerializeToJson<T>(this as T);
+            var sb = new StringWriter();
+            Json.Serialize(this as T, sb);
+            return sb.ToString();
         }
-
-        public abstract CommandType type();
     }
 }

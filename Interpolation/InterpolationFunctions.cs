@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Character;
+using UnityEngine;
 
 namespace Interpolation {
     public static class InterpolationFunctions {
@@ -22,16 +23,33 @@ namespace Interpolation {
 
         public static Vector3 InterpolatePosition(Vector3 lastlastPosition, Vector3 lastPosition, Vector3 nextPosition, 
             float coef) {
-            return (Lerp3Points(lastlastPosition, lastPosition, nextPosition, 
+            return (Lerp3Points(lastlastPosition, lastPosition, nextPosition,
                         1,
-                        coef)
+                        coef) * 0.2f
                     +
-                    Vector3.Lerp(lastPosition, nextPosition, coef)) 
-                   / 2;
+                    Vector3.Lerp(lastPosition, nextPosition, coef) * 0.8f);
         }
 
         public static Quaternion InterpolateRotation(Quaternion lastRotation, Quaternion nextRotation, float coef) {
             return Quaternion.Lerp(lastRotation, nextRotation, coef);
+        }
+
+        public static PlayerAnimationState InterpolatePlayerAnimationState(PlayerAnimationState last,
+            PlayerAnimationState next, float coef) {
+            bool idle = next.idle;//InterpolateBool(last.idle, next.idle, coef);
+            float speed = next.speed;//InterpolateFloat(last.speed, next.speed, coef);
+            float rotationSpeed = InterpolateFloat(last.speed, next.speed, coef);
+            return new PlayerAnimationState() {
+                idle = idle,
+                speed = speed,
+                rotationSpeed = rotationSpeed
+            };
+        }
+
+        public static bool InterpolateBool(bool last, bool next, float coef) {
+            if (last == next) return last;
+            if (coef < 0.5f) return last;
+            return next;
         }
 
         public static float InterpolateFloat(float last, float next, float coef) {

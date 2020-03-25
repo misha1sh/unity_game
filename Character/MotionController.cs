@@ -1,17 +1,12 @@
-﻿using CommandsSystem.Commands;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Character.Directory;
+using CommandsSystem.Commands;
 using RotaryHeart.Lib.PhysicsExtension;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.EventSystems;
-using UnityEngine.Experimental.PlayerLoop;
-using Physics = UnityEngine.Physics;
-using Random = UnityEngine.Random;
 
 namespace Character {
 
-
+    
 
 //    [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(Rigidbody))]
@@ -20,7 +15,7 @@ namespace Character {
 //        private CharacterController characterController;
         private Rigidbody rigidbody;
         private CapsuleCollider capsuleCollider;
-        private Animator animator;
+        private CharacterAnimator animator;
         
         public float moveForce = 1500;
         public float speed = 6.0f;
@@ -29,15 +24,28 @@ namespace Character {
         public float gravity = 20.0f;
         public float maxGoAngle = 50.0f;
 
+        public float force = 1000;
+
+        private ActionType _c_action_type;
+        public ActionType ActionType {
+            get { return _c_action_type; }
+            set {
+                _c_action_type = value;
+                switch (value) {
+                    
+                }
+            }
+        };
 
         void Start() {
-            ObjectID.StoreObject(gameObject, Client.client.random.Next());
 
 
             //            characterController = GetComponent<CharacterController>();
             rigidbody = GetComponent<Rigidbody>();
             capsuleCollider = GetComponent<CapsuleCollider>();
-            animator = GetComponent<Animator>();
+            animator = GetComponent<CharacterAnimator>();
+            
+            
         }
 
         private List<GameObject> groundCollisions = new List<GameObject>();
@@ -66,8 +74,9 @@ namespace Character {
         /// </summary>
         public Vector3 TargetDirection { get; set; }
         public Vector3 TargetRotation { get; set; }
-        
         public bool Action1 { get; set; }
+        
+        public 
 
         private void FixedUpdate()
         {
@@ -82,7 +91,7 @@ namespace Character {
 
 
 
-            animator.SetBool("push", false);
+           
 
             if (isGrounded) {
                 var targetSpeed = speed * TargetDirection;
@@ -104,7 +113,7 @@ namespace Character {
                    transform.Rotate(0, 1, 0);*/
                 // transform.rotation = Quaternion.LookRotation(TargetDirection);
                 } else {
-                    animator.SetFloat("rotationSpeed", 0);
+                    animator.SetRotationSpeed(0);
                 }
             }
 
@@ -112,14 +121,14 @@ namespace Character {
                 transform.rotation = Quaternion.LookRotation(TargetRotation);
 
             
-            if (Input.GetMouseButtonDown(0)) {
-                animator.SetBool("push", true);
+            if (Action1) {
+                animator.SetPush();
+                Client.client.commandsHandler.RunSimpleCommand(new PlayerPushCommand(ObjectID.GetID(gameObject)));
             }
 
             float linearSpeed = TargetDirection.magnitude;
-            animator.SetBool("idle", linearSpeed == 0f);
-            animator.SetFloat("speed", linearSpeed);
-
+            animator.SetIdle(linearSpeed == 0.0f);
+            animator.SetSpeed(linearSpeed);
 
 
 
@@ -177,8 +186,8 @@ namespace Character {
             var scale = pushCollider.transform.localScale;
             var rotation = pushCollider.transform.rotation;
 
-            var delta = rotation * Vector3.up;
-            delta.Scale(scale);
+            var delta = rotation * Vector3.up * scale.y;
+            //delta.Scale(scale);
             
             var radius = scale.x * transform.lossyScale.x / 2;
 
@@ -191,12 +200,25 @@ namespace Character {
 
          var f = /*Physics.CapsuleCastAll(start, stop, radius, Vector3.forward);//*/
              RotaryHeart.Lib.PhysicsExtension.Physics.OverlapCapsule(start, stop, radius, PreviewCondition.Both, drawDuration: 1);
+
+         var force = rotation * Vector3.up * this.force;
          foreach (var v in f) {
-             Debug.LogError(v.gameObject.name);
+             if (v.gameObject == gameObject) continue;
+             
+             if (v.gameObject.CompareTag("Unmanagable")) {
+                 var command = new ApplyForceCommand(v.gameObject, force);
+                 Client.client.commandsHandler.RunSimpleCommand(command);
+             } else {
+                 var rig = v.gameObject.GetComponent<Rigidbody>();
+                 if (rig != null) {
+                     rig.AddForce(force, ForceMode.Impulse);
+                 }
+             }
+       /*      Debug.LogError(v.gameObject.name);
              var rig = v.gameObject.GetComponent<Rigidbody>();
              if (rig != null) {
-                 rig.AddForce(rotation * Vector3.up * 500);
-             }
+                 rig.AddForce(force);
+             }*/
          }
         }
     }

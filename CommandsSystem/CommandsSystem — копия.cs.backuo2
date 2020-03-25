@@ -4,8 +4,6 @@ using System.Reflection;
 using CommandsSystem;
 using CommandsSystem.Commands;
 using GameDevWare.Serialization;
-using Interpolation;
-using Interpolation.Properties;
 
 namespace CommandsSystem {
     
@@ -15,23 +13,11 @@ namespace CommandsSystem {
 
             byte type;
             
-/*BEGIN2*/            if (command is ApplyForceCommand) {
-                    type = 0;
-               } else             if (command is CreateGhostCommand) {
-                    type = 1;
-               } else             if (command is PickCoinCommand) {
-                    type = 2;
-               } else             if (command is PlayerPushCommand) {
-                    type = 3;
-               } else             if (command is SpawnPrefabCommand) {
-                    type = 4;
-               } else             if (command is StartGameCommand) {
-                    type = 5;
-               } else             if (command is ChangeGameObjectStateCommand<PlayerProperty>) {
-                    type = 6;
-               } else             if (command is ChangeGameObjectStateCommand<TransformProperty>) {
-                    type = 7;
-               } else /*END2*/
+/*BEGIN2*/
+            if (command is CreateGhostCommand) {
+                type = 0;
+            } else 
+/*END2*/
             {
                 throw new ArgumentException("Unkwown command: " + command);
             }
@@ -86,23 +72,15 @@ namespace CommandsSystem {
 
              switch (commandType) {
 
-/*BEGIN1*/             case 0:
-                     return MsgPack.Deserialize<ApplyForceCommand>(stream);
-             case 1:
+/*BEGIN1*/
+             case 0:
                      return MsgPack.Deserialize<CreateGhostCommand>(stream);
-             case 2:
+             case 1:
                      return MsgPack.Deserialize<PickCoinCommand>(stream);
-             case 3:
-                     return MsgPack.Deserialize<PlayerPushCommand>(stream);
-             case 4:
+             case 2:
                      return MsgPack.Deserialize<SpawnPrefabCommand>(stream);
-             case 5:
-                     return MsgPack.Deserialize<StartGameCommand>(stream);
-             case 6:
-                     return MsgPack.Deserialize<ChangeGameObjectStateCommand<PlayerProperty>>(stream);
-             case 7:
-                     return MsgPack.Deserialize<ChangeGameObjectStateCommand<TransformProperty>>(stream);
-/*END1*/
+             case 3:
+                     return MsgPack.Deserialize<StartGameCommand>(stream); /*END1*/
 
                  default:
                      throw new ArgumentOutOfRangeException("Command type is " + commandType);

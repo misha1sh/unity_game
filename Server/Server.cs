@@ -246,13 +246,21 @@ public class Server : MonoBehaviour
     void RunServer() {
         
         Debug.Log("SERVER starting...");
-        httpServer = new HttpServer ("http://0.0.0.0:8887");
+
         
+        httpServer = new HttpServer("http://0.0.0.0:8887");
+     
         var room = new GameServerRoom();
         httpServer.AddWebSocketService<GameServerConnection>("/ws", 
             connection => connection.Init(room));
         
-        httpServer.Start();
+        try {
+            httpServer.Start();
+        }
+        catch (Exception ex) {
+            Debug.LogException(ex);
+        }
+
         Debug.Log("SERVER started");
 
      

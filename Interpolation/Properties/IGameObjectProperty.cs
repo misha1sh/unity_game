@@ -1,17 +1,21 @@
-﻿using UnityEngine;
+﻿using CommandsSystem;
+using UnityEngine;
 
 namespace Interpolation.Properties {
-    public interface IGameObjectProperty<T>
-        where T : new() {
-        T Create();
-        void CopyFrom(T state);
+    public interface IGameObjectProperty {
+        int ID { get; }
+        
+        void CopyFrom(IGameObjectProperty state);
         void FromGameObject(GameObject gameObject);
         void ApplyToObject(GameObject gameObject);
 
         void Interpolate(
-            T lastLastState,
-            T lastState,
-            T nextState, 
+            IGameObjectProperty lastLastState,
+            IGameObjectProperty lastState,
+            IGameObjectProperty nextState, 
             float coef);
+
+        ICommand GetCommand();
+
     }
 }

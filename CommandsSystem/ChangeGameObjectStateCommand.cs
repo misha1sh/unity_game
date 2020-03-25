@@ -1,13 +1,13 @@
 ﻿using Character;
 using System;
 using Interpolation;
+using Interpolation.Properties;
 using UnityEngine;
 
 namespace CommandsSystem.Commands {
     public class ChangeGameObjectStateCommand<T> : Command<ChangeGameObjectStateCommand<T>>
-        where T: GameObjectState, new()
+        where T: IGameObjectProperty, new()
     {
-        public override CommandType type() => CommandType.CreateGhostCommand; // rqwelmrpqwoer
         
         public T state;
 
@@ -22,11 +22,11 @@ namespace CommandsSystem.Commands {
 
         public override void Run()
         {
-            var gameObject = ObjectID.GetObject(state.id);
+            var gameObject = ObjectID.GetObject(state.ID);
             if (gameObject is null)
             {
                 var spawnCommand = new SpawnPrefabCommand {
-                    id = state.id, 
+                    id = state.ID, 
                     //position = state.position, 
                     //rotation = state.rotation, 
                     prefabName = "PlayerGhost"

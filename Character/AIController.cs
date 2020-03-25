@@ -7,9 +7,10 @@ using UnityEngine.Assertions;
 public class AIController : MonoBehaviour {
 
     public MotionController target;
-    
-    void Start()
-    {}
+
+    void Start() {
+      
+    }
 
     void Update()
     {

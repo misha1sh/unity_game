@@ -52,13 +52,19 @@ public class Client : MonoBehaviour
     }
 
     public float GameTime => Time.time - gameStartTime;
-    
-    
-    
+
+
+    private void OnEnable() {
+        client = this;
+
+    }
 
 
     void Start()
     {
+        
+
+        /*
         var ttest = new IGameObjectProperty<TransformProperty>[10];
         for (int i = 0; i < 5; i++) {
             ttest[i] = new TransformProperty();
@@ -105,12 +111,10 @@ public class Client : MonoBehaviour
         Assert.IsNotNull(player);
         //ObjectID.StoreObject(player, player.GetInstanceID());
 
-        client = this;
         commandsHandler = new CommandsHandler(new WebSocketHandler());
         commandsHandler.Start();
         commandsHandler.RunUniqCommand(new StartGameCommand(), 1, 1);
 
-        spawnBorder.AddComponent<ManagedGameObject>();
 
 
 
@@ -139,7 +143,7 @@ public class Client : MonoBehaviour
         if (commandsHandler is null) return;
         commandsHandler.Update();
         foreach (var command in commandsHandler.GetCommands()) {
-            if (false) {//command is ChangeGameObjectStateCommand) {
+            if (command is ChangeGameObjectStateCommand<PlayerProperty>) {//command is ChangeGameObjectStateCommand) {
 //                Debug.Log("Client got command: ChangeCharacterStateCommand " + (command as ChangeCharacterStateCommand).state.id);
             } else {
                 Debug.Log("Client got command: " + command);

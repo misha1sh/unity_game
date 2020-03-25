@@ -4,9 +4,6 @@ using UnityEngine;
 namespace CommandsSystem.Commands {
     [Serializable]
     public class SpawnPrefabCommand: Command<SpawnPrefabCommand> {
-        public override CommandType type() => CommandType.SpawnPrefabCommand;
-        
-        
         public string prefabName;
         public Vector3 position;
         public Quaternion rotation;

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Character {
     
-    [RequireComponent(typeof(CharacterAnimator))]
+  /*  [RequireComponent(typeof(CharacterAnimator))]
     public class GhostController : MonoBehaviour {
 
 
@@ -49,7 +49,7 @@ namespace Character {
            
             var rot = Quaternion.Lerp(lastState.rotation, nextState.rotation, coef);
             transform.position = pos;
-            transform.rotation = rot;*/
+            transform.rotation = rot;
         }
-    }
+    }*/
 }

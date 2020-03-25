@@ -20,11 +20,16 @@ namespace Character {
             layerIndex = animator.GetLayerIndex("hands");
             Assert.AreNotEqual(layerIndex, -1);
         }
+        
+        
 
+        
+        
         // Update is called once per frame
         void Update()
         {
             if (blendStart) {
+                
                 blendCoeff += blendSpeed * Time.deltaTime;
                 if (blendCoeff >= 1) {
                     blendStart = false;
@@ -46,6 +51,7 @@ namespace Character {
         public void StartHandAnimation() {
             blendStart = true;
             blendStop = false;
+            animator.SetBool("push", false);
         }
 
         public void StopHandAnimation() {
