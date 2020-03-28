@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Character;
 using UnityEngine;
 using UnityEngine.Assertions;
+using CharacterController = Character.CharacterController;
 
 
 public static class Vector2Extension {
@@ -19,15 +20,15 @@ public static class Vector2Extension {
 }
 
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : CharacterController
 {
     
-    public MotionController target;
     public Camera camera;
 
+    
     void Start()
     {
-        Assert.IsNotNull(target);
+        base.Start();
         Assert.IsNotNull(camera);
     }
 
@@ -51,7 +52,7 @@ public class PlayerController : MonoBehaviour
        vec3.y = 0;
        vec3 = vec3.normalized * len;
        
-       target.TargetDirection = vec3;
+       motionController.TargetDirection = vec3;
 
        var pos = camera.ScreenToViewportPoint(Input.mousePosition);
        pos.x -= 0.5f;
@@ -61,10 +62,10 @@ public class PlayerController : MonoBehaviour
 
        pos = camera.transform.rotation * pos;
        pos.y = 0;
-       target.TargetRotation = pos;
+       motionController.TargetRotation = pos;
 
 
-       target.Action1 = Input.GetMouseButtonDown(0);
+       actionController.DoAction = Input.GetMouseButton(0);
 //       var rot = Input.mousePosition;
 //       target.TargetRotation = 
     }

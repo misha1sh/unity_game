@@ -3,23 +3,21 @@ using System.Collections.Generic;
 using Character;
 using UnityEngine;
 using UnityEngine.Assertions;
+using CharacterController = Character.CharacterController;
 
-public class AIController : MonoBehaviour {
+public class AIController : CharacterController {
 
-    public MotionController target;
-
-    void Start() {
-      
-    }
 
     void Update()
     {
         if (Random.value < 0.01f) {
             var dir = new Vector3(Random.value * 2 - 1, 0, Random.value * 2- 1);
-            target.TargetDirection = dir;
+            motionController.TargetDirection = dir;
             var rot = Random.rotation * Vector3.forward;
             rot.y = 0;
-            target.TargetRotation = rot;
+            motionController.TargetRotation = rot;
+
+            actionController.DoAction = Random.value < 0.2f;
         }
     }
 }

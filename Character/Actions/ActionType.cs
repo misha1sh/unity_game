@@ -1,4 +1,4 @@
-﻿namespace Character.Directory {
+﻿namespace Character.Actions {
     public enum ActionType {
         PUSH,
         SHOOT

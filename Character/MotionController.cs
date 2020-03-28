@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Character.Directory;
 using CommandsSystem.Commands;
 using RotaryHeart.Lib.PhysicsExtension;
 using UnityEngine;
@@ -17,25 +16,15 @@ namespace Character {
         private CapsuleCollider capsuleCollider;
         private CharacterAnimator animator;
         
-        public float moveForce = 1500;
-        public float speed = 6.0f;
+        public float moveForce = 2000;
+        public float speed = 15.0f;
         public float rotationSpeed = 150.0f;
         public float jumpSpeed = 8.0f;
         public float gravity = 20.0f;
         public float maxGoAngle = 50.0f;
 
-        public float force = 1000;
 
-        private ActionType _c_action_type;
-        public ActionType ActionType {
-            get { return _c_action_type; }
-            set {
-                _c_action_type = value;
-                switch (value) {
-                    
-                }
-            }
-        };
+        
 
         void Start() {
 
@@ -74,17 +63,6 @@ namespace Character {
         /// </summary>
         public Vector3 TargetDirection { get; set; }
         public Vector3 TargetRotation { get; set; }
-        public bool Action1 { get; set; }
-        
-        public 
-
-        private void FixedUpdate()
-        {
-            // TODO: ffix
-
-        
-            
-        }
 
 
         void Update() {
@@ -121,10 +99,6 @@ namespace Character {
                 transform.rotation = Quaternion.LookRotation(TargetRotation);
 
             
-            if (Action1) {
-                animator.SetPush();
-                Client.client.commandsHandler.RunSimpleCommand(new PlayerPushCommand(ObjectID.GetID(gameObject)));
-            }
 
             float linearSpeed = TargetDirection.magnitude;
             animator.SetIdle(linearSpeed == 0.0f);
@@ -180,47 +154,6 @@ namespace Character {
         }
 
 
-        public GameObject pushCollider;
-        public void pushEnd() {
-            var center = pushCollider.transform.position;
-            var scale = pushCollider.transform.localScale;
-            var rotation = pushCollider.transform.rotation;
-
-            var delta = rotation * Vector3.up * scale.y;
-            //delta.Scale(scale);
-            
-            var radius = scale.x * transform.lossyScale.x / 2;
-
-            delta -= rotation * (radius * Vector3.up);
-            
-            var start = center - delta;
-            var stop = center + delta;
- 
-         //   DebugExtension.DebugCapsule(start, stop, Color.red, radius, 1);
-
-         var f = /*Physics.CapsuleCastAll(start, stop, radius, Vector3.forward);//*/
-             RotaryHeart.Lib.PhysicsExtension.Physics.OverlapCapsule(start, stop, radius, PreviewCondition.Both, drawDuration: 1);
-
-         var force = rotation * Vector3.up * this.force;
-         foreach (var v in f) {
-             if (v.gameObject == gameObject) continue;
-             
-             if (v.gameObject.CompareTag("Unmanagable")) {
-                 var command = new ApplyForceCommand(v.gameObject, force);
-                 Client.client.commandsHandler.RunSimpleCommand(command);
-             } else {
-                 var rig = v.gameObject.GetComponent<Rigidbody>();
-                 if (rig != null) {
-                     rig.AddForce(force, ForceMode.Impulse);
-                 }
-             }
-       /*      Debug.LogError(v.gameObject.name);
-             var rig = v.gameObject.GetComponent<Rigidbody>();
-             if (rig != null) {
-                 rig.AddForce(force);
-             }*/
-         }
-        }
     }
 }
 
