@@ -1,12 +1,22 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Character {
     public class HPController : MonoBehaviour {
         public float MaxHP;
 
-        public float CurrentHp => currentHp;
-        private float currentHp;
+        public Image hpImage;
+
+        private float _currentHp;
+
+        public float currentHp {
+            get => _currentHp;
+            private set {
+                _currentHp = value;
+                hpImage.fillAmount = _currentHp / MaxHP;
+            }
+        }
 
         void Start() {
             currentHp = MaxHP;
@@ -18,7 +28,7 @@ namespace Character {
             currentHp -= realDamage;
 
             if (currentHp == 0) {
-                
+                // TODO        
             }
             
             return realDamage;

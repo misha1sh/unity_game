@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Character.Actions {
     public interface IAction {
-        IEnumerator OnStartDoing();
-        IEnumerator OnStopDoing();
+        void OnStartDoing();
+        void OnStopDoing();
     }
 }

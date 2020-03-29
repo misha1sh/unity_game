@@ -18,10 +18,9 @@ namespace Character.Actions {
             animator = gameObject.GetComponent<CharacterAnimator>();
         }
 
-        public IEnumerator OnStartDoing() {
+        public void OnStartDoing() {
             animator.SetPush();
             Client.client.commandsHandler.RunSimpleCommand(new PlayerPushCommand(ObjectID.GetID(gameObject)));
-            yield break;
         }
 
         public void pushEnd() {
@@ -65,8 +64,7 @@ namespace Character.Actions {
             }
         }
 
-        public IEnumerator OnStopDoing() {
-            yield break;
+        public void OnStopDoing() {
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Character;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.UI;
 using CharacterController = Character.CharacterController;
 
 
@@ -24,15 +25,15 @@ public class PlayerController : CharacterController
 {
     
     public Camera camera;
+    private Plane plane;
 
-    
     void Start()
     {
         base.Start();
         Assert.IsNotNull(camera);
+        plane = new Plane(Vector3.up, 0);
     }
 
-    
     
     void Update() {
        /* Vector2 vec = new Vector2( Input.GetAxis("Horizontal"),Input.GetAxis("Vertical"));
@@ -54,7 +55,41 @@ public class PlayerController : CharacterController
        
        motionController.TargetDirection = vec3;
 
-       var pos = camera.ScreenToViewportPoint(Input.mousePosition);
+       var ray = camera.ScreenPointToRay(Input.mousePosition);
+
+       var target_pos = target.transform.position + Vector3.up * 1.5f;
+       plane.SetNormalAndPosition(Vector3.up, target_pos);
+
+       float distance;
+       plane.Raycast(ray, out distance);
+       var pos = ray.GetPoint(distance);
+       /*DebugExtension.DebugPoint(pos, Color.red, 3f);
+       DebugExtension.DebugArrow(target_pos, pos - target_pos, Color.magenta);*/
+       motionController.TargetRotation = pos - target_pos;
+     
+       /*  Vector3 tttest = Input.mousePosition;
+       tttest.z = 10;
+       var pos = camera.ScreenToWorldPoint(tttest);
+    //   var rotation = camera.transform.rotation
+//       var pos2 = ().//camera.transform.position + camera.transform.forward * 10;
+       DebugExtension.DebugPoint(pos, Color.red, 3f);
+  //     DebugExtension.DebugPoint(pos2, Color.magenta, 3f);
+
+        var pos3 = Quaternion.Inverse()
+       
+       motionController.TargetRotation = pos - pos2;
+
+/*
+    
+  */
+        
+        /*
+
+       if (Input.GetMouseButton(0)) {
+           GameObject.CreatePrimitive(PrimitiveType.Cube).transform.position = pos;
+           
+       }
+       
        pos.x -= 0.5f;
        pos.y -= 0.5f;
        pos.z = pos.y;
@@ -62,7 +97,7 @@ public class PlayerController : CharacterController
 
        pos = camera.transform.rotation * pos;
        pos.y = 0;
-       motionController.TargetRotation = pos;
+       motionController.TargetRotation = pos;*/
 
 
        actionController.DoAction = Input.GetMouseButton(0);

@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
 using Character.Actions;
+using Character.Guns;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Character {
@@ -10,11 +13,38 @@ namespace Character {
         private CharacterAnimator animator;
         void Start() {
             animator = GetComponent<CharacterAnimator>();
-            ActionType = ActionType.PUSH;
+            SetPistolAction(new Pistol());
+           //SetPushAction();
+        }
+
+        private IAction currentAction = null;
+
+        
+        private void StopCurrent() {
+            if (currentAction != null) {
+                DoAction = false;
+                Destroy(currentAction as MonoBehaviour);
+            }
         }
         
-        private ActionType _actionType;
-        private IAction currentAction = null;
+        public void SetPushAction() {
+            StopCurrent();
+            var pushAction = gameObject.AddComponent<PushAction>();
+            currentAction = pushAction;
+        }
+
+        public void SetPistolAction(Pistol pistol) {
+            StopCurrent();
+            var shootPistolAction = gameObject.AddComponent<ShootPistolAction>();
+            shootPistolAction.Init(pistol);
+            currentAction = shootPistolAction;
+        }
+
+        public void SetNothing() {
+            StopCurrent();
+            currentAction = null;
+        }
+   /*     private ActionType _actionType;
         public ActionType ActionType {
             get => _actionType;
             set {
@@ -31,21 +61,18 @@ namespace Character {
                 }
                 _actionType = value;
             }
-        }
-
+        }*/
 
         private bool _actionDoing = false;
         public bool DoAction {
-            get { return _actionDoing; }
+            get => _actionDoing;
             set {
                 if (value == _actionDoing) return;
                 _actionDoing = value;
                 if (value) {
-                    if (currentAction != null) 
-                        StartCoroutine(currentAction.OnStartDoing());
+                    currentAction?.OnStartDoing();
                 } else {
-                    if (currentAction != null) 
-                        StartCoroutine(currentAction?.OnStopDoing());
+                    currentAction?.OnStopDoing();
                 }
             }
         }
