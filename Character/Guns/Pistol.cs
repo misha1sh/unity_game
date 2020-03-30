@@ -6,44 +6,60 @@ using UnityEngine;
 namespace Character.Guns {
     
     [Serializable]
-    [DataContract]
     public class Pistol : IGun {
-        [DataMember, SerializeField]
-        public GunState state { get; private set; }
+        public GunState state;
 
         
-        [DataMember, SerializeField]
-        private float fullReloadTime = 3.0f;
-        [DataMember, SerializeField]
-        private float reloadTime = 1.0f;
-        [DataMember, SerializeField]
-        private int bulletsInMagazine = 8;
-        [DataMember, SerializeField]
-        private int magazinesCount = 3;
-
-        [DataMember]
-        private int bulletsCount;
-
+        public float _fullReloadTime = 3.0f;
         
-        public float GetFullReloadTime() => fullReloadTime;
-
-        public float GetReloadTime() => reloadTime;
+        public float _reloadTime = 1.0f;
+        
+        public int _bulletsInMagazine = 8;
+        
 
         // includes current bullet
-        public int GetBulletsCount() => bulletsCount;
+        public int _bulletsCount;
+        public int bulletsCount { 
+            get => _bulletsCount;
+            private set {
+                _bulletsCount = value;
+                if (player != null) {
+                    EventsManager.handler.OnPlayerBulletsCountChanged(player, _bulletsCount);
+                }
+            } 
+        }
+
         // not includes current magazine
-        public int GetMagazinesCount() => magazinesCount;
+        public int _magazinesCount = 3;
+        public int magazinesCount {
+            get => _magazinesCount;
+            private set {
+                _magazinesCount = value;
+                if (player != null) {
+                    EventsManager.handler.OnPlayerMagazinesCountChanged(player, _bulletsCount);
+                }
+            }
+        }
+        
+        public float GetFullReloadTime() => _fullReloadTime;
+
+        public float GetReloadTime() => _reloadTime;
+
+        
 
         public Pistol() {
-            bulletsCount = bulletsInMagazine;
+            bulletsCount = _bulletsInMagazine;
             state = GunState.READY;
         }
 
 
-        public void OnPickedUp() {
+        private GameObject player;
+        public void OnPickedUp(GameObject player) {
+            this.player = player;
         }
 
         public void OnDropped() {
+            this.player = null;
             // drop reloading state
             if (state == GunState.RELOADING_MAGAZINE)
                 state = GunState.READY;
@@ -60,7 +76,7 @@ namespace Character.Guns {
                 needTime -= dt;
                 if (needTime <= 0) {
                     state = GunState.READY;
-                    bulletsCount = bulletsInMagazine;
+                    bulletsCount = _bulletsInMagazine;
                     magazinesCount--;
                 }
             }

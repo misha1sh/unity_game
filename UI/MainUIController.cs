@@ -1,7 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using UI;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class MainUIController : MonoBehaviour {
 
@@ -12,30 +15,35 @@ public class MainUIController : MonoBehaviour {
     public Sprite semiautoSprite;
     public Sprite grenadeLauncherSprite;
 
-    public RectTransform bulletsPanel;
-    public Image bulletImage;
-    public float bulletHeight;
+    public MultiImagePanel bulletsPanel;
+    public MultiImagePanel magazinesPanel;
     
-    private List<Image> bullets;
 
-    public void SetMaxBulletsCount(int count) {
-        float bulletOffsetX = bulletImage.sprite.rect.width / count;
-        
-        for (int i = 0; i < count; i++) {
-            var go = Instantiate(bulletImage, bulletsPanel.gameObject.transform, true);
-            var rt = go.GetComponent<RectTransform>();
-            rt.position.Set(bulletOffsetX * i, 0, 0);
-        }
-    }
+   
     
+
     // Start is called before the first frame update
     void Start() {
-        SetMaxBulletsCount(10);
+        bulletsPanel.SetMaxImagesCount(15);
+        magazinesPanel.SetMaxImagesCount(8);
+        magazinesPanel.SetActiveImagesCount(0);
+
+        EventsManager.handler.OnPlayerBulletsCountChanged += (player, count) => {
+            if (player == Client.client.mainPlayer)
+                bulletsPanel.SetActiveImagesCount(count);
+        };
+        EventsManager.handler.OnPlayerMagazinesCountChanged += (player, count) => {
+            if (player == Client.client.mainPlayer)
+               magazinesPanel.SetActiveImagesCount(count);
+        };
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+   /*     if (Random.value < 0.01f) {
+            bulletsPanel.SetActiveImagesCount(Random.Range(0, 16));
+            magazinesPanel.SetActiveImagesCount(Random.Range(0, 5));
+        }*/
     }
 }

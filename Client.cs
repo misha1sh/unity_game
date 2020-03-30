@@ -28,15 +28,18 @@ public class Client : MonoBehaviour
     public const int NETWORK_FPS = 20;
     
     
-    
+
     public GameObject player = null;
     public GameObject spawnBorder = null;
+   
 
     public List<GameObject> prefabsList = new List<GameObject>();
     private Dictionary<string, GameObject> prefabs = new Dictionary<string, GameObject>();
 
     private TrianglePolygon spawnPolygon;
     public static Client client { get; private set; }
+    public GameObject mainPlayer;
+    
     public int ID => ObjectID.GetID(player);
 
 
@@ -56,14 +59,12 @@ public class Client : MonoBehaviour
 
     private void OnEnable() {
         client = this;
-
+        
     }
 
 
     void Start()
     {
-        
-
         /*
         var ttest = new IGameObjectProperty<TransformProperty>[10];
         for (int i = 0; i < 5; i++) {

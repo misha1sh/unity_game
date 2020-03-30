@@ -1,7 +1,9 @@
-﻿namespace Character.Guns {
+﻿using UnityEngine;
+
+namespace Character.Guns {
     public interface IGun {
         GunState state { get; }
-        void OnPickedUp();
+        void OnPickedUp(GameObject player);
         void OnDropped();
     }
 }
