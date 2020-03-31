@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class EventsManager : MonoBehaviour {
 
-    public GameObject ui;
+//    public GameObject ui;
 
     public static EventsHandler handler;
     private EventsHandler m_handler;

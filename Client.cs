@@ -12,9 +12,11 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
+using Character.Guns;
 using UnityEditor;
 using CommandsSystem;
 using CommandsSystem.Commands;
+using GameDevWare.Serialization;
 using Interpolation;
 using Interpolation.Properties;
 using Networking;
@@ -26,7 +28,9 @@ public class Client : MonoBehaviour
 {
     //#if UNITY_WEBGL// && !UNITY_EDITOR
     public const int NETWORK_FPS = 20;
-    
+
+
+    public testscript TrailRenderer;
     
 
     public GameObject player = null;
@@ -85,8 +89,11 @@ public class Client : MonoBehaviour
         
         var tttest = bf.Deserialize(tr, ttest.GetType());
         Console.Write(tttest);*/
-        
-        
+        /*
+        var ms = new StringWriter();
+        Json.Serialize(new Pistol(), ms);
+        Debug.LogError(ms.ToString());
+        */
         Debug.LogError("test");
         Assembly.Load("Assembly-CSharp").GetType("AIController");
         Debug.LogError(Type.GetType("AIController"));

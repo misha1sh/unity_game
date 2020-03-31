@@ -3,14 +3,7 @@ using Character.Guns;
 using UnityEngine;
 
 namespace Character.Actions {
-    public class ShootPistolAction : ShootAction {
-
-        private Pistol pistol;
-
-        public void Init(Pistol pistol) {
-            this.pistol = pistol;
-        }
-
+    public class ShootPistolAction : ShootAction<ReloadingGun> {
         private float needShoot = -100;
         public override void OnStartDoing() {
             needShoot = Time.time;
@@ -20,10 +13,9 @@ namespace Character.Actions {
         }
 
         void LateUpdate() {
-            pistol.Update(Time.deltaTime);
-            if (Time.time - needShoot < 0.15f && pistol.state == GunState.READY) {
-                pistol.Shoot();
-                ShootWithDamage(Vector3.zero, 10);
+            gun.Update(Time.deltaTime);
+            if (Time.time - needShoot < 0.15f && gun.state == GunState.READY) {
+                gun.Shoot();
                 needShoot = -100;
             }
         }

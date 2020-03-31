@@ -59,7 +59,7 @@ namespace Character {
         
         public void SetSpeed(float speed) {
             animator.SetFloat(Speed, speed);
-            animationState.speed = speed;
+            animationState.speed = speed + 10;
         }
 
         public void SetPush() {
@@ -83,16 +83,16 @@ namespace Character {
         }
         
         
-        void Update() {
+     /*   void LateUpdate() {
             //   animator.SetBool("push", false);
             //var deltaPos = transform.position - lastPosition;
 
 
-            /*  float linearSpeed = deltaPos.magnitude / Time.deltaTime;
+              float linearSpeed = deltaPos.magnitude / Time.deltaTime;
               animator.SetBool("idle", linearSpeed < 0.001f);
-              animator.SetFloat("speed", linearSpeed);*/
+              animator.SetFloat("speed", linearSpeed);
 
             //lastPosition = transform.position;
-        }
+        }*/
     }
 }

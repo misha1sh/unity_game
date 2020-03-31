@@ -1,24 +1,26 @@
-﻿
-using System;
-using System.Runtime.Serialization;
+﻿using System;
 using UnityEngine;
 
 namespace Character.Guns {
-    
     [Serializable]
-    public class Pistol : ReloadingGun {
+    public class ShotGun : ReloadingGun {
         public float _fullReloadTime = 10.0f;
         public float _reloadTime = 0.3f;
-        public int _bulletsInMagazine = 8;
+        public int _bulletsInMagazine = 3;
 
         public float damage = 10;
+        public int shootsCount = 5;
+        public float accurancy = 12f;
         
         public override float GetFullReloadTime() => _fullReloadTime;
         public override float GetReloadTime() => _reloadTime;
         public override int GetBulletsInMagazine() => _bulletsInMagazine;
         
         protected override void DoShoot() {
-            ShootSystem.ShootWithDamage(player, Vector3.zero, damage);
+            for (int i = 0; i < shootsCount; i++) {
+                Vector3 random_delta = ShootSystem.RandomDelta(1 / accurancy);
+                ShootSystem.ShootWithDamage(player, random_delta, damage);
+            }
         }
     }
 }

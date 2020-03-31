@@ -1,36 +1,32 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using Character.Guns;
 using RotaryHeart.Lib.PhysicsExtension;
 using UnityEngine;
 using Physics = UnityEngine.Physics;
 
 namespace Character.Actions {
-    public abstract class ShootAction : MonoBehaviour, IAction {
+    public abstract class ShootAction<T> : MonoBehaviour, IAction 
+        where T: IGun {
         private CharacterAnimator animator;
 
-        protected bool SimpleRaycast(Vector3 directionDelta, out RaycastHit raycastRes) {
-            var position = transform.position + Vector3.up * 1.5f;
-            var direction = transform.rotation * Vector3.forward + directionDelta;
+        public T gun;
 
-            RotaryHeart.Lib.PhysicsExtension.Physics.Raycast(position, direction, drawDuration: 10,
-                hitColor: Color.red, noHitColor: Color.white, preview: PreviewCondition.Both);
-
-            return Physics.Raycast(position, direction, out raycastRes);
+        void OnEnable() {
+            if (gun != null) {
+                gun.OnPickedUp(gameObject);
+                EventsManager.handler.OnPlayerPickedUpGun(gameObject, gun);
+            }
         }
 
-        private RaycastHit _raycastHit;
-        public bool ShootWithDamage(Vector3 directionDelta, float damage) {
-            var raycastRes = SimpleRaycast(directionDelta,  out _raycastHit);
-            if (raycastRes == false) return false;
-            
-            var other = _raycastHit.collider.gameObject;
-            var hp = other.GetComponent<HPController>();
-
-            if (hp == null) return false;
-
-            hp.TakeDamage(damage, DamageSource.Player(gameObject)); 
-            
-            return true;
+        private void OnDisable() {
+            if (gun != null) {
+                gun.OnDropped();
+                EventsManager.handler.OnPlayerDroppedGun(gameObject, gun);
+            }
         }
+
+       
         
         void Start() {
             animator = gameObject.GetComponent<CharacterAnimator>();

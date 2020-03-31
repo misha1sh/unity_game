@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections;
-using Character.Actions;
+﻿using Character.Actions;
 using Character.Guns;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Character {
     [RequireComponent(typeof(CharacterAnimator))]
     [RequireComponent(typeof(PushAction))]
+    [RequireComponent(typeof(ShootPistolAction))]
     public class ActionController : MonoBehaviour {
         
         private CharacterAnimator animator;
         void Start() {
             animator = GetComponent<CharacterAnimator>();
-            SetPistolAction(new Pistol());
-           //SetPushAction();
+           // SetAction<ShootSemiautoAction>(action => action.gun = new SemiautoGun());
+            SetAction<ShootPistolAction>(action => action.gun = new Pistol());
+            //SetAction<PushAction>(action => { });
         }
 
         private IAction currentAction = null;
@@ -23,22 +22,34 @@ namespace Character {
         private void StopCurrent() {
             if (currentAction != null) {
                 DoAction = false;
-                Destroy(currentAction as MonoBehaviour);
+                (currentAction as MonoBehaviour).enabled = false;
             }
         }
         
-        public void SetPushAction() {
+        
+        public void SetAction<T>(System.Action<T> setup)
+            where T: MonoBehaviour, IAction {
             StopCurrent();
-            var pushAction = gameObject.AddComponent<PushAction>();
-            currentAction = pushAction;
+            var action = gameObject.GetComponent<T>();
+
+            setup(action);
+            
+            action.enabled = true;
+            currentAction = action;
+        }
+        
+ /*       public void SetPushAction() {
+            SetAction<PushAction>();
         }
 
         public void SetPistolAction(Pistol pistol) {
             StopCurrent();
-            var shootPistolAction = gameObject.AddComponent<ShootPistolAction>();
-            shootPistolAction.Init(pistol);
+            var shootPistolAction = gameObject.GetComponent<ShootPistolAction>();
+            shootPistolAction.gun = pistol;
+
+            shootPistolAction.enabled = true;
             currentAction = shootPistolAction;
-        }
+        }*/
 
         public void SetNothing() {
             StopCurrent();
@@ -77,10 +88,6 @@ namespace Character {
             }
         }
 
-  
-
-        void Update() {
-            
-        }
+        
     }
 }

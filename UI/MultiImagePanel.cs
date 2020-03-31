@@ -11,7 +11,7 @@ namespace UI {
 
         private RectTransform panel;
         
-        public void Start() {
+        public void OnEnable() {
             panel = GetComponent<RectTransform>();
             image.enabled = false;
         }
