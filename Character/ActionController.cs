@@ -11,8 +11,9 @@ namespace Character {
         private CharacterAnimator animator;
         void Start() {
             animator = GetComponent<CharacterAnimator>();
-           // SetAction<ShootSemiautoAction>(action => action.gun = new SemiautoGun());
-            SetAction<ShootPistolAction>(action => action.gun = new Pistol());
+             SetAction<ShootSemiautoAction>(action => action.gun = new SemiautoGun());
+         //    SetAction<ShootPistolAction>(action => action.gun = new ShotGun());
+          //  SetAction<ShootPistolAction>(action => action.gun = new Pistol());
             //SetAction<PushAction>(action => { });
         }
 

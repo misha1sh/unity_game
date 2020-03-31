@@ -86,8 +86,10 @@ namespace Character.Guns {
           
                 if (bulletsCount > 0) {
                     SetReloadBullet();
-                } else {
+                } else if (magazinesCount > 0) {
                     SetReloadMagazine();
+                } else {
+                    throw  new Exception("werwerwererw");
                 }
             } else {
                 throw new InvalidOperationException("Cannot shoot without bullet");
