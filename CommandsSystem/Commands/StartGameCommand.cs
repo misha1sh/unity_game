@@ -1,13 +1,11 @@
 ﻿using System;
 
-namespace CommandsSystem {
+namespace CommandsSystem.Commands {
     
-    [Serializable]
-    public class StartGameCommand: Command<StartGameCommand> {
-        public StartGameCommand() {}
-        
+    public partial class StartGameCommand {
+        public int kek;
 
-        public override void Run() {
+        public void Run() {
             Client.client.SetGameStarted();
         }
         

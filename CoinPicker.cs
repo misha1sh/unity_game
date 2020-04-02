@@ -6,9 +6,6 @@ using UnityEngine;
 
 public class CoinPicker : MonoBehaviour
 {
-    private void Start()
-    {
-    }
 
     private float picked = float.MaxValue;
 

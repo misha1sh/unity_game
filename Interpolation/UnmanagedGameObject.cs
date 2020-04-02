@@ -36,7 +36,7 @@ namespace Interpolation {
                       {
                           animator = GetComponent<CharacterAnimator>();
                       }*/
-            Debug.Log("got state " + state);
+            //Debug.Log("got state " + state);
 
             lastlastState = lastState;
             lastState.FromGameObject(gameObject);

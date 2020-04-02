@@ -1,19 +1,15 @@
 ﻿using UnityEngine;
 
 namespace CommandsSystem.Commands {
-    public class ApplyForceCommand : Command<ApplyForceCommand> {
+    public partial class ApplyForceCommand {
         public int objectId;
-
         public Vector3 force;
-        
-        public ApplyForceCommand() {}
 
-        public ApplyForceCommand(GameObject gameObject, Vector3 force) {
-            this.objectId = ObjectID.GetID(gameObject);
-            this.force = force;
-        }
-        
-        public override void Run() {
+
+        public ApplyForceCommand(GameObject gameObject, Vector3 force) :
+            this(ObjectID.GetID(gameObject), force) {}
+
+        public void Run() {
             var gameObject = ObjectID.GetObject(objectId);
             if (gameObject == null) {
                 Debug.LogError($"Not found gameobject#{objectId} for applying force");

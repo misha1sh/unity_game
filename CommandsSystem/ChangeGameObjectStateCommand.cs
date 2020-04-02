@@ -5,7 +5,7 @@ using Interpolation.Properties;
 using UnityEngine;
 
 namespace CommandsSystem.Commands {
-    public class ChangeGameObjectStateCommand<T> : Command<ChangeGameObjectStateCommand<T>>
+   /* public class ChangeGameObjectStateCommand<T> : ICommand
         where T: IGameObjectProperty, new()
     {
         
@@ -20,7 +20,7 @@ namespace CommandsSystem.Commands {
         public ChangeGameObjectStateCommand() {}
 
 
-        public override void Run()
+        public void Run()
         {
             var gameObject = ObjectID.GetObject(state.ID);
             if (gameObject is null)
@@ -48,6 +48,6 @@ namespace CommandsSystem.Commands {
     */
 
             /// Assert. (!character.CompareTag("EntityPlayer")) return;
-        }
-    }
+    /*    }
+    }*/
 }

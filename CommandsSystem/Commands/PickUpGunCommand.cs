@@ -1,23 +1,20 @@
 ﻿using System;
 using Character;
+using Character.Actions;
+using Character.Guns;
 using Interpolation;
 using Interpolation.Managers;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace CommandsSystem.Commands {
-    [Serializable]
-    public class PickUpGunCommand : Command<PickUpGunCommand> {
+    public partial class PickUpGunCommand {
         public int player;
         public int gun;
 
         
-        public PickUpGunCommand() {}
-        public PickUpGunCommand(int player, int gun) {
-            this.player = player;
-            this.gun = gun;
-        }
 
-        public override void Run()
+        public void Run()
         {
             var player = ObjectID.GetObject(this.player);
             var gunObject = ObjectID.GetObject(this.gun);
@@ -26,13 +23,28 @@ namespace CommandsSystem.Commands {
                 Debug.LogWarning("Player or gun null.");
                 return;
             }
-            Client.client.RemoveObject(gunObject);
 
             var managed = player.GetComponent<ActionController>();
-            if (managed == null) return;
+            if (managed == null) {
+                Client.client.RemoveObject(gunObject);
+                return;
+            };
+
+            ReloadingGun gun = gunObject.GetComponent<PistolController>()?.gun ?? 
+                               gunObject.GetComponent<SemiautoController>()?.gun ??
+                               gunObject.GetComponent<ShotgunController>()?.gun as ReloadingGun;/*??
+                  managed.GetComponent<SemiautoController>()?.gun as ReloadingGun;*/
+
+            Assert.IsNotNull(gun);
+            if (gun is Pistol || gun is ShotGun) {
+                managed.SetAction<ShootPistolAction>(action => action.gun = gun);
+            } else {
+                managed.SetAction<ShootSemiautoAction>(action => action.gun = gun);
+            }
             
-            var gun = gunObject.GetComponent<>()
-           // managed.SetAction<();
+            Client.client.RemoveObject(gunObject);
+
+            // managed.SetAction<();
         }
     }
 }

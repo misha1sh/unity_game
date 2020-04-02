@@ -1,4 +1,5 @@
 ﻿using UnityEditor;
+using UnityEngine;
 
 namespace Editor {
     [CustomEditor(typeof(Client))]
@@ -7,8 +8,8 @@ namespace Editor {
             
             base.OnInspectorGUI();
             
-            
-            EditorGUILayout.HelpBox(ObjectID.ToString(), UnityEditor.MessageType.Info);
+            if (Application.isPlaying)
+                EditorGUILayout.TextArea(ObjectID.ToString());
         }
     }
 }

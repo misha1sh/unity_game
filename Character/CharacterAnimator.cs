@@ -5,21 +5,6 @@ using Interpolation;
 using UnityEngine;
 
 namespace Character {
-
-
-
-
-
-
-
-    [Serializable]
-    public struct PlayerAnimationState {
-        public bool idle;
-        public float speed;
-        public float rotationSpeed;
-    }
-
-
     [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(HandAnimationBlender))]
     public class CharacterAnimator : MonoBehaviour {

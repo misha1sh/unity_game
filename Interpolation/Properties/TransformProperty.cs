@@ -2,7 +2,7 @@
 using UnityEngine;
 
 namespace Interpolation.Properties {
-    [Serializable]
+   /* [Serializable]
     public class TransformProperty : GameObjectProperty<TransformProperty> {
         public Vector3 position;
         public Quaternion rotation;
@@ -13,7 +13,7 @@ namespace Interpolation.Properties {
             rotation = state.rotation;
         }
 
-        public override void FromGameObject2(GameObject gameObject) {
+        public override void FromGameObject(GameObject gameObject) {
             position = gameObject.transform.position;
             rotation = gameObject.transform.rotation;
         }
@@ -27,5 +27,5 @@ namespace Interpolation.Properties {
             position = InterpolationFunctions.InterpolatePosition(lastLastState.position, lastState.position, nextState.position, coef);
             rotation = InterpolationFunctions.InterpolateRotation(lastState.rotation, nextState.rotation, coef);
         }
-    }
+    }*/
 }

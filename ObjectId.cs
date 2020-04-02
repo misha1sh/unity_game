@@ -22,9 +22,16 @@ public class ObjectID: MonoBehaviour
         UnityIDtoObjectID.Add(gameObject.GetInstanceID(), id);
     }
 
-    public static int GetID(GameObject gameObject)
-    {
-        return UnityIDtoObjectID[gameObject.GetInstanceID()];
+    public static int GetID(GameObject gameObject) {
+        int result;
+        if (!UnityIDtoObjectID.TryGetValue(gameObject.GetInstanceID(), out result)) {
+            throw new KeyNotFoundException($"Gameobject {gameObject.name}#{gameObject.GetInstanceID()} not found in ObjectID");
+        }
+        return result;
+    }
+
+    public static bool TryGetID(GameObject gameObject, out int result) {
+        return UnityIDtoObjectID.TryGetValue(gameObject.GetInstanceID(), out result);
     }
 
     public static GameObject GetObject(int id)

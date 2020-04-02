@@ -3,20 +3,13 @@ using System;
 using UnityEngine;
 
 namespace CommandsSystem.Commands {
-    [Serializable]
-    public class PickCoinCommand : Command<PickCoinCommand>
+    public partial class PickCoinCommand
     {
         public int player;
         public int coin;
 
-        
-        public PickCoinCommand() {}
-        public PickCoinCommand(int player, int coin) {
-            this.player = player;
-            this.coin = coin;
-        }
 
-        public override void Run()
+        public void Run()
         {
             var player = ObjectID.GetObject(this.player);
             var coin = ObjectID.GetObject(this.coin);

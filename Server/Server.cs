@@ -177,10 +177,7 @@ class GameServerConnection : WebSocketBehavior {
         room.RemoveClient(ID);
     }
 
-    protected override void OnMessage(MessageEventArgs e) {
-//        Debug.Log("SERVER got message");
-       // Debug.Log("SERVER got message: " + e.RawData.Length + " from " + ID);
-
+    private void HandleMessage(MessageEventArgs e) {
         if (!e.IsBinary) {
             Debug.LogError("SERVER got not binary message.");
             return;
@@ -222,10 +219,15 @@ class GameServerConnection : WebSocketBehavior {
             default:
                 throw new ArgumentOutOfRangeException();
         }
-        
-        
-     
-    
+    }
+
+    protected override void OnMessage(MessageEventArgs e) {
+//        Debug.Log("SERVER got message");
+       // Debug.Log("SERVER got message: " + e.RawData.Length + " from " + ID);
+      /* Task.Run(async () => {
+           await Task.Delay(100);*/
+           HandleMessage(e);
+      // });
     }
 }
 
@@ -249,7 +251,7 @@ public class Server : MonoBehaviour
 
         
         httpServer = new HttpServer("http://0.0.0.0:8887");
-     
+        
         var room = new GameServerRoom();
         httpServer.AddWebSocketService<GameServerConnection>("/ws", 
             connection => connection.Init(room));

@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Character {
+namespace Character.HP {
     public class HPController : MonoBehaviour {
         public float MaxHP;
 
@@ -12,7 +12,7 @@ namespace Character {
 
         public float currentHp {
             get => _currentHp;
-            private set {
+            set {
                 _currentHp = value;
                 hpImage.fillAmount = _currentHp / MaxHP;
             }
@@ -30,19 +30,11 @@ namespace Character {
             if (currentHp == 0) {
                 // TODO        
             }
-            
+
             return realDamage;
         }
         
     }
 
-    public static class DamageSource {
-        public static int Player(int id) {
-            return id;
-        }
 
-        public static int Player(GameObject gameObject) {
-            return Player(ObjectID.GetID(gameObject));
-        }
-    }
 }

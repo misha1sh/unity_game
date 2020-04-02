@@ -15,7 +15,11 @@ namespace Networking {
             this.webSocketHandler = webSocketHandler;
         }
 
+        private float lastTimeRequestSended;
+
+
         public void Start() {
+            lastTimeRequestSended = Time.time;
             webSocketHandler.Start();
             RunAskMessage(0, int.MaxValue);
         }
@@ -40,12 +44,16 @@ namespace Networking {
         }
 
         public IEnumerable<ICommand> GetCommands() {
+            bool loggedTwice = false;
             byte[] data;
             while (webSocketHandler.serverToClientMessages.TryDequeue(out data)) {
                 int commandId;
                 ICommand command = commandsSystem.DecodeCommand(data, out commandId);
                 if (commandId <= lastMessage || losedMessages.Contains(commandId)) {
-                    Debug.LogWarning("CLIENT: Got message twice.");
+                    if (!loggedTwice) {
+                        loggedTwice = true;
+                        Debug.LogWarning("CLIENT: Got message twice.");
+                    }
                     continue;
                 }
                 losedMessages.Add(commandId, command);
@@ -58,8 +66,10 @@ namespace Networking {
                 
                 yield return command;
             }
-
-            if (losedMessages.Count != 0) {
+            
+            if (losedMessages.Count != 0 && Time.time - lastTimeRequestSended > 1.0f) {
+                lastTimeRequestSended = Time.time;
+                
                 var enumerator = losedMessages.GetEnumerator();
                 enumerator.MoveNext();
                 int currentId = (int) enumerator.Key;

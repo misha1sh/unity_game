@@ -1,12 +1,9 @@
-﻿
-
-using System;
+﻿using System;
 
 namespace CommandsSystem.Commands
 {
     
-    [Serializable]
-    public class CreateGhostCommand : Command<CreateGhostCommand>
+    public partial class CreateGhostCommand
     {
         public int id;
       /*  public CharacterState 
@@ -14,7 +11,7 @@ namespace CommandsSystem.Commands
             
         }*/
 
-        public override void Run()
+        public void Run()
         {
             throw new NotImplementedException();
         }

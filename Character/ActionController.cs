@@ -6,6 +6,7 @@ namespace Character {
     [RequireComponent(typeof(CharacterAnimator))]
     [RequireComponent(typeof(PushAction))]
     [RequireComponent(typeof(ShootPistolAction))]
+    [RequireComponent(typeof(ShootSemiautoAction))]
     public class ActionController : MonoBehaviour {
         
         private CharacterAnimator animator;
