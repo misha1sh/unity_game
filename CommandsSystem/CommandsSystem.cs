@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Character.Guns;
 using CommandsSystem;
 using CommandsSystem.Commands;
 using GameDevWare.Serialization;
@@ -67,9 +68,14 @@ namespace CommandsSystem {
                 var buf = startgamecommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
+            if (command is Pistol pistol) {
+                stream.WriteByte((byte)10);
+                var buf = pistol.Serialize();
+                stream.Write(buf, 0, buf.Length);
+            } else
 /*END2*/
             {
-                throw new ArgumentException("Unkwown command: " + command);
+                throw new ArgumentException("Unkwown command: " + command.GetType());
             }
                        
             
@@ -152,6 +158,8 @@ namespace CommandsSystem {
                      return SpawnPrefabCommand.Deserialize(arr);
                  case 9:
                      return StartGameCommand.Deserialize(arr);
+                 case 10:
+                     return Pistol.Deserialize(arr);
     /*END1*/
 
                  default:

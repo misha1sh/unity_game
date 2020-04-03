@@ -1,4 +1,5 @@
 ﻿using System;
+using CommandsSystem;
 using UnityEngine;
 
 namespace Character.Guns {
@@ -6,9 +7,9 @@ namespace Character.Guns {
     public abstract class ReloadingGun : IGun {
         public GunState state { get; set; }
 
-        
-     
-        
+        public Vector3 position;
+        public int id;
+
         public abstract float GetFullReloadTime();
         public abstract float GetReloadTime();
         public abstract int GetBulletsInMagazine();
@@ -44,6 +45,7 @@ namespace Character.Guns {
         public ReloadingGun() {
             bulletsCount = GetBulletsInMagazine();
             state = GunState.READY;
+            id = ObjectID.RandomID;
         }
 
 
@@ -52,8 +54,17 @@ namespace Character.Guns {
             this.player = player;
         }
 
+        public bool IsEmpty() => bulletsCount == 0 && magazinesCount == 0;
+
         public void OnDropped() {
+            if (!IsEmpty()) // just destroy it
+            {
+                this.position = player.transform.position - player.transform.forward  + Vector3.up;
+                Client.client.commandsHandler.RunSimpleCommand(this as ICommand);
+            }
+ 
             this.player = null;
+            
             // drop reloading state
             if (state == GunState.RELOADING_MAGAZINE)
                 state = GunState.READY;

@@ -81,10 +81,19 @@ def extract_fields(filename):
     inp = inp.split(classname, 1)[1].split("{")[1]
     fields = []
     for line in inp.split("\n"):
-        if re.match("\s*public [A-Za-z0-9]+ [A-Za-z0-9]+;*$", line):
-            public, typ, name = line.split()
+        if re.match("\s*public [_A-Za-z0-9]+ [_A-Za-z0-9]+\s*=*\s*[0-9\.a-zA-Z]*[;\s]*$", line):
+            ll = line.split()
+            public, typ, name = ll[0], ll[1], ll[2]
             name = name.split(";")[0]
             fields.append((typ, name))
+            
+        if re.match("\s*\/\/\/\s*public [_A-Za-z0-9]+ [_A-Za-z0-9]+\s*=*\s*[0-9\.a-zA-Z]*[;\s]*$", line):
+            ll = line.split()
+            public, typ, name = ll[1], ll[2], ll[3]
+            name = name.split(";")[0]
+            fields.append((typ, name))
+    
+    print(filename,  fields)        
     return fields
 
 
@@ -114,12 +123,13 @@ def pack_custom_type(typename):
         return ser, deser, offset
             
     return pack_custom
-
 paths = {
     "PlayerAnimationState": "Character/PlayerAnimationState.cs",
     "Vector3": "Util2/Vector3.txt",
     "Quaternion": "Util2/Quaternion.txt",
-    "HPChange": "Character/HP/HPChange.cs"
+    "HPChange": "Character/HP/HPChange.cs",
+    
+    
 }
 
 packers = {
@@ -130,18 +140,27 @@ packers = {
     "PlayerAnimationState": pack_custom_type("PlayerAnimationState"),
     "Vector3": pack_custom_type("Vector3"),
     "Quaternion": pack_custom_type("Quaternion"),
-    "HPChange" : pack_custom_type("HPChange")
+    "HPChange": pack_custom_type("HPChange")
 } 
     
 commands = []
     
-for filename in os.listdir("CommandsSystem/Commands"):
+files = os.listdir("CommandsSystem/Commands")
+ffiles = []
+for i in files:
+    ffiles.append((i, "CommandsSystem/Commands/" + i))
+    
+for filename, path in ffiles + [("Pistol.cs", "Character/Guns/Pistol.cs"),
+                                ("ShotGun.cs", "Character/Guns/ShotGun.cs"),
+                                ("SemiautoGun.cs", "Character/Guns/SemiautoGun.cs")]:
     if not filename.endswith(".cs"): continue
     
-    #with open("CommandsSystem/Commands/" + filename) as file: inp = file.read()
+    with open(path) as file: inp = file.read()
     
     command = filename.split(".")[0]
     commands.append(command)
+
+    namespace = inp.split("namespace")[1].split("{")[0].replace(" ", "")
     #inp = inp.split(command, 1)[1].split("{")[1]
 
     serialize = ""
@@ -151,7 +170,8 @@ for filename in os.listdir("CommandsSystem/Commands"):
     constr_args = ""
     constr = ""
     
-    for (typ, name) in extract_fields("CommandsSystem/Commands/" + filename):
+    
+    for (typ, name) in extract_fields(path):
             
             s, d, o = ser_field(typ, name, offset)
             
@@ -178,8 +198,9 @@ using Interpolation.Properties;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Character.HP;
+using CommandsSystem;
 
-namespace CommandsSystem.Commands {
+namespace """+namespace+""" {
     public partial class """ + command + """ : ICommand  {
 
         public """ + command + """(){}

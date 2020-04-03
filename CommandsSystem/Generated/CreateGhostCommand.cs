@@ -7,8 +7,10 @@ using Interpolation.Properties;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Character.HP;
+using CommandsSystem;
 
-namespace CommandsSystem.Commands {
+namespace CommandsSystem.Commands
+ {
     public partial class CreateGhostCommand : ICommand  {
 
         public CreateGhostCommand(){}

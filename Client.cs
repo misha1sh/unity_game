@@ -173,7 +173,7 @@ public class Client : MonoBehaviour
             commandsHandler.RunUniqCommand(new SpawnPrefabCommand("coin", pos, new Quaternion()), 1, lastCointId++);
         }
         
-        if (Random.value < 0.05 && FindObjectsOfType<PistolController>().Length < 5)
+        if (Random.value < 0.05 && FindObjectsOfType<PistolController>().Length < 3)
         {
             Vector3 pos = FindPlaceForSpawn(1, 1);
             commandsHandler.RunUniqCommand(new SpawnPrefabCommand("pistol", pos, new Quaternion()), 1, (int) (Random.value * 100));
@@ -214,14 +214,22 @@ public class Client : MonoBehaviour
             DebugExtension.DrawCapsule(capsule.pos1, capsule.pos2, Color.blue, capsule.radius);
         }
     }
-    
 
-    
 
-    public void RemoveObject(GameObject gameObject)
-    {
+
+
+    public void RemoveObject(GameObject gameObject) {
+     /*   if (gameObject.TryGetComponent<Rigidbody>(out var r)) {// need to fire ontriggerexitevent
+            r.position = new Vector3(Random.Range(-100000, 100000),
+                -10000,
+                Random.Range(-100000, 100000));
+        } else {
+            gameObject.transform.position = new Vector3(Random.Range(-100000, 100000),
+                -10000,
+                Random.Range(-100000, 100000));
+        }*/
         ObjectID.RemoveObject(gameObject);
-        Destroy(gameObject);
+       Destroy(gameObject);
     }
 
     public GameObject SpawnObject(SpawnPrefabCommand command)

@@ -12,7 +12,7 @@ namespace Interpolation {
 
         public T property;
 
-
+        protected virtual float updateTime => 1f / Client.NETWORK_FPS;
 
 
         public void Start() {
@@ -23,7 +23,7 @@ namespace Interpolation {
         }
 
         void Update() {
-            if (Time.time - lastSendState > 1f / Client.NETWORK_FPS) {
+            if (Time.time - lastSendState > updateTime) {
 //                Debug.Log("Sending coordianates " );
                 property.FromGameObject(gameObject);
                 var command = property.GetCommand();

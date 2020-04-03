@@ -1,4 +1,5 @@
 ﻿using System;
+using CommandsSystem.Commands;
 using UnityEngine;
 
 namespace Character.Guns {
@@ -16,9 +17,18 @@ namespace Character.Guns {
         public override int GetBulletsInMagazine() => _bulletsInMagazine;
        
         
+        ///  public int _bulletsCount;
+        ///  public int _magazinesCount; 
+
+        
         protected override void DoShoot() {
             Vector3 random_delta = ShootSystem.RandomDelta(1 / accurancy);
             ShootSystem.ShootWithDamage(player, random_delta, damage);
+        }
+        
+        public void Run() {
+            var go = Client.client.SpawnObject(new SpawnPrefabCommand("semiauto", position, Quaternion.identity, id));
+            go.AddComponent<SemiautoController>().gun = this;
         }
     }
 }

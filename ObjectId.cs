@@ -11,8 +11,8 @@ public class ObjectID: MonoBehaviour
     private static Dictionary<int, WeakReference> IDToObject = new Dictionary<int, WeakReference>();
     private static Dictionary<int, int> UnityIDtoObjectID = new Dictionary<int, int>();
 
-
-    
+    private static System.Random random = new System.Random();
+    public static int RandomID => random.Next();
     
     public static void StoreObject(GameObject gameObject, int id)
     {
@@ -45,9 +45,9 @@ public class ObjectID: MonoBehaviour
     }
 
 
-    public static void RemoveObject(GameObject gameObject)
-    {
-        int id = GetID(gameObject);
+    public static void RemoveObject(GameObject gameObject) {
+        int id;
+        if (!TryGetID(gameObject, out id)) return;
         Assert.IsTrue(IDToObject.Remove(id));
         Assert.IsTrue(UnityIDtoObjectID.Remove(gameObject.GetInstanceID()));
     }

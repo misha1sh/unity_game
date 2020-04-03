@@ -7,6 +7,7 @@ using Interpolation.Properties;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Character.HP;
+using CommandsSystem;
 
 namespace CommandsSystem.Commands {
     public partial class StartGameCommand : ICommand  {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CommandsSystem.Commands;
 using RotaryHeart.Lib.PhysicsExtension;
 using UnityEngine;
@@ -53,6 +54,7 @@ namespace Character {
         }
 
         private void OnTriggerExit(Collider other) {
+            Debug.LogError(other.name);
             DeGround(other.gameObject);
         }
         private bool isGrounded = true;
@@ -64,6 +66,14 @@ namespace Character {
         public Vector3 TargetDirection { get; set; }
         public Vector3 TargetRotation { get; set; }
 
+        private void FixedUpdate() {
+            for (int i = 0; i < groundCollisions.Count; i++) {
+                if (!groundCollisions[i]) {
+                    DeGround(groundCollisions[i]);
+                    break; // TODO
+                }
+            }
+        }
 
         void Update() {
 
