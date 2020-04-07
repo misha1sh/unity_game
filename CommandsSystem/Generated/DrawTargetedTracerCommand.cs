@@ -65,6 +65,7 @@ result.player = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));
 
 result.target = (arr[4] | (arr[5] << 8) | (arr[6] << 16) | (arr[7] << 24));
 
+result.HpChange = new HPChange();
 int i_result_HpChange_delta;
 i_result_HpChange_delta = (arr[8] | (arr[9] << 8) | (arr[10] << 16) | (arr[11] << 24));
 float f_result_HpChange_delta = *((float*)&i_result_HpChange_delta);

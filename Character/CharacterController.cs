@@ -8,7 +8,7 @@ namespace Character {
         protected MotionController motionController;
         protected ActionController actionController;
 
-        protected void Start() {
+        protected virtual void Start() {
             motionController = target.GetComponent<MotionController>();
             actionController = target.GetComponent<ActionController>();
         }

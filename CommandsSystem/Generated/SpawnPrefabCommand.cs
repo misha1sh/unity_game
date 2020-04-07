@@ -14,16 +14,17 @@ namespace CommandsSystem.Commands {
 
         public SpawnPrefabCommand(){}
         
-        public SpawnPrefabCommand(string prefabName,Vector3 position,Quaternion rotation,int id) {
+        public SpawnPrefabCommand(string prefabName,Vector3 position,Quaternion rotation,int id,int owner) {
             this.prefabName = prefabName;
 this.position = position;
 this.rotation = rotation;
 this.id = id;
+this.owner = owner;
         }
 
         private byte[] SerializeLittleEndian() {
             unsafe {
-var arr = new byte[61];
+var arr = new byte[65];
 var bytes_prefabName= Encoding.UTF8.GetBytes(prefabName);
     Assert.IsTrue(bytes_prefabName.Length <= 25);
 
@@ -89,6 +90,11 @@ arr[57] = (byte)(id & 0x000000ff);
    arr[59] = (byte)((id & 0x00ff0000) >> 16);
    arr[60] = (byte)((id & 0xff000000) >> 24);
 
+arr[61] = (byte)(owner & 0x000000ff);
+   arr[62] = (byte)((owner & 0x0000ff00) >> 8);
+   arr[63] = (byte)((owner & 0x00ff0000) >> 16);
+   arr[64] = (byte)((owner & 0xff000000) >> 24);
+
 
                 return arr;
             }
@@ -108,6 +114,7 @@ int len_result_prefabName;
 len_result_prefabName = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));
 result.prefabName = Encoding.UTF8.GetString(arr, 4, len_result_prefabName);
 
+result.position = new Vector3();
 int i_result_position_x;
 i_result_position_x = (arr[29] | (arr[30] << 8) | (arr[31] << 16) | (arr[32] << 24));
 float f_result_position_x = *((float*)&i_result_position_x);
@@ -124,6 +131,7 @@ float f_result_position_z = *((float*)&i_result_position_z);
 result.position.z = f_result_position_z;
 
 
+result.rotation = new Quaternion();
 int i_result_rotation_x;
 i_result_rotation_x = (arr[41] | (arr[42] << 8) | (arr[43] << 16) | (arr[44] << 24));
 float f_result_rotation_x = *((float*)&i_result_rotation_x);
@@ -147,6 +155,8 @@ result.rotation.w = f_result_rotation_w;
 
 result.id = (arr[57] | (arr[58] << 8) | (arr[59] << 16) | (arr[60] << 24));
 
+result.owner = (arr[61] | (arr[62] << 8) | (arr[63] << 16) | (arr[64] << 24));
+
              
                 return result;
             }
@@ -161,7 +171,7 @@ result.id = (arr[57] | (arr[58] << 8) | (arr[59] << 16) | (arr[60] << 24));
         
         
         public string AsJson() {
-            return $"{{'prefabName':{prefabName},'position':{position},'rotation':{rotation},'id':{id}}}";
+            return $"{{'prefabName':{prefabName},'position':{position},'rotation':{rotation},'id':{id},'owner':{owner}}}";
         }
         
         public override string ToString() {

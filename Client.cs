@@ -44,8 +44,9 @@ public class Client : MonoBehaviour
     private TrianglePolygon spawnPolygon;
     public static Client client { get; private set; }
     public GameObject mainPlayer;
-    
-    public int ID => ObjectID.GetID(player);
+
+    private int _id;
+    public int ID => _id;
 
 
     public System.Random random = new System.Random();
@@ -62,9 +63,11 @@ public class Client : MonoBehaviour
     public float GameTime => Time.time - gameStartTime;
 
 
+    public float interpolationCoef;
+    
     private void OnEnable() {
         client = this;
-        
+        _id = random.Next();
     }
 
 
@@ -96,7 +99,7 @@ public class Client : MonoBehaviour
         Debug.LogError(ms.ToString());
         */
     ///    var c = new PlayerProperty(10, new Vector3(1, 2, 3), Quaternion.identity, new PlayerAnimationState());
-        var c = new SpawnPrefabCommand("123123", Vector3.back, Quaternion.identity, 4);
+        var c = new SpawnPrefabCommand("123123", Vector3.back, Quaternion.identity, 123, 4);
         var f = c.Serialize();
         var d = SpawnPrefabCommand.Deserialize(f);
 
@@ -157,7 +160,7 @@ public class Client : MonoBehaviour
         if (commandsHandler is null) return;
         commandsHandler.Update();
         foreach (var command in commandsHandler.GetCommands()) {
-            if (command is PlayerProperty || command is DrawTargetedTracerCommand || command is DrawPositionTracerCommand) {//command is ChangeGameObjectStateCommand) {
+            if (command is ChangePlayerProperty || command is DrawTargetedTracerCommand || command is DrawPositionTracerCommand) {//command is ChangeGameObjectStateCommand) {
 //                Debug.Log("Client got command: ChangeCharacterStateCommand " + (command as ChangeCharacterStateCommand).state.id);
             } else {
                 Debug.Log("Client got command: " + command);
@@ -167,16 +170,16 @@ public class Client : MonoBehaviour
         }
 
 
-        if (Random.value < 0.05 && FindObjectsOfType<CoinPicker>().Length < 5)
+        if (Random.value < 0.05 && FindObjectsOfType<CoinPicker>().Length < 0)
         {
             Vector3 pos = FindPlaceForSpawn(10, 1);
-            commandsHandler.RunUniqCommand(new SpawnPrefabCommand("coin", pos, new Quaternion()), 1, lastCointId++);
+            commandsHandler.RunUniqCommand(new SpawnPrefabCommand("coin", pos, new Quaternion(), ObjectID.RandomID, Client.client.ID), UniqCodes.SPAWN_COIN, lastCointId++);
         }
         
-        if (Random.value < 0.05 && FindObjectsOfType<PistolController>().Length < 3)
+        if (Random.value < 0.05 && FindObjectsOfType<PistolController>().Length < 1)
         {
             Vector3 pos = FindPlaceForSpawn(1, 1);
-            commandsHandler.RunUniqCommand(new SpawnPrefabCommand("pistol", pos, new Quaternion()), 1, (int) (Random.value * 100));
+            commandsHandler.RunUniqCommand(new SpawnPrefabCommand("pistol", pos, new Quaternion(), ObjectID.RandomID, Client.client.ID), UniqCodes.SPAWN_GUN, (int) (100)); // Random.value * 
         }
 
         //Instantiate(myPrefab, new Vector3(0, 0, 0), Quaternion.identity);
@@ -239,7 +242,7 @@ public class Client : MonoBehaviour
         }
         GameObject prefab = prefabs[command.prefabName];
         var gameObject = Instantiate(prefab, command.position, command.rotation);
-        ObjectID.StoreObject(gameObject, command.id);
+        ObjectID.StoreObject(gameObject, command.id, command.owner);
         Debug.Log($"Spawned {gameObject}({gameObject.GetInstanceID()}). id: {command.id}");
         return gameObject;
     }

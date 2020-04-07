@@ -25,9 +25,9 @@ namespace Interpolation {
             float coef) {
             return (Lerp3Points(lastlastPosition, lastPosition, nextPosition,
                         1,
-                        coef) * 0.2f
+                        coef) * Client.client.interpolationCoef
                     +
-                    Vector3.Lerp(lastPosition, nextPosition, coef) * 0.8f);
+                    Vector3.LerpUnclamped(lastPosition, nextPosition, coef) * (1.0f - Client.client.interpolationCoef));
         }
 
         public static Quaternion InterpolateRotation(Quaternion lastRotation, Quaternion nextRotation, float coef) {

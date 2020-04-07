@@ -13,7 +13,7 @@ namespace Interpolation.Properties {
             IGameObjectProperty nextState, 
             float coef);
 
-        ICommand GetCommand();
+       // ICommand GetCommand();
 
     }
 }

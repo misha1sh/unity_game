@@ -7,9 +7,11 @@ namespace Editor {
         public override void OnInspectorGUI() {
             
             base.OnInspectorGUI();
-            
-            if (Application.isPlaying)
+
+            if (Application.isPlaying) {
+                EditorGUILayout.TextArea("ID: " + Client.client.ID);
                 EditorGUILayout.TextArea(ObjectID.ToString());
+            }
         }
     }
 }

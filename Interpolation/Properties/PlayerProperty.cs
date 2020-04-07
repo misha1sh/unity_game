@@ -5,8 +5,11 @@ using Interpolation.Properties;
 using UnityEngine;
 
 namespace CommandsSystem.Commands {
-    public partial class PlayerProperty : GameObjectProperty<PlayerProperty> {
+    public class PlayerProperty : GameObjectProperty<PlayerProperty> {
         public int id;
+
+
+      //  public int parentTransform;
         public Vector3 position;
         public Quaternion rotation;
         public PlayerAnimationState animationState;
@@ -17,12 +20,21 @@ namespace CommandsSystem.Commands {
             id = state.id;
             position = state.position;
             rotation = state.rotation;
+            animationState.idle = state.animationState.idle;
+            animationState.speed = state.animationState.speed;
+            animationState.rotationSpeed = state.animationState.rotationSpeed;
+            //    parentTransform = state.parentTransform;
         }
 
         public override void FromGameObject(GameObject gameObject) {
             id = ObjectID.GetID(gameObject);
             position = gameObject.transform.position;
             rotation = gameObject.transform.rotation;
+        /*   if (gameObject.transform.parent == null) {
+                parentTransform = 0;
+            } else {
+                parentTransform = ObjectID.GetID()
+            }*/
             if (characterAnimator is null) characterAnimator = gameObject.GetComponent<CharacterAnimator>();
             animationState = characterAnimator.GetAnimationState();
         }
@@ -42,35 +54,7 @@ namespace CommandsSystem.Commands {
                     nextState.animationState, coef);
         }
         
-        public override void Run()
-        {
-            var gameObject = ObjectID.GetObject(id);
-            if (gameObject is null)
-            {
-                var spawnCommand = new SpawnPrefabCommand {
-                    id = this.id, 
-                    position = position, 
-                    rotation = rotation, 
-                    prefabName = "RobotGhost"
-                };
-
-      
-                
-                
-                gameObject = Client.client.SpawnObject(spawnCommand);
-            }
-
-            var controller = gameObject.GetComponent<UnmanagedGameObject<PlayerProperty>>();
-            if (controller is null) return;
-            controller.SetStateAnimated(this);
-
-            /*    GhostController controller = character.GetComponent<GhostController>();
-                if (controller is null) return;
-                controller.SetStateAnimated(state);
-    */
-
-            /// Assert. (!character.CompareTag("EntityPlayer")) return;
-        }
+       
     }
     
     

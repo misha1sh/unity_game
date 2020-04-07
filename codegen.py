@@ -114,21 +114,24 @@ def ser_field(typ, name, offset):
 def pack_custom_type(typename):
     def pack_custom(stname, offset):
         ser, deser = "", ""
+        deser += "result." + stname + " = new " + typename + "();\n";
+    
         for (typ, name) in extract_fields(paths[typename]):
             s, d, o = ser_field(typ, stname + "." + name, offset)
             ser += s
             deser += d
             offset = o
-            
         return ser, deser, offset
             
     return pack_custom
+
+
 paths = {
     "PlayerAnimationState": "Character/PlayerAnimationState.cs",
     "Vector3": "Util2/Vector3.txt",
     "Quaternion": "Util2/Quaternion.txt",
     "HPChange": "Character/HP/HPChange.cs",
-    
+    "PlayerProperty": "Interpolation/Properties/PlayerProperty.cs",
     
 }
 
@@ -140,7 +143,8 @@ packers = {
     "PlayerAnimationState": pack_custom_type("PlayerAnimationState"),
     "Vector3": pack_custom_type("Vector3"),
     "Quaternion": pack_custom_type("Quaternion"),
-    "HPChange": pack_custom_type("HPChange")
+    "HPChange": pack_custom_type("HPChange"),
+    "PlayerProperty": pack_custom_type("PlayerProperty")
 } 
     
 commands = []

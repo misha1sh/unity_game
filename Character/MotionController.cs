@@ -54,7 +54,7 @@ namespace Character {
         }
 
         private void OnTriggerExit(Collider other) {
-            Debug.LogError(other.name);
+           // Debug.LogError(other.name);
             DeGround(other.gameObject);
         }
         private bool isGrounded = true;

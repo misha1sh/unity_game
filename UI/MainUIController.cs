@@ -46,7 +46,7 @@ public class MainUIController : MonoBehaviour {
 
             if (gun is ReloadingGun g) {
                 bulletsPanel.SetMaxImagesCount(g.GetBulletsInMagazine());
-                bulletsPanel.SetActiveImagesCount(g.bulletsCount);
+                bulletsPanel.SetActiveImagesCount(g.bulletsCount + 1);
                 magazinesPanel.SetMaxImagesCount(5);
                 magazinesPanel.SetActiveImagesCount(g.magazinesCount);
             }

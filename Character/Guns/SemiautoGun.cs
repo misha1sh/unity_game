@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Character.Guns {
     [Serializable]
-    public class SemiautoGun : ReloadingGun {
+    public partial class  SemiautoGun : ReloadingGun {
         public float _fullReloadTime = 10.0f;
         public float _reloadTime = 0.06f;
         public int _bulletsInMagazine = 50;
@@ -16,9 +16,11 @@ namespace Character.Guns {
         public override float GetReloadTime() => _reloadTime;
         public override int GetBulletsInMagazine() => _bulletsInMagazine;
        
-        
+   
         ///  public int _bulletsCount;
-        ///  public int _magazinesCount; 
+        ///  public int _magazinesCount;
+        ///  public Vector3 position;
+        ///  public int id;
 
         
         protected override void DoShoot() {
@@ -27,8 +29,8 @@ namespace Character.Guns {
         }
         
         public void Run() {
-            var go = Client.client.SpawnObject(new SpawnPrefabCommand("semiauto", position, Quaternion.identity, id));
-            go.AddComponent<SemiautoController>().gun = this;
+            var go = Client.client.SpawnObject(new SpawnPrefabCommand("semiauto", position, Quaternion.identity, id, 0));
+            go.GetComponent<SemiautoController>().gun = this;
         }
     }
 }

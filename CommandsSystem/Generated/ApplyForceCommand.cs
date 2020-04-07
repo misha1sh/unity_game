@@ -66,6 +66,7 @@ arr[12] = (byte)(i_force_z & 0x000000ff);
             unsafe {
 result.objectId = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));
 
+result.force = new Vector3();
 int i_result_force_x;
 i_result_force_x = (arr[4] | (arr[5] << 8) | (arr[6] << 16) | (arr[7] << 24));
 float f_result_force_x = *((float*)&i_result_force_x);

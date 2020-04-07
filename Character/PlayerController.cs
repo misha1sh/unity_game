@@ -27,7 +27,7 @@ public class PlayerController : CharacterController
     public Camera camera;
     private Plane plane;
 
-    void Start()
+    protected override void Start()
     {
         base.Start();
         Assert.IsNotNull(camera);

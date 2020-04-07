@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Interpolation.Properties {
     
     [Serializable]
-    public abstract class GameObjectProperty<T> : IGameObjectProperty, ICommand
+    public abstract class GameObjectProperty<T> : IGameObjectProperty
         where T : GameObjectProperty<T>, new() { 
 
         public abstract void CopyFrom(T state);
@@ -24,16 +24,13 @@ namespace Interpolation.Properties {
             float coef) {
             Interpolate(lastLastState as T, lastState as T, nextState as T, coef);
         }
-
-        public ICommand GetCommand() {
-            return this;
-        }
+        
 
 
         public abstract void FromGameObject(GameObject gameObject);
         public abstract void ApplyToObject(GameObject gameObject);
 
 
-        public abstract void Run();
+      //  public abstract void Run();
     }
 }

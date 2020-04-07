@@ -4,6 +4,13 @@ using CommandsSystem;
 using UnityEngine;
 
 namespace Networking {
+    public static class UniqCodes {
+        public static int PICK_UP_COIN = 0;
+        public static int PICK_UP_GUN = 1;
+        public static int SPAWN_COIN = 2;
+        public static int SPAWN_GUN = 3;
+    }
+    
     public class CommandsHandler {
         private WebSocketHandler webSocketHandler;
 

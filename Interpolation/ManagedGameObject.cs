@@ -1,4 +1,6 @@
-﻿using Character;
+﻿using System;
+using Character;
+using CommandsSystem;
 using CommandsSystem.Commands;
 using Interpolation.Properties;
 using UnityEngine;
@@ -16,19 +18,28 @@ namespace Interpolation {
 
 
         public void Start() {
-            ObjectID.StoreObject(gameObject, Client.client.random.Next());
+            ObjectID.StoreOwnedObject(gameObject);
 
             property = new T();
             property.FromGameObject(gameObject);
         }
+        
 
         void Update() {
-            if (Time.time - lastSendState > updateTime) {
+            float curTime = Time.realtimeSinceStartup;
+            
+            if (curTime - lastSendState > updateTime) {
 //                Debug.Log("Sending coordianates " );
                 property.FromGameObject(gameObject);
-                var command = property.GetCommand();
+                ICommand command;
+                if (property is PlayerProperty p) {
+                    command = new ChangePlayerProperty(p, curTime - lastSendState);
+                } else {
+                    throw new Exception("Unknown property " + property.GetType());
+                }
+                // var command = property.GetCommand();
                 Client.client.commandsHandler.RunSimpleCommand(command);
-                lastSendState = Time.time;
+                lastSendState = curTime;
             }
         }
     }

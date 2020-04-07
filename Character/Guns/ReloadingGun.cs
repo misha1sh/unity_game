@@ -1,6 +1,7 @@
 ﻿using System;
 using CommandsSystem;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Character.Guns {
     [Serializable]
@@ -52,6 +53,7 @@ namespace Character.Guns {
         protected GameObject player;
         public void OnPickedUp(GameObject player) {
             this.player = player;
+            
         }
 
         public bool IsEmpty() => bulletsCount == 0 && magazinesCount == 0;
@@ -59,7 +61,18 @@ namespace Character.Guns {
         public void OnDropped() {
             if (!IsEmpty()) // just destroy it
             {
-                this.position = player.transform.position - player.transform.forward  + Vector3.up;
+                var motionController = player.GetComponent<MotionController>();
+                Vector3 dir;
+               /* var dir = motionController.TargetDirection;
+                if (dir.sqrMagnitude < 0.01f) {*/
+                    var rig = player.GetComponent<Rigidbody>();
+                    dir = rig.velocity;
+                    if (dir.sqrMagnitude < 0.01f)
+                        dir = new Vector3(Random.value - 0.5f, 0, Random.value - 0.5f);//player.transform.forward;
+                //}
+
+                id = ObjectID.RandomID;
+                this.position = player.transform.position - dir.normalized * 2  + Vector3.up;
                 Client.client.commandsHandler.RunSimpleCommand(this as ICommand);
             }
  

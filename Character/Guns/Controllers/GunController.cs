@@ -1,4 +1,5 @@
 ﻿using CommandsSystem.Commands;
+using Networking;
 using UnityEngine;
 
 namespace Character.Guns {
@@ -16,7 +17,7 @@ namespace Character.Guns {
                 picked = Time.time;
                 var command = new PickUpGunCommand(ObjectID.GetID(other.gameObject), ObjectID.GetID(this.gameObject));
             
-                Client.client.commandsHandler.RunSimpleCommand(command);
+                Client.client.commandsHandler.RunUniqCommand(command, UniqCodes.PICK_UP_GUN, command.gun);
             }
         }
     }

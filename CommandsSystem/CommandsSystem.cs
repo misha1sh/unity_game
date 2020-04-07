@@ -23,34 +23,34 @@ namespace CommandsSystem {
                 var buf = applyforcecommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
-            if (command is CreateGhostCommand createghostcommand) {
+            if (command is ChangePlayerProperty changeplayerproperty) {
                 stream.WriteByte((byte)1);
+                var buf = changeplayerproperty.Serialize();
+                stream.Write(buf, 0, buf.Length);
+            } else
+            if (command is CreateGhostCommand createghostcommand) {
+                stream.WriteByte((byte)2);
                 var buf = createghostcommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is DrawPositionTracerCommand drawpositiontracercommand) {
-                stream.WriteByte((byte)2);
+                stream.WriteByte((byte)3);
                 var buf = drawpositiontracercommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is DrawTargetedTracerCommand drawtargetedtracercommand) {
-                stream.WriteByte((byte)3);
+                stream.WriteByte((byte)4);
                 var buf = drawtargetedtracercommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is PickCoinCommand pickcoincommand) {
-                stream.WriteByte((byte)4);
+                stream.WriteByte((byte)5);
                 var buf = pickcoincommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is PickUpGunCommand pickupguncommand) {
-                stream.WriteByte((byte)5);
-                var buf = pickupguncommand.Serialize();
-                stream.Write(buf, 0, buf.Length);
-            } else
-            if (command is PlayerProperty playerproperty) {
                 stream.WriteByte((byte)6);
-                var buf = playerproperty.Serialize();
+                var buf = pickupguncommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is PlayerPushCommand playerpushcommand) {
@@ -68,9 +68,29 @@ namespace CommandsSystem {
                 var buf = startgamecommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
-            if (command is Pistol pistol) {
+            if (command is StartMovePlatform startmoveplatform) {
                 stream.WriteByte((byte)10);
+                var buf = startmoveplatform.Serialize();
+                stream.Write(buf, 0, buf.Length);
+            } else
+            if (command is TakeOwnCommand takeowncommand) {
+                stream.WriteByte((byte)11);
+                var buf = takeowncommand.Serialize();
+                stream.Write(buf, 0, buf.Length);
+            } else
+            if (command is Pistol pistol) {
+                stream.WriteByte((byte)12);
                 var buf = pistol.Serialize();
+                stream.Write(buf, 0, buf.Length);
+            } else
+            if (command is ShotGun shotgun) {
+                stream.WriteByte((byte)13);
+                var buf = shotgun.Serialize();
+                stream.Write(buf, 0, buf.Length);
+            } else
+            if (command is SemiautoGun semiautogun) {
+                stream.WriteByte((byte)14);
+                var buf = semiautogun.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
 /*END2*/
@@ -141,17 +161,17 @@ namespace CommandsSystem {
              case 0:
                      return ApplyForceCommand.Deserialize(arr);
                  case 1:
-                     return CreateGhostCommand.Deserialize(arr);
+                     return ChangePlayerProperty.Deserialize(arr);
                  case 2:
-                     return DrawPositionTracerCommand.Deserialize(arr);
+                     return CreateGhostCommand.Deserialize(arr);
                  case 3:
-                     return DrawTargetedTracerCommand.Deserialize(arr);
+                     return DrawPositionTracerCommand.Deserialize(arr);
                  case 4:
-                     return PickCoinCommand.Deserialize(arr);
+                     return DrawTargetedTracerCommand.Deserialize(arr);
                  case 5:
-                     return PickUpGunCommand.Deserialize(arr);
+                     return PickCoinCommand.Deserialize(arr);
                  case 6:
-                     return PlayerProperty.Deserialize(arr);
+                     return PickUpGunCommand.Deserialize(arr);
                  case 7:
                      return PlayerPushCommand.Deserialize(arr);
                  case 8:
@@ -159,7 +179,15 @@ namespace CommandsSystem {
                  case 9:
                      return StartGameCommand.Deserialize(arr);
                  case 10:
+                     return StartMovePlatform.Deserialize(arr);
+                 case 11:
+                     return TakeOwnCommand.Deserialize(arr);
+                 case 12:
                      return Pistol.Deserialize(arr);
+                 case 13:
+                     return ShotGun.Deserialize(arr);
+                 case 14:
+                     return SemiautoGun.Deserialize(arr);
     /*END1*/
 
                  default:
