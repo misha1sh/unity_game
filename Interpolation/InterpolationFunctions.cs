@@ -7,13 +7,35 @@ namespace Interpolation {
             return (2*t*t*t - 3*t*t + 1) * start + (t*t*t - 2*t*t + t)*m0 + (-2*t*t*t + 3*t*t) * stop + (t*t*t - t*t) * m1;
         }
 
+
+
         public static float CubicHermiteSpline3(float p0, float p1, float p2, float dt01, float t) {
-            var m0 = Mathf.Atan2(p1 - p0, dt01);
-            var m1 = Mathf.Atan2(p2 - p1, 1);
-            return CubicHermiteSpline(p1, p2, m0, m1, t);
+          /*  if (Mathf.Approximately(p0, p1))
+                return InterpolateFloat(p1, p2, t);*/
+            
+            var m0 = (p1 - p0);
+            var m1 = (p2 - p1);
+            if (p0 >= p1 && p1 <= p2) {
+                m0 = 0;
+            }
+
+            if (p0 <= p1 && p1 >= p2) {
+                m0 = 0;
+            }
+
+            if (t > 1)
+                Debug.LogError("time is " + t);
+
+            var res = CubicHermiteSpline(p1, p2, m0, m1, t);
+            // TODO: нормальная формула без min max
+         /*   if (p1 <= p2 && res > p2)
+                return p2;
+            if (p1 >= p2 && res < p2)
+                return p2;*/
+            return res;
         }
 
-        
+
         public static Vector3 Lerp3Points(Vector3 p0, Vector3 p1, Vector3 p2, float dt01, float t) {
             float x = CubicHermiteSpline3(p0.x, p1.x, p2.x, dt01, t);
             float y = CubicHermiteSpline3(p0.y, p1.y, p2.y, dt01, t);

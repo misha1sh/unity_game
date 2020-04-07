@@ -26,7 +26,8 @@ namespace Interpolation {
         private float lastMessageTime;
 
         void Init() {
-            lastlastState = lastState = nextState = new Data(null, 1);
+            lastlastState = lastState = nextState = new Data(new T(), 1);
+            lastlastState.s.FromGameObject(gameObject);
             state = new T();
             /*  state.s = new T();
               state.s.FromGameObject(gameObject);
@@ -43,6 +44,9 @@ namespace Interpolation {
               lastMessageTime = 0;
   
               nextNextState = null;*/
+            
+            DebugGUI.SetGraphProperties("dx", "dx", -15f, 15f, 0, new Color(0, 1, 1), false);
+            DebugGUI.SetGraphProperties("x", "x", 5f, 25f, 1, new Color(0, 1, 1), true);
         }
         
         
@@ -59,12 +63,12 @@ namespace Interpolation {
 
             nextNextState = null;*/
             lastlastState = lastState;
-            lastState = nextState;
+            lastState = nextState; //.s.FromGameObject(gameObject);
             nextState = nextNextState;
             nextNextState = null;
             
             
-            lastMessageTime = Time.realtimeSinceStartup;//-1f;
+            lastMessageTime = Time.time;//-1f;
             P0P1InterpolationCoef = P1P2InterpolationCoef;
         }
 
@@ -73,7 +77,7 @@ namespace Interpolation {
         public void SetStateAnimated(T newState, float deltaSinceLast) {
             if (lastlastState is null) Init();
             nextNextState = new Data(newState, deltaSinceLast);
-            Debug.LogWarning($"Time {(int)((Time.realtimeSinceStartup-last_time) * 1000)} msec. {(int)(deltaSinceLast*1000)}");
+       //     Debug.LogWarning($"Time {(int)((Time.realtimeSinceStartup-last_time) * 1000)} msec. {(int)(deltaSinceLast*1000)}");
             last_time = Time.realtimeSinceStartup;
             /*          if (animator is null)
                       {
@@ -106,22 +110,31 @@ namespace Interpolation {
             newState.ApplyToObject(gameObject);
         }
 */
+        private float interpolationTime;
         private void Animate(float delta) {
            /* if (lastMessageTime < 0) lastMessageTime = Time.realtimeSinceStartup;/* - 
                                                        Math.Min(Time.deltaTime, timePerFrame)*/; // endTime: lastMessageTime + timePerFrame
             // (beginTime, endTime]
 
            // var interpolationTime = Time.realtimeSinceStartup  - lastMessageTime;
+           interpolationTime += delta;
             if (interpolationTime > nextState.timeSinceLast) {
+                
+              /*  state.Interpolate(lastlastState.s, lastState.s, nextState.s, 1f);
+                state.ApplyToObject(gameObject);*/
                 
                 // TODO adaptive correct
                 if (nextNextState == null) {
+                    DebugExtension.DebugPoint(transform.position, Color.blue, 0.1f, 3);
                     var waitTime = Math.Round((interpolationTime - nextState.timeSinceLast) * 1000);
                     Debug.LogWarning($"Where is message? Waiting {waitTime} msec.");
+                    interpolationTime = nextState.timeSinceLast + 0.0000001f;
                     return;
                 }
+
+                interpolationTime -= nextState.timeSinceLast;
                 SwitchToNextState();
-                Animate();
+                Animate(0);
                 return;
             }
 
@@ -131,15 +144,18 @@ namespace Interpolation {
             
             P1P2InterpolationCoef = coef;
 
-           
+
+            var pos = transform.position.x;
             state.Interpolate(lastlastState.s, lastState.s, nextState.s, coef);
             state.ApplyToObject(gameObject);
+           // Debug.Log(transform.position.x - pos);
+           DebugGUI.Graph("dx", (transform.position.x - pos) / Time.deltaTime);
+           DebugGUI.Graph("x", transform.position.x);
         }
 
         void Update() {
             if (lastlastState is null) Init();
-            Animate();
-            
+            Animate(Time.deltaTime);
         }
     }
 }

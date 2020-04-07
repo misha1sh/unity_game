@@ -28,7 +28,7 @@ using Object = System.Object;
 public class Client : MonoBehaviour
 {
     //#if UNITY_WEBGL// && !UNITY_EDITOR
-    public const int NETWORK_FPS = 20;
+    public const int NETWORK_FPS = 15;
 
 
     public testscript TrailRenderer;

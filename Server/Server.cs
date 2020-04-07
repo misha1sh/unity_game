@@ -224,10 +224,10 @@ class GameServerConnection : WebSocketBehavior {
     protected override void OnMessage(MessageEventArgs e) {
 //        Debug.Log("SERVER got message");
        // Debug.Log("SERVER got message: " + e.RawData.Length + " from " + ID);
-      /* Task.Run(async () => {
-           await Task.Delay(100);*/
+       Task.Run(async () => {
+           await Task.Delay(100);
            HandleMessage(e);
-      // });
+       });
     }
 }
 
