@@ -1,6 +1,4 @@
-﻿
-using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace CommandsSystem.Commands {
     public partial class PickCoinCommand
@@ -18,6 +16,9 @@ namespace CommandsSystem.Commands {
                 Debug.LogWarning("Player or coin null.");
                 return;
             }
+
+            EventsManager.handler.OnPlayerPickedUpCoin(player, coin);
+
             Client.client.RemoveObject(coin);
         }
         

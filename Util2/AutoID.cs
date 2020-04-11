@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Util2 {
     public class AutoID : MonoBehaviour {
@@ -9,7 +8,8 @@ namespace Util2 {
             ID = ObjectID.RandomID;
         }
 
-        public void OnEnable() {
+        public void Awake() {
+            Debug.LogError("Awake called!");
             ObjectID.StoreObject(gameObject, ID, 0);
         }
 

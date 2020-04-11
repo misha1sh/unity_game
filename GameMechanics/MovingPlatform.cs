@@ -1,5 +1,4 @@
-﻿using System;
-using CommandsSystem.Commands;
+﻿using CommandsSystem.Commands;
 using UnityEngine;
 using Util2;
 
@@ -73,7 +72,7 @@ namespace GameMechanics {
                 currentStayingTime -= Time.deltaTime;
                 if (currentStayingTime < 0) {
                     if (ObjectID.IsOwned(id)) {
-                        Client.client.commandsHandler.RunSimpleCommand(new StartMovePlatform(id, 1 - direction));
+                        Client.client.commandsHandler.RunSimpleCommand(new SetPlatformStateCommand(id, 1 - direction));
                     }
 
                     state = WAITING_FOR_COMMAND;

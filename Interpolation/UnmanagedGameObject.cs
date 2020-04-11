@@ -44,9 +44,10 @@ namespace Interpolation {
               lastMessageTime = 0;
   
               nextNextState = null;*/
-            
+#if DEBUG_INTERPOLATION            
             DebugGUI.SetGraphProperties("dx", "dx", -15f, 15f, 0, new Color(0, 1, 1), false);
             DebugGUI.SetGraphProperties("x", "x", 5f, 25f, 1, new Color(0, 1, 1), true);
+#endif
         }
         
         
@@ -68,17 +69,17 @@ namespace Interpolation {
             nextNextState = null;
             
             
-            lastMessageTime = Time.time;//-1f;
+            lastMessageTime = Time.realtimeSinceStartup;//-1f;
             P0P1InterpolationCoef = P1P2InterpolationCoef;
         }
 
 
-        private float last_time = -1f;
+      //  private float last_time = -1f;
         public void SetStateAnimated(T newState, float deltaSinceLast) {
             if (lastlastState is null) Init();
             nextNextState = new Data(newState, deltaSinceLast);
        //     Debug.LogWarning($"Time {(int)((Time.realtimeSinceStartup-last_time) * 1000)} msec. {(int)(deltaSinceLast*1000)}");
-            last_time = Time.realtimeSinceStartup;
+         //   last_time = Time.realtimeSinceStartup;
             /*          if (animator is null)
                       {
                           animator = GetComponent<CharacterAnimator>();
@@ -111,6 +112,18 @@ namespace Interpolation {
         }
 */
         private float interpolationTime;
+
+        private void Interpolate(float coef) {
+            var pos = transform.position.x;
+            state.Interpolate(lastlastState.s, lastState.s, nextState.s, coef);
+            state.ApplyToObject(gameObject);
+            // Debug.Log(transform.position.x - pos);
+#if DEBUG_INTERPOLATION
+            DebugGUI.Graph("dx", (transform.position.x - pos) / Time.deltaTime);
+            DebugGUI.Graph("x", transform.position.x);
+#endif
+        }
+        
         private void Animate(float delta) {
            /* if (lastMessageTime < 0) lastMessageTime = Time.realtimeSinceStartup;/* - 
                                                        Math.Min(Time.deltaTime, timePerFrame)*/; // endTime: lastMessageTime + timePerFrame
@@ -118,6 +131,7 @@ namespace Interpolation {
 
            // var interpolationTime = Time.realtimeSinceStartup  - lastMessageTime;
            interpolationTime += delta;
+           float coef = interpolationTime / nextState.timeSinceLast;
             if (interpolationTime > nextState.timeSinceLast) {
                 
               /*  state.Interpolate(lastlastState.s, lastState.s, nextState.s, 1f);
@@ -127,8 +141,14 @@ namespace Interpolation {
                 if (nextNextState == null) {
                     DebugExtension.DebugPoint(transform.position, Color.blue, 0.1f, 3);
                     var waitTime = Math.Round((interpolationTime - nextState.timeSinceLast) * 1000);
+#if DEBUG_INTERPOLATION                    
                     Debug.LogWarning($"Where is message? Waiting {waitTime} msec.");
+#endif
+
+                    Interpolate(coef);
+                    
                     interpolationTime = nextState.timeSinceLast + 0.0000001f;
+                    
                     return;
                 }
 
@@ -140,17 +160,11 @@ namespace Interpolation {
 
 
             
-            var coef = interpolationTime / nextState.timeSinceLast;
-            
-            P1P2InterpolationCoef = coef;
+            Interpolate(coef);
+          //  P1P2InterpolationCoef = coef;
 
 
-            var pos = transform.position.x;
-            state.Interpolate(lastlastState.s, lastState.s, nextState.s, coef);
-            state.ApplyToObject(gameObject);
-           // Debug.Log(transform.position.x - pos);
-           DebugGUI.Graph("dx", (transform.position.x - pos) / Time.deltaTime);
-           DebugGUI.Graph("x", transform.position.x);
+
         }
 
         void Update() {

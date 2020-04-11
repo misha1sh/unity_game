@@ -1,25 +1,44 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Concurrent;
+﻿using UnityEngine;
+
+#if UNITY_EDITOR
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using ConcurrentCollections;
-using Fleck;
-using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.Networking;
 using WebSocketSharp;
-using WebSocketSharp.Net;
 using WebSocketSharp.Server;
 using Debug = UnityEngine.Debug;
 using Random = System.Random;
-using WebSocketServer = Fleck.WebSocketServer;
+#endif
+
+/// <summary>
+///     Message formats:
+///
+///     Client to Server
+///         1: simple message
+///             - 4 byte message type + data
+///             - send to all clients
+///         2: uniq message
+///             - 4 byte message type + 8 byte uniq code(4 byte code type, 4 byte code num) + data
+///             - if uniq code is new, message will be sended to all clients. otherwise, message will be discarded
+///         3: ask for new messages
+///             - 4 byte message type + 4 byte first message + 4 byte last message
+///
+///    Server to Client:
+///         - 4 byte message id + message data
+/// 
+/// </summary>
+
+public enum MessageType {
+    SimpleMessage = 1,
+    UniqMessage = 2,
+    AskMessage = 3
+};
 
 
+#if UNITY_EDITOR
 public static class ArrayExtension {
     public static T[] SubArray<T>(this T[] data, long index)
     {
@@ -44,29 +63,7 @@ public static class BinaryReaderExtension {
     }
 }*/
 
-/// <summary>
-///     Message formats:
-///
-///     Client to Server
-///         1: simple message
-///             - 4 byte message type + data
-///             - send to all clients
-///         2: uniq message
-///             - 4 byte message type + 8 byte uniq code(4 byte code type, 4 byte code num) + data
-///             - if uniq code is new, message will be sended to all clients. otherwise, message will be discarded
-///         3: ask for new messages
-///             - 4 byte message type + 4 byte first message + 4 byte last message
-///
-///    Server to Client:
-///         - 4 byte message id + message data
-/// 
-/// </summary>
 
-public enum MessageType {
-    SimpleMessage = 1,
-    UniqMessage = 2,
-    AskMessage = 3
-}
 
 class GameServerRoom {
     private static Random random = new Random();
@@ -224,17 +221,19 @@ class GameServerConnection : WebSocketBehavior {
     protected override void OnMessage(MessageEventArgs e) {
 //        Debug.Log("SERVER got message");
        // Debug.Log("SERVER got message: " + e.RawData.Length + " from " + ID);
-       Task.Run(async () => {
-           await Task.Delay(100);
+      /* Task.Run(async () => {
+          // await Task.Delay(100);-*/
            HandleMessage(e);
-       });
+      // });
     }
 }
 
+
 public class Server : MonoBehaviour
 {
+
     // Start is called before the first frame update
-#if UNITY_EDITOR
+
     private int safeChannelId;
     private Thread serverThread;
     void Start() {
@@ -283,10 +282,8 @@ public class Server : MonoBehaviour
     
     }
 
-
-    void Update()
-    {
-  
-    }
-#endif
+    
 }
+#else
+public class Server : MonoBehaviour { }
+#endif

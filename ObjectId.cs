@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -134,4 +132,8 @@ public class ObjectID: MonoBehaviour
         IDToObject[id].owner = owner;
     }
 
+    public static void Clear() {
+        IDToObject.Clear();
+        UnityIDtoObjectID.Clear();
+    }
 }

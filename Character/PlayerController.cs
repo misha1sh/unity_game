@@ -1,9 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Character;
-using UnityEngine;
-using UnityEngine.Assertions;
-using UnityEngine.UI;
+﻿using UnityEngine;
 using CharacterController = Character.CharacterController;
 
 
@@ -24,14 +19,13 @@ public static class Vector2Extension {
 public class PlayerController : CharacterController
 {
     
-    public Camera camera;
     private Plane plane;
 
     protected override void Start()
     {
         base.Start();
-        Assert.IsNotNull(camera);
         plane = new Plane(Vector3.up, 0);
+        transform.parent = null;
     }
 
     
@@ -49,13 +43,13 @@ public class PlayerController : CharacterController
        var len = 1;
        
        var vec3 = new Vector3(vec.x, 0, vec.y);
-       vec3 = camera.transform.rotation * vec3;
+       vec3 = Camera.main.transform.rotation * vec3;
        vec3.y = 0;
        vec3 = vec3.normalized * len;
        
        motionController.TargetDirection = vec3;
 
-       var ray = camera.ScreenPointToRay(Input.mousePosition);
+       var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
        var target_pos = target.transform.position + Vector3.up * 1.5f;
        plane.SetNormalAndPosition(Vector3.up, target_pos);

@@ -1,34 +1,21 @@
 ﻿
 using System;
 using UnityEngine;
-using System.IO;
-using System.Linq;
-using UnityEngine.Networking;
 using Random = UnityEngine.Random;
 using UnityEngine.Assertions;
 using System.Collections.Generic;
-using System.Threading;
-using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Reflection;
-using System.Runtime.Serialization.Formatters.Binary;
-using Character;
 using Character.Guns;
-using UnityEditor;
-using CommandsSystem;
 using CommandsSystem.Commands;
-using GameDevWare.Serialization;
-using Interpolation;
-using Interpolation.Properties;
+using GameMode;
 using Networking;
 
 using Debug = UnityEngine.Debug;
-using Object = System.Object;
 
 public class Client : MonoBehaviour
 {
     //#if UNITY_WEBGL// && !UNITY_EDITOR
-    public const int NETWORK_FPS = 15;
+    public const int NETWORK_FPS = 20;
 
 
     public testscript TrailRenderer;
@@ -41,10 +28,13 @@ public class Client : MonoBehaviour
     public List<GameObject> prefabsList = new List<GameObject>();
     private Dictionary<string, GameObject> prefabs = new Dictionary<string, GameObject>();
 
-    private TrianglePolygon spawnPolygon;
+    public TrianglePolygon spawnPolygon;
     public static Client client { get; private set; }
-    public GameObject mainPlayer;
+    public GameObject mainPlayerObj;
 
+    public GameObject cameraObj;
+
+    public Player mainPlayer;
     private int _id;
     public int ID => _id;
 
@@ -157,6 +147,9 @@ public class Client : MonoBehaviour
 
     private int lastCointId = -1;
     void Update() {
+        GameManager.Update();
+        
+        
         if (commandsHandler is null) return;
         commandsHandler.Update();
         foreach (var command in commandsHandler.GetCommands()) {
@@ -170,15 +163,15 @@ public class Client : MonoBehaviour
         }
 
 
-        if (Random.value < 0.05 && FindObjectsOfType<CoinPicker>().Length < 0)
+        if (Random.value < 0.05 && FindObjectsOfType<Coin>().Length < 0)
         {
-            Vector3 pos = FindPlaceForSpawn(10, 1);
+            Vector3 pos = GameModeFunctions.FindPlaceForSpawn(10, 1);
             commandsHandler.RunUniqCommand(new SpawnPrefabCommand("coin", pos, new Quaternion(), ObjectID.RandomID, Client.client.ID), UniqCodes.SPAWN_COIN, lastCointId++);
         }
         
         if (Random.value < 0.05 && FindObjectsOfType<PistolController>().Length < 1)
         {
-            Vector3 pos = FindPlaceForSpawn(1, 1);
+            Vector3 pos = GameModeFunctions.FindPlaceForSpawn(1, 1);
             commandsHandler.RunUniqCommand(new SpawnPrefabCommand("pistol", pos, new Quaternion(), ObjectID.RandomID, Client.client.ID), UniqCodes.SPAWN_GUN, (int) (100)); // Random.value * 
         }
 
@@ -194,21 +187,7 @@ public class Client : MonoBehaviour
 
     }
 
-    public Vector3 FindPlaceForSpawn(float height, float radius)
-    {
-        Vector3 pos1, pos2;
-        int iterCount = 0;
-        do
-        {
-            pos1 = pos2 = spawnPolygon.RandomPoint();
-            pos1.y = -3;
-            pos2.y = height;
-            Assert.IsTrue(iterCount++ < 100, $"Unable to find free place for object with height: {height:F2}, radius: {radius:F2}");
-        } while ((Physics.OverlapCapsule(pos1, pos2, radius).Length > 1));
-  //      capsules.Add(new CapsuleGizmos(pos1, pos2, radius));
-
-        return pos2;
-    }
+  
 
     private void OnDrawGizmos()
     {

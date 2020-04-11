@@ -1,5 +1,4 @@
-﻿using CommandsSystem;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Interpolation.Properties {
     public interface IGameObjectProperty {

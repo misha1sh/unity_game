@@ -21,6 +21,7 @@ namespace Character.Guns {
         ///  public int _magazinesCount;
         ///  public Vector3 position;
         ///  public int id;
+        ///  public int _state;
 
         
         protected override void DoShoot() {

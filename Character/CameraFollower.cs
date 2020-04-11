@@ -14,6 +14,7 @@ namespace Character {
 
         // Update is called once per frame
         void LateUpdate() {
+            if (character == null) return;
             var position = character.transform.position;
             var vec = new Vector3(position.x, yLevel, position.z);
             transform.position = vec;

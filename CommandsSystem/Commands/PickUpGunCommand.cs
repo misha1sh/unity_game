@@ -1,9 +1,6 @@
-﻿using System;
-using Character;
+﻿using Character;
 using Character.Actions;
 using Character.Guns;
-using Interpolation;
-using Interpolation.Managers;
 using UnityEngine;
 using UnityEngine.Assertions;
 

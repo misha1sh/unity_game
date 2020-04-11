@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using Character.Guns;
+﻿using Character.Guns;
 using UnityEngine;
 
 namespace Character.Actions {

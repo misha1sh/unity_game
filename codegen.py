@@ -132,7 +132,8 @@ paths = {
     "Quaternion": "Util2/Quaternion.txt",
     "HPChange": "Character/HP/HPChange.cs",
     "PlayerProperty": "Interpolation/Properties/PlayerProperty.cs",
-    
+    "Player": "Game/Player.cs",
+    "SpawnPrefabCommand": "CommandsSystem/Commands/SpawnPrefabCommand.cs"
 }
 
 packers = {
@@ -144,11 +145,13 @@ packers = {
     "Vector3": pack_custom_type("Vector3"),
     "Quaternion": pack_custom_type("Quaternion"),
     "HPChange": pack_custom_type("HPChange"),
-    "PlayerProperty": pack_custom_type("PlayerProperty")
-} 
-    
+    "PlayerProperty": pack_custom_type("PlayerProperty"),
+    "Player": pack_custom_type("Player"),
+    "SpawnPrefabCommand": pack_custom_type("SpawnPrefabCommand")
+}
+
 commands = []
-    
+
 files = os.listdir("CommandsSystem/Commands")
 ffiles = []
 for i in files:
@@ -203,6 +206,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using Character.HP;
 using CommandsSystem;
+using GameMode;
 
 namespace """+namespace+""" {
     public partial class """ + command + """ : ICommand  {

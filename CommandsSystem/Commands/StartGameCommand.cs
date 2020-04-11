@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CommandsSystem.Commands {
+﻿namespace CommandsSystem.Commands {
     
     public partial class StartGameCommand {
         public int kek;

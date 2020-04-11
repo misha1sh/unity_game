@@ -9,6 +9,8 @@ namespace Networking {
         public static int PICK_UP_GUN = 1;
         public static int SPAWN_COIN = 2;
         public static int SPAWN_GUN = 3;
+
+        public static int ADD_AI_PLAYER = 4;
     }
     
     public class CommandsHandler {

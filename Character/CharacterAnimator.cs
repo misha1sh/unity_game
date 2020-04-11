@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Interpolation;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Character {
     [RequireComponent(typeof(Animator))]

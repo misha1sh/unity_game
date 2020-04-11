@@ -1,10 +1,4 @@
-﻿using Character;
-using System;
-using Interpolation;
-using Interpolation.Properties;
-using UnityEngine;
-
-namespace CommandsSystem.Commands {
+﻿namespace CommandsSystem.Commands {
    /* public class ChangeGameObjectStateCommand<T> : ICommand
         where T: IGameObjectProperty, new()
     {

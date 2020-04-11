@@ -1,5 +1,4 @@
 ﻿using System;
-using Character;
 using CommandsSystem;
 using CommandsSystem.Commands;
 using Interpolation.Properties;
@@ -18,7 +17,7 @@ namespace Interpolation {
 
 
         public void Start() {
-            ObjectID.StoreOwnedObject(gameObject);
+//            ObjectID.StoreOwnedObject(gameObject);
 
             property = new T();
             property.FromGameObject(gameObject);
@@ -26,7 +25,7 @@ namespace Interpolation {
         
 
         void Update() {
-            float curTime = Time.realtimeSinceStartup;
+            float curTime = Time.time;
             
             if (curTime - lastSendState > updateTime) {
 //                Debug.Log("Sending coordianates " );

@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Threading;
+﻿using System.Collections.Concurrent;
 using UnityEngine;
 using System.Threading.Tasks;
 using NativeWebSocket;
-using System.IO;
-using Random = UnityEngine.Random;
 
 public class WebSocketHandler
 {

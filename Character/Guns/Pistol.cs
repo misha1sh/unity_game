@@ -1,6 +1,5 @@
 ﻿
 using System;
-using System.Runtime.Serialization;
 using CommandsSystem.Commands;
 using UnityEngine;
 
@@ -23,6 +22,7 @@ namespace Character.Guns {
    ///  public int _magazinesCount;
    ///  public Vector3 position;
    ///  public int id;
+   ///  public int _state;
 
    protected override void DoShoot() {
             ShootSystem.ShootWithDamage(player, Vector3.zero, damage);

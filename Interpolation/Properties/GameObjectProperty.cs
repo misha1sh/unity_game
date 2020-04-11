@@ -1,6 +1,4 @@
 ﻿using System;
-using CommandsSystem;
-using CommandsSystem.Commands;
 using UnityEngine;
 
 namespace Interpolation.Properties {

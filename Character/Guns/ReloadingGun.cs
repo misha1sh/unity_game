@@ -6,7 +6,11 @@ using Random = UnityEngine.Random;
 namespace Character.Guns {
     [Serializable]
     public abstract class ReloadingGun : IGun {
-        public GunState state { get; set; }
+        public int _state = (int)GunState.READY;
+        public GunState state {
+            get => (GunState) _state;
+            set => _state = (int) value;
+        }
 
         public Vector3 position;
         public int id;
@@ -53,7 +57,9 @@ namespace Character.Guns {
         protected GameObject player;
         public void OnPickedUp(GameObject player) {
             this.player = player;
-            
+            if (bulletsCount == 0) {
+                SetReloadMagazine();
+            }            
         }
 
         public bool IsEmpty() => bulletsCount == 0 && magazinesCount == 0;
@@ -77,10 +83,10 @@ namespace Character.Guns {
             }
  
             this.player = null;
-            
+          /*  
             // drop reloading state
             if (state == GunState.RELOADING_MAGAZINE)
-                state = GunState.READY;
+                state = GunState.READY;*/
         }
 
         private float needTime = 0;
@@ -113,7 +119,8 @@ namespace Character.Guns {
                 } else if (magazinesCount > 0) {
                     SetReloadMagazine();
                 } else {
-                    throw  new Exception("werwerwererw");
+                    //throw  new Exception("werwerwererw");
+                    player.GetComponent<ActionController>().SetNothing();
                 }
             } else {
                 throw new InvalidOperationException("Cannot shoot without bullet");

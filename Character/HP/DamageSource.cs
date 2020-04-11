@@ -6,6 +6,10 @@ namespace Character.HP {
         public static int None() {
             return 0;
         }
+
+        public static int InstaKill() {
+            return 1;
+        }
         
         public static int Player(int id) {
             return id;

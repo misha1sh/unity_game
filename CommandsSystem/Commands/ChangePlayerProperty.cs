@@ -26,9 +26,9 @@ namespace CommandsSystem.Commands {
             var controller = gameObject.GetComponent<UnmanagedGameObject<PlayerProperty>>();
             if (controller is null) return;
             controller.SetStateAnimated(property, deltaTime);
-            
+#if DEBUG_INTERPOLATION              
             DebugExtension.DebugPoint(property.position, Color.red, 0.1f, 3);
-
+#endif
             /*    GhostController controller = character.GetComponent<GhostController>();
                 if (controller is null) return;
                 controller.SetStateAnimated(state);

@@ -1,6 +1,4 @@
 ﻿
-using UnityEngine;
-
 namespace CommandsSystem.Commands {
     public partial class TakeOwnCommand {
         public int objectId;

@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Character;
-using UnityEngine;
-using UnityEngine.Assertions;
+﻿using UnityEngine;
 using CharacterController = Character.CharacterController;
 
 public class AIController : CharacterController {

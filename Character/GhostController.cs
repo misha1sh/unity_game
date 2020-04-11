@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-
-namespace Character {
+﻿namespace Character {
     
   /*  [RequireComponent(typeof(CharacterAnimator))]
     public class GhostController : MonoBehaviour {

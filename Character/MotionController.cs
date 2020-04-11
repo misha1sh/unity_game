@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using CommandsSystem.Commands;
-using RotaryHeart.Lib.PhysicsExtension;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Character {

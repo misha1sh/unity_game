@@ -1,5 +1,4 @@
-﻿using System;
-using Character;
+﻿using Character;
 using Interpolation;
 using Interpolation.Properties;
 using UnityEngine;

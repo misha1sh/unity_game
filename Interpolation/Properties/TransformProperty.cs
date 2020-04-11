@@ -1,7 +1,4 @@
-﻿using System;
-using UnityEngine;
-
-namespace Interpolation.Properties {
+﻿namespace Interpolation.Properties {
    /* [Serializable]
     public class TransformProperty : GameObjectProperty<TransformProperty> {
         public Vector3 position;

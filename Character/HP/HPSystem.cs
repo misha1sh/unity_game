@@ -6,5 +6,6 @@ namespace Character.HP {
             if (hpChange.source == DamageSource.None()) return;
             target.GetComponent<HPController>().currentHp += hpChange.delta;
         }
+        
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using Character.Guns;
+﻿using Character.Guns;
 using Character.HP;
 using Interpolation.Managers;
 

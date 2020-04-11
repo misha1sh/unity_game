@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections;
-using Character.Guns;
-using RotaryHeart.Lib.PhysicsExtension;
+﻿using Character.Guns;
 using UnityEngine;
-using Physics = UnityEngine.Physics;
 
 namespace Character.Actions {
     public abstract class ShootAction<T> : MonoBehaviour, IAction 

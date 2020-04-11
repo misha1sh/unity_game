@@ -1,8 +1,6 @@
-﻿using System;
-using Character.HP;
+﻿using Character.HP;
 using CommandsSystem;
 using CommandsSystem.Commands;
-using RotaryHeart.Lib.PhysicsExtension;
 using UnityEngine;
 using Util2;
 using Physics = UnityEngine.Physics;
@@ -34,6 +32,10 @@ namespace Character.Guns {
                 var t = ObjectID.GetID(raycastRes.collider.gameObject);
                 DrawTracer(position, raycastRes.point);
                 command = new DrawTargetedTracerCommand(ObjectID.GetID(transform.gameObject), targetID, new HPChange());
+            } else if (rres) {
+                Vector3 target = raycastRes.point;
+                DrawTracer(position, target);
+                command = new DrawPositionTracerCommand(ObjectID.GetID(transform.gameObject), target);
             } else {
                 Vector3 target = position + direction.normalized * 100;
                 DrawTracer(position, target);

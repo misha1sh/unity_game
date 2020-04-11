@@ -1,12 +1,6 @@
 
 using System;
-using System.Text;
-using Character;
-using Interpolation;
-using Interpolation.Properties;
 using UnityEngine;
-using UnityEngine.Assertions;
-using Character.HP;
 using CommandsSystem;
 
 namespace Character.Guns {
@@ -14,7 +8,7 @@ namespace Character.Guns {
 
         public Pistol(){}
         
-        public Pistol(float _fullReloadTime,float _reloadTime,int _bulletsInMagazine,float damage,int _bulletsCount,int _magazinesCount,Vector3 position,int id) {
+        public Pistol(float _fullReloadTime,float _reloadTime,int _bulletsInMagazine,float damage,int _bulletsCount,int _magazinesCount,Vector3 position,int id,int _state) {
             this._fullReloadTime = _fullReloadTime;
 this._reloadTime = _reloadTime;
 this._bulletsInMagazine = _bulletsInMagazine;
@@ -23,11 +17,12 @@ this._bulletsCount = _bulletsCount;
 this._magazinesCount = _magazinesCount;
 this.position = position;
 this.id = id;
+this._state = _state;
         }
 
         private byte[] SerializeLittleEndian() {
             unsafe {
-var arr = new byte[40];
+var arr = new byte[44];
     float f__fullReloadTime = _fullReloadTime;
     int i__fullReloadTime = *((int*)&f__fullReloadTime);
 arr[0] = (byte)(i__fullReloadTime & 0x000000ff);
@@ -91,6 +86,11 @@ arr[36] = (byte)(id & 0x000000ff);
    arr[38] = (byte)((id & 0x00ff0000) >> 16);
    arr[39] = (byte)((id & 0xff000000) >> 24);
 
+arr[40] = (byte)(_state & 0x000000ff);
+   arr[41] = (byte)((_state & 0x0000ff00) >> 8);
+   arr[42] = (byte)((_state & 0x00ff0000) >> 16);
+   arr[43] = (byte)((_state & 0xff000000) >> 24);
+
 
                 return arr;
             }
@@ -146,6 +146,8 @@ result.position.z = f_result_position_z;
 
 result.id = (arr[36] | (arr[37] << 8) | (arr[38] << 16) | (arr[39] << 24));
 
+result._state = (arr[40] | (arr[41] << 8) | (arr[42] << 16) | (arr[43] << 24));
+
              
                 return result;
             }
@@ -160,7 +162,7 @@ result.id = (arr[36] | (arr[37] << 8) | (arr[38] << 16) | (arr[39] << 24));
         
         
         public string AsJson() {
-            return $"{{'_fullReloadTime':{_fullReloadTime},'_reloadTime':{_reloadTime},'_bulletsInMagazine':{_bulletsInMagazine},'damage':{damage},'_bulletsCount':{_bulletsCount},'_magazinesCount':{_magazinesCount},'position':{position},'id':{id}}}";
+            return $"{{'_fullReloadTime':{_fullReloadTime},'_reloadTime':{_reloadTime},'_bulletsInMagazine':{_bulletsInMagazine},'damage':{damage},'_bulletsCount':{_bulletsCount},'_magazinesCount':{_magazinesCount},'position':{position},'id':{id},'_state':{_state}}}";
         }
         
         public override string ToString() {
