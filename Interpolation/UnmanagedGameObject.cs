@@ -17,7 +17,7 @@ namespace Interpolation {
         }
         
         
-        private float timePerFrame = 1f / Client.NETWORK_FPS;
+        private float timePerFrame = 1f / sClient.NETWORK_FPS;
 
         
         private Data lastlastState, lastState, nextState;

@@ -123,20 +123,24 @@ namespace CommandsSystem {
             _writer.Seek(0, SeekOrigin.Begin);
         }
         
-        public byte[] EncodeSimpleCommand<T>(T command) where T : ICommand {
+        public byte[] EncodeSimpleCommand<T>(T command, int room, byte needStore) where T : ICommand {
           /*  var stream = new MemoryStream();
             var writer = new BinaryWriter(stream);
             */
           ResetWriteStreams();
             _writer.Write((int) MessageType.SimpleMessage); 
+            _writer.Write((int)room);
+            _writer.Write((byte)needStore);
             
             EncodeCommand(command, _stream);
             return _stream.ToArray();
         }
 
-        public byte[] EncodeUniqCommand<T>(T command, int code1, int code2) where T : ICommand {
+        public byte[] EncodeUniqCommand<T>(T command, int room, byte needStore, int code1, int code2) where T : ICommand {
             ResetWriteStreams();
             _writer.Write((int) MessageType.UniqMessage);
+            _writer.Write(room);
+            _writer.Write((byte)needStore);
             _writer.Write(code1);
             _writer.Write(code2);
             
@@ -144,24 +148,44 @@ namespace CommandsSystem {
             return _stream.ToArray();
         }
 
-        public byte[] EncodeAskMessage(int firstIndex, int lastIndex) {
+        public byte[] EncodeAskMessage(int room, int firstIndex, int lastIndex) {
             ResetWriteStreams();
             
             _writer.Write((int) MessageType.AskMessage);
+            _writer.Write(room);
             _writer.Write(firstIndex);
             _writer.Write(lastIndex);
 
             return _stream.ToArray();
         }
 
+        public byte[] EncodeJoinGameRoomMessage(int room) {
+            ResetWriteStreams();
+            
+            _writer.Write((int) MessageType.JoinGameRoom);
+            _writer.Write(room);
+
+            return _stream.ToArray();
+        }
+
+        public byte[] EncodeLeaveGameRoomMessage(int room) {
+            ResetWriteStreams();
+            
+            _writer.Write((int) MessageType.LeaveGameRoom);
+            _writer.Write(room);
+
+            return _stream.ToArray();
+        }
+        
         private static MemoryStream _read_stream = new MemoryStream();
         
-        public ICommand DecodeCommand(byte[] array, out int num) {
+        public ICommand DecodeCommand(byte[] array, out int num, out int room) {
             var stream = new MemoryStream(array);
             
             var reader = new BinaryReader(stream);
             
             num = reader.ReadInt32();
+            room = reader.ReadInt32();
             
             var commandType = stream.ReadByte();
             byte[] arr = array.Skip(5).ToArray(); // TODO: fix perfomance

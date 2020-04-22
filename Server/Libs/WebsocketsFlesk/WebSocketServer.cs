@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -160,3 +161,5 @@ namespace Fleck
         }
     }
 }
+
+#endif

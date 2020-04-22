@@ -13,7 +13,7 @@ namespace Interpolation {
 
         public T property;
 
-        protected virtual float updateTime => 1f / Client.NETWORK_FPS;
+        protected virtual float updateTime => 1f / sClient.NETWORK_FPS;
 
 
         public void Start() {
@@ -31,13 +31,9 @@ namespace Interpolation {
 //                Debug.Log("Sending coordianates " );
                 property.FromGameObject(gameObject);
                 ICommand command;
-                if (property is PlayerProperty p) {
-                    command = new ChangePlayerProperty(p, curTime - lastSendState);
-                } else {
-                    throw new Exception("Unknown property " + property.GetType());
-                }
+                command = property.CreateChangedCommand(curTime - lastSendState);
                 // var command = property.GetCommand();
-                Client.client.commandsHandler.RunSimpleCommand(command);
+                sClient.commandsHandler.RunSimpleCommand(command, 0);
                 lastSendState = curTime;
             }
         }

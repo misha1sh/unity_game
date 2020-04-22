@@ -16,8 +16,9 @@ namespace GameMode {
         
         public void SpawnRandomCoin(int id) {
             var position = GameModeFunctions.FindPlaceForSpawn(10, 1);
-            Client.client.commandsHandler.RunUniqCommand(new SpawnPrefabCommand("coin",
-                position, Quaternion.identity, ObjectID.RandomID, Client.client.ID),
+            sClient.commandsHandler.RunUniqCommand(new SpawnPrefabCommand("coin",
+                position, Quaternion.identity, ObjectID.RandomID, sClient.ID),
+                 1,
                 UniqCodes.SPAWN_COIN, id);
         }
         
@@ -30,7 +31,7 @@ namespace GameMode {
                     EventsManager.handler.OnPlayerPickedUpCoin += (playerObj, coin) => {
                         SpawnRandomCoin(coinsCount++);
                         var player = playerObj.GetComponent<PlayerStorage>().Player;
-                        if (player.owner == Client.client.ID)
+                        if (player.owner == sClient.ID)
                             PlayersManager.AddScoreToPlayer(player, 1);
                     };
 
@@ -56,7 +57,7 @@ namespace GameMode {
         }
 
         public float TimeLength() {
-            return 600f;
+            return 10f;
         }
     }
 }

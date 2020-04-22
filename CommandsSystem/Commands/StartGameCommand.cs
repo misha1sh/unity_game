@@ -4,8 +4,7 @@
         public int kek;
 
         public void Run() {
-            Client.client.SetGameStarted();
+            sClient.SetGameStarted();
         }
-        
     }
 }

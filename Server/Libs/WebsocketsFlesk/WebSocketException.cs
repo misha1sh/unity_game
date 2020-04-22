@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System;
 namespace Fleck
 {
@@ -21,3 +22,5 @@ namespace Fleck
         public ushort StatusCode { get; private set;}
     }
 }
+
+#endif

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using CommandsSystem;
+using UnityEngine;
 
 namespace Interpolation.Properties {
     public interface IGameObjectProperty {
@@ -12,6 +13,7 @@ namespace Interpolation.Properties {
             IGameObjectProperty nextState, 
             float coef);
 
+        ICommand CreateChangedCommand(float deltaTime);
        // ICommand GetCommand();
 
     }

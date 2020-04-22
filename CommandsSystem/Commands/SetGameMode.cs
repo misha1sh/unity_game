@@ -3,9 +3,10 @@
 namespace CommandsSystem.Commands {
     public partial class SetGameMode {
         public int gamemode;
+        public int roomId;
 
         public void Run() {
-            GameManager.SetGameMode(gamemode);
+            GameManager.SetGameMode(gamemode, roomId);
         }
     }
 }

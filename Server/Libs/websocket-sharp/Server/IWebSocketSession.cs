@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 #region License
 /*
  * IWebSocketSession.cs
@@ -89,3 +90,5 @@ namespace WebSocketSharp.Server
     #endregion
   }
 }
+
+#endif

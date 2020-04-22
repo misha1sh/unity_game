@@ -10,7 +10,7 @@ namespace CommandsSystem.Commands {
             GameObject gameObject;
             if (!ObjectID.TryGetObject(property.id, out gameObject))
             {
-                var spawnCommand = new SpawnPrefabCommand {
+             /*   var spawnCommand = new SpawnPrefabCommand {
                     id = property.id, 
                     position = property.position, 
                     rotation = property.rotation, 
@@ -20,7 +20,8 @@ namespace CommandsSystem.Commands {
       
                 
                 
-                gameObject = Client.client.SpawnObject(spawnCommand);
+                gameObject = Client.client.SpawnObject(spawnCommand);*/
+                return;
             }
 
             var controller = gameObject.GetComponent<UnmanagedGameObject<PlayerProperty>>();

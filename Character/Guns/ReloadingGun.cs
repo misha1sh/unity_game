@@ -79,7 +79,7 @@ namespace Character.Guns {
 
                 id = ObjectID.RandomID;
                 this.position = player.transform.position - dir.normalized * 2  + Vector3.up;
-                Client.client.commandsHandler.RunSimpleCommand(this as ICommand);
+                sClient.commandsHandler.RunSimpleCommand(this as ICommand, 1);
             }
  
             this.player = null;

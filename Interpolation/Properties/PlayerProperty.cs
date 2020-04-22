@@ -45,6 +45,11 @@ namespace CommandsSystem.Commands {
             characterAnimator.SetAnimationState(animationState);
         }
 
+        public override ICommand CreateChangedCommand(float deltaTime) {
+            return new ChangePlayerProperty(this, deltaTime);
+        }
+        
+
         public override void Interpolate(PlayerProperty lastLastState, PlayerProperty lastState, PlayerProperty nextState, float coef) {
             position = InterpolationFunctions.InterpolatePosition(lastLastState.position, lastState.position, nextState.position, coef);
             rotation = InterpolationFunctions.InterpolateRotation(lastState.rotation, nextState.rotation, coef);

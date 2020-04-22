@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -60,3 +61,5 @@ namespace Fleck
         public IDictionary<string, string> Headers { get; private set; }
     }
 }
+
+#endif

@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Reflection;
 
 // Information about this assembly is defined by the following attributes. 
@@ -23,3 +24,5 @@ using System.Reflection;
 
 //[assembly: AssemblyDelaySign(false)]
 //[assembly: AssemblyKeyFile("")]
+
+#endif

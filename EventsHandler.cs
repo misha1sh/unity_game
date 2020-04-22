@@ -15,6 +15,8 @@ public class EventsHandler {
     public delegate void PlayerParameterChanged<T>(Player player, T parameter);
     
     public PlayerParameterChanged<int> OnPlayerScoreChanged = delegate {  };
+
+
     /*   public void (GameObject player, int bulletsCount) {
            
        }

@@ -1,5 +1,14 @@
 
 using System;
+using System.Text;
+using Character;
+using Interpolation;
+using Interpolation.Properties;
+using UnityEngine;
+using UnityEngine.Assertions;
+using Character.HP;
+using CommandsSystem;
+using GameMode;
 
 namespace CommandsSystem.Commands {
     public partial class StartGameCommand : ICommand  {

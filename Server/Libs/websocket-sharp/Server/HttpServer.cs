@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 #region License
 /*
  * HttpServer.cs
@@ -1646,3 +1647,5 @@ namespace WebSocketSharp.Server
     #endregion
   }
 }
+
+#endif

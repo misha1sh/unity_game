@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 namespace Fleck
 {
     public enum FrameType : byte
@@ -11,3 +12,5 @@ namespace Fleck
     }
 }
 
+
+#endif

@@ -20,9 +20,22 @@ public class MainUIController : MonoBehaviour {
 
     public TextMeshProUGUI scoreText;
 
+    private void RedrawScore() {
+        var text = new StringBuilder();
+        text.AppendLine("<size=130%>Score</size>");
+        foreach (var player in PlayersManager.players) {
+            if (PlayersManager.mainPlayer != null && player.id == PlayersManager.mainPlayer.id) {
+                text.AppendLine($"<color=green> {player.name}    <pos=65%>{player.score}</color>");
+            } else {
+                text.AppendLine($"<color=red> {player.name}    <pos=65%>{player.score}</color>");
+            }
+        }
 
+        scoreText.text = text.ToString();
+    }
+    
 
-    private void OnEnable() {
+    private void Start() {
 
         EventsManager.handler.OnPlayerBulletsCountChanged += (player, count) => {
             if (player != Client.client.mainPlayerObj) return;
@@ -58,19 +71,10 @@ public class MainUIController : MonoBehaviour {
         EventsManager.handler.OnPlayerDroppedGun += (player, gun) => { gunImage.enabled = false; };
 
         EventsManager.handler.OnPlayerScoreChanged += (_player, score) => {
-            var text = new StringBuilder();
-            text.AppendLine("<size=130%>Score</size>");
-            foreach (var player in PlayersManager.players) {
-                if (Client.client.mainPlayer != null && player.id == Client.client.mainPlayer.id) {
-                    text.AppendLine($"<color=green> {player.name}    <pos=65%>{player.score}</color>");
-                } else {
-                    text.AppendLine($"<color=red> {player.name}    <pos=65%>{player.score}</color>");
-                }
-            }
-
-            scoreText.text = text.ToString();
-
+            RedrawScore();
         };
+        
+        RedrawScore();
     }
 
 

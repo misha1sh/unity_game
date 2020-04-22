@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Linq;
 using System.Collections.Generic;
 
@@ -19,3 +20,5 @@ namespace Fleck
         }
     }
 }
+
+#endif

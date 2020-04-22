@@ -5,6 +5,8 @@ using UnityEngine;
 namespace GameMode {
     public static class PlayersManager {
         public static List<Player> players = new List<Player>();
+        public static Player mainPlayer;
+
         public static int playersCount => players.Count;
 
         public static Player GetPlayerById(int id) {
@@ -22,7 +24,7 @@ namespace GameMode {
         }        
         
         public static void AddScoreToPlayer(Player player, int score) {
-            Client.client.commandsHandler.RunSimpleCommand(new ChangePlayerScore(player.id, score));
+            sClient.commandsHandler.RunSimpleCommand(new ChangePlayerScore(player.id, score), 1);
         }
     }
 }

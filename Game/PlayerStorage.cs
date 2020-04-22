@@ -11,7 +11,7 @@ namespace GameMode {
             get => _player;
             set {
                 _player = value;
-                if (_player.id == Client.client.mainPlayer.id) {
+                if (_player.id == PlayersManager.mainPlayer.id) {
                     namePanel.text = $"<color=green>{_player.name}</color>";
                 } else {
                     namePanel.text = $"<color=red>{_player.name}</color>";

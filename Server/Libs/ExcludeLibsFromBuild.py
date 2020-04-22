@@ -9,4 +9,8 @@ for root, subdirs, files in os.walk("./"):
         
         if inp.startswith("#if UNITY_EDITOR"): continue
         
-        inp = "#if UNITY_EDITOR\n" + inp + "\n#ENDIF"
+        inp = "#if UNITY_EDITOR\n" + inp + "\n#endif"
+        
+        with open(root + "/" + file, "w") as f:
+            f.write(inp)
+            

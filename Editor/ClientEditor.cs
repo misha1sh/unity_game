@@ -9,7 +9,7 @@ namespace Editor {
             base.OnInspectorGUI();
 
             if (Application.isPlaying) {
-                EditorGUILayout.TextArea("ID: " + Client.client.ID);
+                EditorGUILayout.TextArea("ID: " + sClient.ID);
                 EditorGUILayout.TextArea(ObjectID.ToString());
             }
         }

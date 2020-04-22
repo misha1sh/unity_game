@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 ﻿using System;
 
 namespace Fleck
@@ -42,3 +43,5 @@ namespace Fleck
 
     }
 }
+
+#endif

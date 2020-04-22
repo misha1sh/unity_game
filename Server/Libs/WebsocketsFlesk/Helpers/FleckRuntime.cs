@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 ﻿using System;
 using System.Runtime.InteropServices;
 
@@ -20,3 +21,4 @@ namespace Fleck.Helpers
         }
     }
 }
+#endif

@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -67,3 +68,5 @@ namespace Fleck
     }
 }
 
+
+#endif

@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 #region License
 /*
  * Mask.cs
@@ -47,3 +48,5 @@ namespace WebSocketSharp
     On = 0x1
   }
 }
+
+#endif

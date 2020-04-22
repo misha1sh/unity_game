@@ -12,7 +12,7 @@ public class WebSocketHandler
 
     
     private Task<WebSocket> connectTask;
-    private Task recieveTask = Task.CompletedTask;
+  //  private Task receiveTask = Task.CompletedTask;
     private Task sendTask = Task.CompletedTask;
     
     private WebSocket webSocket;

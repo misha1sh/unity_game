@@ -15,54 +15,34 @@ using Debug = UnityEngine.Debug;
 public class Client : MonoBehaviour
 {
     //#if UNITY_WEBGL// && !UNITY_EDITOR
-    public const int NETWORK_FPS = 20;
+    public static Client client { get; private set; }
 
 
     public testscript TrailRenderer;
     
 
-    public GameObject player = null;
     public GameObject spawnBorder = null;
    
 
-    public List<GameObject> prefabsList = new List<GameObject>();
-    private Dictionary<string, GameObject> prefabs = new Dictionary<string, GameObject>();
 
     public TrianglePolygon spawnPolygon;
-    public static Client client { get; private set; }
+    
     public GameObject mainPlayerObj;
-
     public GameObject cameraObj;
 
-    public Player mainPlayer;
-    private int _id;
-    public int ID => _id;
 
 
-    public System.Random random = new System.Random();
 
-    public CommandsHandler commandsHandler;
-
-
-    private float gameStartTime;
-
-    public void SetGameStarted() {
-        gameStartTime = Time.time;
-    }
-
-    public float GameTime => Time.time - gameStartTime;
+    private Dictionary<string, GameObject> prefabs = new Dictionary<string, GameObject>();
+    public List<GameObject> prefabsList = new List<GameObject>();
 
 
-    public float interpolationCoef;
+
+
     
-    private void OnEnable() {
+    private void Awake() {
         client = this;
-        _id = random.Next();
-    }
 
-
-    void Start()
-    {
         /*
         var ttest = new IGameObjectProperty<TransformProperty>[10];
         for (int i = 0; i < 5; i++) {
@@ -89,14 +69,7 @@ public class Client : MonoBehaviour
         Debug.LogError(ms.ToString());
         */
     ///    var c = new PlayerProperty(10, new Vector3(1, 2, 3), Quaternion.identity, new PlayerAnimationState());
-        var c = new SpawnPrefabCommand("123123", Vector3.back, Quaternion.identity, 123, 4);
-        var f = c.Serialize();
-        var d = SpawnPrefabCommand.Deserialize(f);
-
-        Debug.LogError("test");
-        Assembly.Load("Assembly-CSharp").GetType("AIController");
-        Debug.LogError(Type.GetType("AIController"));
-        Debug.Log("CLIENT starting");
+   
         List<Vector3> points = new List<Vector3>();
         for (int i = 0; i < spawnBorder.transform.childCount; i++)
         {
@@ -115,22 +88,22 @@ public class Client : MonoBehaviour
 
         }
 
-        Assert.IsNotNull(player);
         //ObjectID.StoreObject(player, player.GetInstanceID());
 
-        commandsHandler = new CommandsHandler(new WebSocketHandler());
-        commandsHandler.Start();
-        commandsHandler.RunUniqCommand(new StartGameCommand(), 1, 1);
+        var c = new SpawnPrefabCommand("123123", Vector3.back, Quaternion.identity, 123, 4);
+        var f = c.Serialize();
+        var d = SpawnPrefabCommand.Deserialize(f);
 
-
-
-
+        Debug.LogError("test");
+        Assembly.Load("Assembly-CSharp").GetType("AIController");
+        Debug.LogError(Type.GetType("AIController"));
+        Debug.Log("CLIENT starting");
     }
 
     
 
 
-    struct CapsuleGizmos
+   /* struct CapsuleGizmos
     {
         public Vector3 pos1, pos2;
         public float radius;
@@ -144,35 +117,23 @@ public class Client : MonoBehaviour
     }
 
     List<CapsuleGizmos> capsules = new List<CapsuleGizmos>();
-
+*/
     private int lastCointId = -1;
     void Update() {
-        GameManager.Update();
-        
-        
-        if (commandsHandler is null) return;
-        commandsHandler.Update();
-        foreach (var command in commandsHandler.GetCommands()) {
-            if (command is ChangePlayerProperty || command is DrawTargetedTracerCommand || command is DrawPositionTracerCommand) {//command is ChangeGameObjectStateCommand) {
-//                Debug.Log("Client got command: ChangeCharacterStateCommand " + (command as ChangeCharacterStateCommand).state.id);
-            } else {
-                Debug.Log("Client got command: " + command);
-            }
-            
-            command.Run();
-        }
 
 
+
+/*
         if (Random.value < 0.05 && FindObjectsOfType<Coin>().Length < 0)
         {
             Vector3 pos = GameModeFunctions.FindPlaceForSpawn(10, 1);
-            commandsHandler.RunUniqCommand(new SpawnPrefabCommand("coin", pos, new Quaternion(), ObjectID.RandomID, Client.client.ID), UniqCodes.SPAWN_COIN, lastCointId++);
+            sClient.commandsHandler.RunUniqCommand(new SpawnPrefabCommand("coin", pos, new Quaternion(), ObjectID.RandomID, sClient.ID), GameManager.GameModeRoom, UniqCodes.SPAWN_COIN, lastCointId++);
         }
         
         if (Random.value < 0.05 && FindObjectsOfType<PistolController>().Length < 1)
         {
             Vector3 pos = GameModeFunctions.FindPlaceForSpawn(1, 1);
-            commandsHandler.RunUniqCommand(new SpawnPrefabCommand("pistol", pos, new Quaternion(), ObjectID.RandomID, Client.client.ID), UniqCodes.SPAWN_GUN, (int) (100)); // Random.value * 
+            sClient.commandsHandler.RunUniqCommand(new SpawnPrefabCommand("pistol", pos, new Quaternion(), ObjectID.RandomID, sClient.ID), UniqCodes.SPAWN_GUN, (int) (100)); // Random.value * 
         }
 
         //Instantiate(myPrefab, new Vector3(0, 0, 0), Quaternion.identity);
@@ -189,14 +150,14 @@ public class Client : MonoBehaviour
 
   
 
-    private void OnDrawGizmos()
+ /*   private void OnDrawGizmos()
     {
         foreach (var capsule in capsules)
         {
             DebugExtension.DrawCapsule(capsule.pos1, capsule.pos2, Color.blue, capsule.radius);
         }
     }
-
+*/
 
 
 
@@ -226,9 +187,7 @@ public class Client : MonoBehaviour
         return gameObject;
     }
 
-    private void OnApplicationQuit() {
-        commandsHandler?.Stop();
-    }
+
 
 //#endif
 }

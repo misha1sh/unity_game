@@ -9,7 +9,6 @@ namespace Util2 {
         }
 
         public void Awake() {
-            Debug.LogError("Awake called!");
             ObjectID.StoreObject(gameObject, ID, 0);
         }
 

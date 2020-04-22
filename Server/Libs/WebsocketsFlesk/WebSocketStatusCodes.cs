@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 namespace Fleck
 {
     public static class WebSocketStatusCodes
@@ -25,3 +26,5 @@ namespace Fleck
     }
 }
 
+
+#endif

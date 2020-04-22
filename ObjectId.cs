@@ -39,7 +39,7 @@ public class ObjectID: MonoBehaviour
     }
 
     public static void StoreOwnedObject(GameObject gameObject) {
-        StoreObject(gameObject, RandomID, Client.client.ID);
+        StoreObject(gameObject, RandomID, sClient.ID);
     }
 
     public static int GetID(GameObject gameObject) {
@@ -121,11 +121,11 @@ public class ObjectID: MonoBehaviour
     }
 
     public static bool IsOwned(int id) {
-        return GetOwner(id) == Client.client.ID;
+        return GetOwner(id) == sClient.ID;
     }
 
     public static bool IsOwned(GameObject gameObject) {
-        return GetOwner(gameObject) == Client.client.ID;
+        return GetOwner(gameObject) == sClient.ID;
     }
 
     public static void SetOwner(int id, int owner) {

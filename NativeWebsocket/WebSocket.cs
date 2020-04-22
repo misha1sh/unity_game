@@ -1,6 +1,12 @@
 using System;
 using System.Threading.Tasks;
 
+#if UNITY_WEBGL && !UNITY_EDITOR
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using AOT;
+#endif
+
 namespace NativeWebSocket
 {
 	public delegate void WebSocketOpenEventHandler();
@@ -118,7 +124,7 @@ namespace NativeWebSocket
         /* WebSocket JSLIB functions */
         [DllImport("__Internal")]
         public static extern int WebSocketConnect(int instanceId);
-
+			
         [DllImport("__Internal")]
         public static extern int WebSocketClose(int instanceId, int code, string reason);
 

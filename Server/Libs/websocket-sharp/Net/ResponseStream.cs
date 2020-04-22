@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 #region License
 /*
  * ResponseStream.cs
@@ -372,3 +373,5 @@ namespace WebSocketSharp.Net
     #endregion
   }
 }
+
+#endif

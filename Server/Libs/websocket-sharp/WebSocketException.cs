@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 #region License
 /*
  * WebSocketException.cs
@@ -107,3 +108,5 @@ namespace WebSocketSharp
     #endregion
   }
 }
+
+#endif

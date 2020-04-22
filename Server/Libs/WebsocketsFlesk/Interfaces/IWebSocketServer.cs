@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System;
 
 namespace Fleck
@@ -7,3 +8,5 @@ namespace Fleck
         void Start(Action<IWebSocketConnection> config);
     }
 }
+
+#endif

@@ -60,18 +60,18 @@ namespace Character.Guns {
                         c.HpChange.source = DamageSource.Player(c.player);
                     }
                     
-                    Client.client.commandsHandler.RunSimpleCommand(command);
+                    sClient.commandsHandler.RunSimpleCommand(command, 0);
                     return true;
                 }
             }
             
-            Client.client.commandsHandler.RunSimpleCommand(command);
+            sClient.commandsHandler.RunSimpleCommand(command, 0);
             return false;
         }
 
         public static Vector3 RandomDelta(double sigma) {
-            float x = (float) Client.client.random.NextGaussian(0, sigma);
-            float y = (float) Client.client.random.NextGaussian(0, sigma);
+            float x = (float) sClient.random.NextGaussian(0, sigma);
+            float y = (float) sClient.random.NextGaussian(0, sigma);
             return new Vector3(x, y, 0);
         }
         

@@ -15,7 +15,7 @@ namespace CommandsSystem.Commands {
             Player player = PlayersManager.GetPlayerById(playerId);
 
             GameObject go;
-            if (command.owner == Client.client.ID) {
+            if (command.owner == sClient.ID) {
                 if (player.controllerType == 0) {
                     command.prefabName += "WithPlayer";
                     go = Client.client.SpawnObject(command);

@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Text;
 
 namespace Fleck.Handlers
@@ -28,3 +29,5 @@ namespace Fleck.Handlers
     }
 }
 
+
+#endif

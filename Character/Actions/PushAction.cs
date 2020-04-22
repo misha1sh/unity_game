@@ -18,7 +18,7 @@ namespace Character.Actions {
 
         public void OnStartDoing() {
             animator.SetPush();
-            Client.client.commandsHandler.RunSimpleCommand(new PlayerPushCommand(ObjectID.GetID(gameObject)));
+            sClient.commandsHandler.RunSimpleCommand(new PlayerPushCommand(ObjectID.GetID(gameObject)), 0);
         }
 
         public void pushEnd() {
@@ -47,7 +47,7 @@ namespace Character.Actions {
              
                 if (v.gameObject.CompareTag("Unmanagable")) {
                     var command = new ApplyForceCommand(v.gameObject, force);
-                    Client.client.commandsHandler.RunSimpleCommand(command);
+                    sClient.commandsHandler.RunSimpleCommand(command, 0);
                 } else {
                     var rig = v.gameObject.GetComponent<Rigidbody>();
                     if (rig != null) {

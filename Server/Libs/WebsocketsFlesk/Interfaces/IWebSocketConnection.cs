@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 ﻿using System;
 using System.Threading.Tasks;
 
@@ -21,3 +22,5 @@ namespace Fleck
         bool IsAvailable { get; }
     }
 }
+
+#endif

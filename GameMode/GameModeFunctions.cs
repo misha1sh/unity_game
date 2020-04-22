@@ -8,15 +8,15 @@ namespace GameMode {
             var pos = FindPlaceForSpawn(0, 0.5f);
             var rot = new Quaternion();
             var id = ObjectID.RandomID;
-            var owner = Client.client.ID;
+            var owner = sClient.ID;
             
-            Client.client.commandsHandler.RunSimpleCommand(new SpawnPlayerCommand(new SpawnPrefabCommand("Robot", pos, rot, id, owner), 
-                playerId));
+            sClient.commandsHandler.RunSimpleCommand(new SpawnPlayerCommand(new SpawnPrefabCommand("Robot", pos, rot, id, owner), 
+                playerId), 1);
         }
 
         public static void SpawnPlayers() {
             foreach (var player in PlayersManager.players) {
-                if (player.owner == Client.client.ID) {
+                if (player.owner == sClient.ID) {
                     SpawnPlayer(player.id);
                 }
             }

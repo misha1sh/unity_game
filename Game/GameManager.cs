@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using CommandsSystem.Commands;
 using Networking;
 using UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Debug = UnityEngine.Debug;
 
 namespace GameMode {
     public static class GameManager {
@@ -20,6 +22,9 @@ namespace GameMode {
             FINISH
         }
         
+        
+
+        
         public static int gamesCount = 0;
 
         private static STATE _state;
@@ -28,20 +33,26 @@ namespace GameMode {
             get => _state;
             set {
                 _state = value;
-                DebugUI.debugText[1] = $"State: {state}. {gamesCount}. {currentPlayer.id}";
+                DebugUI.debugText[1] = $"State: {state}. {gamesCount}. {PlayersManager.mainPlayer.id}";
             }
         }
 
-        public static Player currentPlayer;
+        //public static Player currentPlayer;
         
         
         public static IGameMode gameMode;
         public static float timeEnd = -1;
 
-        public static void SetGameMode(int gamemodenum) {
+        public static void SetGameMode(int gamemodenum, int roomId) {
+            var ttest = new Stopwatch();
+            ObjectID.Clear();
+            SceneManager.LoadScene("neon_scene");
+            Debug.LogError("Loaded scene in " + ttest.ElapsedMilliseconds);
+
+
+            
             switch (gamemodenum) {
                 case 1:
-                    
                     gameMode = new ShooterGameMode();
                     break;
                 case 2:
@@ -59,14 +70,12 @@ namespace GameMode {
         public static void Update() {
             switch (state) {
                 case STATE.INIT:
-                    ObjectID.Clear();
-                    SceneManager.LoadScene("neon_scene");
-                    
-                    Client.client.mainPlayer = currentPlayer = new Player(Client.client.ID, Client.client.ID, 0);
-                    Client.client.commandsHandler.RunSimpleCommand(new AddPlayerToGame(currentPlayer));
+
+                    PlayersManager.mainPlayer = new Player(sClient.ID, sClient.ID, 0);
+                    sClient.commandsHandler.RunSimpleCommand(new AddPlayerToGame(PlayersManager.mainPlayer), 1);
                     for (int i = 0; i < 2; i++) {
-                        var ai = new Player(ObjectID.RandomID, Client.client.ID, 1);
-                        Client.client.commandsHandler.RunUniqCommand(new AddPlayerToGame(ai), UniqCodes.ADD_AI_PLAYER, i);
+                        var ai = new Player(ObjectID.RandomID, sClient.ID, 1);
+                        sClient.commandsHandler.RunUniqCommand(new AddPlayerToGame(ai), 1, UniqCodes.ADD_AI_PLAYER, i);
                     }
                     
                     state = STATE.WAIT_OTHERS;
@@ -77,7 +86,7 @@ namespace GameMode {
                     break;
                 case STATE.CHOOSE_GAMEMODE: // choose gamemode
                     int gamemode = 2;
-                    Client.client.commandsHandler.RunSimpleCommand(new SetGameMode(gamemode));
+                    sClient.commandsHandler.RunSimpleCommand(new SetGameMode(gamemode), 1);
                     state = STATE.WAIT_CHOOSING_GAMEMODE;
                     break;
                 case STATE.WAIT_CHOOSING_GAMEMODE:

@@ -7,7 +7,7 @@ public class EventsManager : MonoBehaviour {
     public static EventsHandler handler;
     private EventsHandler m_handler;
     
-    private void OnEnable() {
+    private void Awake() {
         m_handler = new EventsHandler();
         handler = m_handler;
     }

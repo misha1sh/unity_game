@@ -1,4 +1,5 @@
 ﻿using CommandsSystem.Commands;
+using GameMode;
 using UnityEngine;
 using Util2;
 
@@ -26,6 +27,7 @@ namespace GameMechanics {
         private const int DIRECTION_NEXT_TO_LAST = 1;
 
 
+        
         private int id;
         private Rigidbody rigidbody;
         private void Start() {
@@ -33,7 +35,8 @@ namespace GameMechanics {
             nextPosition = nextTransform.position;
             rigidbody = GetComponent<Rigidbody>();
             id = ObjectID.GetID(gameObject);
-            Client.client.commandsHandler.RunSimpleCommand(new TakeOwnCommand(id, Client.client.ID));
+            sClient.commandsHandler.RunSimpleCommand(new TakeOwnCommand(id, sClient.ID), 
+                 1);
         }
 
         private void OnCollisionEnter(Collision other) {
@@ -72,7 +75,8 @@ namespace GameMechanics {
                 currentStayingTime -= Time.deltaTime;
                 if (currentStayingTime < 0) {
                     if (ObjectID.IsOwned(id)) {
-                        Client.client.commandsHandler.RunSimpleCommand(new SetPlatformStateCommand(id, 1 - direction));
+                        sClient.commandsHandler.RunSimpleCommand(new SetPlatformStateCommand(id, 1 - direction),
+                             0);
                     }
 
                     state = WAITING_FOR_COMMAND;

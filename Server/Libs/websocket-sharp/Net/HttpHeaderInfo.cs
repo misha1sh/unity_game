@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 #region License
 /*
  * HttpHeaderInfo.cs
@@ -110,3 +111,5 @@ namespace WebSocketSharp.Net
     #endregion
   }
 }
+
+#endif

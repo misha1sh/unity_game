@@ -1,4 +1,5 @@
 ﻿using System;
+using CommandsSystem;
 using UnityEngine;
 
 namespace Interpolation.Properties {
@@ -22,13 +23,18 @@ namespace Interpolation.Properties {
             float coef) {
             Interpolate(lastLastState as T, lastState as T, nextState as T, coef);
         }
-        
+
+        public abstract ICommand CreateChangedCommand(float deltaTime);
+
+       // public abstract ICommand CreateSpawnCommand();
 
 
         public abstract void FromGameObject(GameObject gameObject);
         public abstract void ApplyToObject(GameObject gameObject);
 
 
-      //  public abstract void Run();
+
+
+        //  public abstract void Run();
     }
 }

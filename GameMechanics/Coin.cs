@@ -1,4 +1,5 @@
 ﻿using CommandsSystem.Commands;
+using GameMode;
 using UnityEngine;
 
 public class Coin : MonoBehaviour
@@ -13,7 +14,7 @@ public class Coin : MonoBehaviour
             picked = Time.time;
             var command = new PickCoinCommand(ObjectID.GetID(other.gameObject), ObjectID.GetID(this.gameObject));
             
-            Client.client.commandsHandler.RunSimpleCommand(command);
+            sClient.commandsHandler.RunSimpleCommand(command, 1);
         }
     }
 
