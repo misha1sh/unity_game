@@ -61,6 +61,7 @@ arr[12] = (byte)(HpChange.source & 0x000000ff);
         
         private static DrawTargetedTracerCommand DeserializeLittleEndian(byte[] arr) {
             var result = new DrawTargetedTracerCommand();
+            Assert.AreEqual(arr.Length, 16);
             unsafe {
 result.player = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));
 

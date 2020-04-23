@@ -1,14 +1,27 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
 using NativeWebSocket;
+
+public static class QueueExtension {
+    public static bool TryDequeue<T>(this Queue<T> queue, out T res) {
+        if (queue.Count == 0) {
+            res = default(T);
+            return false;
+        }
+
+        res = queue.Dequeue();
+        return true;
+    }
+}
 
 public class WebSocketHandler
 {
 
 
-    public ConcurrentQueue<byte[]> clientToServerMessages = new ConcurrentQueue<byte[]>();
-    public ConcurrentQueue<byte[]> serverToClientMessages = new ConcurrentQueue<byte[]>();
+    public Queue<byte[]> clientToServerMessages = new Queue<byte[]>();
+    public Queue<byte[]> serverToClientMessages = new Queue<byte[]>();
 
     
     private Task<WebSocket> connectTask;
@@ -48,6 +61,7 @@ public class WebSocketHandler
               Thread.Sleep(60);
             #endif  */
             sendTask = webSocket.Send(commands);
+            UberDebug.LogChannel("DEBUG", "" + commands.Length);
         }
         
 
@@ -84,6 +98,10 @@ public class WebSocketHandler
        serverToClientMessages.Enqueue(data);
 //       Debug.Log("" + data.Length); //data[0] + data[1] + data[2] + data[3] + data[4]);
     }
+    
+    
+    
+ 
 
 
 }

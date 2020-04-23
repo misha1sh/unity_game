@@ -41,6 +41,7 @@ arr[0] = (byte)(kek & 0x000000ff);
         
         private static StartGameCommand DeserializeLittleEndian(byte[] arr) {
             var result = new StartGameCommand();
+            Assert.AreEqual(arr.Length, 4);
             unsafe {
 result.kek = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));
 

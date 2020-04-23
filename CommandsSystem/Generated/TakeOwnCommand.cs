@@ -47,6 +47,7 @@ arr[4] = (byte)(owner & 0x000000ff);
         
         private static TakeOwnCommand DeserializeLittleEndian(byte[] arr) {
             var result = new TakeOwnCommand();
+            Assert.AreEqual(arr.Length, 8);
             unsafe {
 result.objectId = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));
 

@@ -64,6 +64,7 @@ arr[12] = (byte)(i_force_z & 0x000000ff);
         
         private static ApplyForceCommand DeserializeLittleEndian(byte[] arr) {
             var result = new ApplyForceCommand();
+            Assert.AreEqual(arr.Length, 16);
             unsafe {
 result.objectId = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));
 

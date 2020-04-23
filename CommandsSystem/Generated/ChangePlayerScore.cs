@@ -47,6 +47,7 @@ arr[4] = (byte)(newScore & 0x000000ff);
         
         private static ChangePlayerScore DeserializeLittleEndian(byte[] arr) {
             var result = new ChangePlayerScore();
+            Assert.AreEqual(arr.Length, 8);
             unsafe {
 result.player = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));
 

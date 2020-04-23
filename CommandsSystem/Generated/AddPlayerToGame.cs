@@ -66,6 +66,7 @@ arr[41] = (byte)(player.controllerType & 0x000000ff);
         
         private static AddPlayerToGame DeserializeLittleEndian(byte[] arr) {
             var result = new AddPlayerToGame();
+            Assert.AreEqual(arr.Length, 45);
             unsafe {
 result.player = new Player();
 result.player.id = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));

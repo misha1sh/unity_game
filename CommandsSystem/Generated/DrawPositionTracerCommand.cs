@@ -64,6 +64,7 @@ arr[12] = (byte)(i_target_z & 0x000000ff);
         
         private static DrawPositionTracerCommand DeserializeLittleEndian(byte[] arr) {
             var result = new DrawPositionTracerCommand();
+            Assert.AreEqual(arr.Length, 16);
             unsafe {
 result.player = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));
 

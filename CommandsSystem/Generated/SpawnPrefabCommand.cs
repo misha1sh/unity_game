@@ -110,6 +110,7 @@ arr[61] = (byte)(owner & 0x000000ff);
         
         private static SpawnPrefabCommand DeserializeLittleEndian(byte[] arr) {
             var result = new SpawnPrefabCommand();
+            Assert.AreEqual(arr.Length, 65);
             unsafe {
 int len_result_prefabName;
 len_result_prefabName = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));

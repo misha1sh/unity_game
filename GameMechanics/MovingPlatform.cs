@@ -1,5 +1,6 @@
 ﻿using CommandsSystem.Commands;
 using GameMode;
+using Networking;
 using UnityEngine;
 using Util2;
 
@@ -35,8 +36,8 @@ namespace GameMechanics {
             nextPosition = nextTransform.position;
             rigidbody = GetComponent<Rigidbody>();
             id = ObjectID.GetID(gameObject);
-            sClient.commandsHandler.RunSimpleCommand(new TakeOwnCommand(id, sClient.ID), 
-                 1);
+            CommandsHandler.gameModeRoom.RunSimpleCommand(new TakeOwnCommand(id, sClient.ID), 
+                 MessageFlags.IMPORTANT);
         }
 
         private void OnCollisionEnter(Collision other) {
@@ -64,6 +65,7 @@ namespace GameMechanics {
 
         private float currentStayingTime = -100;
         public void Update() {
+            if (id == 0) return;
             if (state == MOVE_STATE) {
                 transform.position = Vector3.MoveTowards(transform.position, nextPosition, speed*Time.deltaTime);
                 if (transform.position == nextPosition) {
@@ -75,8 +77,9 @@ namespace GameMechanics {
                 currentStayingTime -= Time.deltaTime;
                 if (currentStayingTime < 0) {
                     if (ObjectID.IsOwned(id)) {
-                        sClient.commandsHandler.RunSimpleCommand(new SetPlatformStateCommand(id, 1 - direction),
-                             0);
+                        CommandsHandler.gameModeRoom.RunSimpleCommand(new SetPlatformStateCommand(id, 1 - direction),
+                             MessageFlags.NONE);
+                        currentStayingTime = 0.1f;
                     }
 
                     state = WAITING_FOR_COMMAND;

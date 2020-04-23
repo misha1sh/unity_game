@@ -112,6 +112,7 @@ arr[40] = (byte)(_state & 0x000000ff);
         
         private static Pistol DeserializeLittleEndian(byte[] arr) {
             var result = new Pistol();
+            Assert.AreEqual(arr.Length, 44);
             unsafe {
 int i_result__fullReloadTime;
 i_result__fullReloadTime = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));

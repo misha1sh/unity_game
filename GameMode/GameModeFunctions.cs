@@ -1,4 +1,5 @@
 ﻿using CommandsSystem.Commands;
+using Networking;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -10,8 +11,8 @@ namespace GameMode {
             var id = ObjectID.RandomID;
             var owner = sClient.ID;
             
-            sClient.commandsHandler.RunSimpleCommand(new SpawnPlayerCommand(new SpawnPrefabCommand("Robot", pos, rot, id, owner), 
-                playerId), 1);
+            CommandsHandler.gameModeRoom.RunSimpleCommand(new SpawnPlayerCommand(new SpawnPrefabCommand("Robot", pos, rot, id, owner), 
+                playerId), MessageFlags.IMPORTANT);
         }
 
         public static void SpawnPlayers() {

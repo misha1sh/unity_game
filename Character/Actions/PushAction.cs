@@ -1,4 +1,5 @@
 ﻿using CommandsSystem.Commands;
+using Networking;
 using RotaryHeart.Lib.PhysicsExtension;
 using UnityEngine;
 
@@ -18,7 +19,7 @@ namespace Character.Actions {
 
         public void OnStartDoing() {
             animator.SetPush();
-            sClient.commandsHandler.RunSimpleCommand(new PlayerPushCommand(ObjectID.GetID(gameObject)), 0);
+            CommandsHandler.gameRoom.RunSimpleCommand(new PlayerPushCommand(ObjectID.GetID(gameObject)), MessageFlags.NONE);
         }
 
         public void pushEnd() {
@@ -47,7 +48,7 @@ namespace Character.Actions {
              
                 if (v.gameObject.CompareTag("Unmanagable")) {
                     var command = new ApplyForceCommand(v.gameObject, force);
-                    sClient.commandsHandler.RunSimpleCommand(command, 0);
+                    CommandsHandler.gameRoom.RunSimpleCommand(command, MessageFlags.NONE);
                 } else {
                     var rig = v.gameObject.GetComponent<Rigidbody>();
                     if (rig != null) {

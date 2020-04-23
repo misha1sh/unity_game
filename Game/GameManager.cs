@@ -15,6 +15,7 @@ namespace GameMode {
             WAIT_OTHERS,
             CHOOSE_GAMEMODE,
             WAIT_CHOOSING_GAMEMODE,
+            WAIT_FOR_ALL_LOAD_GAMEMODE,
             UPDATE_GAMEMODE,
             STOP_GAMEMODE,
             SHOW_RESULTS,
@@ -44,6 +45,8 @@ namespace GameMode {
         public static float timeEnd = -1;
 
         public static void SetGameMode(int gamemodenum, int roomId) {
+            CommandsHandler.gameModeRoom = new ClientCommandsRoom(roomId);
+            
             var ttest = new Stopwatch();
             ObjectID.Clear();
             SceneManager.LoadScene("neon_scene");
@@ -70,12 +73,14 @@ namespace GameMode {
         public static void Update() {
             switch (state) {
                 case STATE.INIT:
-
+                    CommandsHandler.gameRoom = new ClientCommandsRoom(137);
+                    CommandsHandler.gameRoom.RunUniqCommand(new StartGameCommand(), 1, 1, MessageFlags.IMPORTANT);
+                    
                     PlayersManager.mainPlayer = new Player(sClient.ID, sClient.ID, 0);
-                    sClient.commandsHandler.RunSimpleCommand(new AddPlayerToGame(PlayersManager.mainPlayer), 1);
+                    CommandsHandler.gameRoom.RunSimpleCommand(new AddPlayerToGame(PlayersManager.mainPlayer), MessageFlags.IMPORTANT);
                     for (int i = 0; i < 2; i++) {
                         var ai = new Player(ObjectID.RandomID, sClient.ID, 1);
-                        sClient.commandsHandler.RunUniqCommand(new AddPlayerToGame(ai), 1, UniqCodes.ADD_AI_PLAYER, i);
+                        CommandsHandler.gameRoom.RunUniqCommand(new AddPlayerToGame(ai), UniqCodes.ADD_AI_PLAYER, i, MessageFlags.IMPORTANT);
                     }
                     
                     state = STATE.WAIT_OTHERS;
@@ -86,10 +91,12 @@ namespace GameMode {
                     break;
                 case STATE.CHOOSE_GAMEMODE: // choose gamemode
                     int gamemode = 2;
-                    sClient.commandsHandler.RunSimpleCommand(new SetGameMode(gamemode), 1);
+                    CommandsHandler.gameRoom.RunSimpleCommand(new SetGameMode(gamemode, sClient.random.Next()), MessageFlags.IMPORTANT);
                     state = STATE.WAIT_CHOOSING_GAMEMODE;
                     break;
                 case STATE.WAIT_CHOOSING_GAMEMODE:
+                    break;
+                case STATE.WAIT_FOR_ALL_LOAD_GAMEMODE:
                     break;
                 case STATE.UPDATE_GAMEMODE: // update gamemode
                     var res = gameMode.Update();
@@ -114,13 +121,13 @@ namespace GameMode {
                     gamesCount++;
                     if (gamesCount > 2) {
                         state = STATE.FINISH;
+                        UberDebug.Log("finish");
                     } else {
                         state = STATE.CHOOSE_GAMEMODE;
                     }
                     break;
                 case STATE.FINISH: // finish
                     // ???
-                    Debug.Log("finish");
                     return;
                 default:
                     throw new Exception($"Unknown GameManager state: {state}");

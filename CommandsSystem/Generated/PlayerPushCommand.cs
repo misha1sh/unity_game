@@ -41,6 +41,7 @@ arr[0] = (byte)(playerId & 0x000000ff);
         
         private static PlayerPushCommand DeserializeLittleEndian(byte[] arr) {
             var result = new PlayerPushCommand();
+            Assert.AreEqual(arr.Length, 4);
             unsafe {
 result.playerId = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));
 

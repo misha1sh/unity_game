@@ -39,10 +39,10 @@ public class Client : MonoBehaviour
 
 
 
-    
+
     private void Awake() {
         client = this;
-
+        sClient.Init();
         /*
         var ttest = new IGameObjectProperty<TransformProperty>[10];
         for (int i = 0; i < 5; i++) {
@@ -68,22 +68,23 @@ public class Client : MonoBehaviour
         Json.Serialize(new Pistol(), ms);
         Debug.LogError(ms.ToString());
         */
-    ///    var c = new PlayerProperty(10, new Vector3(1, 2, 3), Quaternion.identity, new PlayerAnimationState());
-   
-        List<Vector3> points = new List<Vector3>();
-        for (int i = 0; i < spawnBorder.transform.childCount; i++)
-        {
-            points.Add(spawnBorder.transform.GetChild(i).transform.position);
-        }
-        spawnPolygon = new TrianglePolygon(points);
+        ///    var c = new PlayerProperty(10, new Vector3(1, 2, 3), Quaternion.identity, new PlayerAnimationState());
 
-        foreach (var prefab in prefabsList)
-        {
+        if (spawnBorder != null) {
+            List<Vector3> points = new List<Vector3>();
+            for (int i = 0; i < spawnBorder.transform.childCount; i++) {
+                points.Add(spawnBorder.transform.GetChild(i).transform.position);
+            }
+
+            spawnPolygon = new TrianglePolygon(points);
+        }
+
+        foreach (var prefab in prefabsList) {
             prefabs.Add(prefab.name, prefab);
             /*for (int i = 0; i < 100; i++)
             {*/
-        
-           // }
+
+            // }
 
 
         }
@@ -100,24 +101,24 @@ public class Client : MonoBehaviour
         Debug.Log("CLIENT starting");
     }
 
-    
 
 
-   /* struct CapsuleGizmos
-    {
-        public Vector3 pos1, pos2;
-        public float radius;
 
-        public CapsuleGizmos(Vector3 pos1, Vector3 pos2, float radius)
-        {
-            this.pos1 = pos1;
-            this.pos2 = pos2;
-            this.radius = radius;
-        }
-    }
-
-    List<CapsuleGizmos> capsules = new List<CapsuleGizmos>();
-*/
+    /* struct CapsuleGizmos
+     {
+         public Vector3 pos1, pos2;
+         public float radius;
+ 
+         public CapsuleGizmos(Vector3 pos1, Vector3 pos2, float radius)
+         {
+             this.pos1 = pos1;
+             this.pos2 = pos2;
+             this.radius = radius;
+         }
+     }
+ 
+     List<CapsuleGizmos> capsules = new List<CapsuleGizmos>();
+ */
     private int lastCointId = -1;
     void Update() {
 

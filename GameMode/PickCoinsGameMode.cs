@@ -16,10 +16,10 @@ namespace GameMode {
         
         public void SpawnRandomCoin(int id) {
             var position = GameModeFunctions.FindPlaceForSpawn(10, 1);
-            sClient.commandsHandler.RunUniqCommand(new SpawnPrefabCommand("coin",
+            CommandsHandler.gameModeRoom.RunUniqCommand(new SpawnPrefabCommand("coin",
                 position, Quaternion.identity, ObjectID.RandomID, sClient.ID),
-                 1,
-                UniqCodes.SPAWN_COIN, id);
+                UniqCodes.SPAWN_COIN, id,
+                MessageFlags.IMPORTANT);
         }
         
         
@@ -57,7 +57,7 @@ namespace GameMode {
         }
 
         public float TimeLength() {
-            return 10f;
+            return 1000f;
         }
     }
 }

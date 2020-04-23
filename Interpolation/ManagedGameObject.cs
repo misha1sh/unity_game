@@ -2,6 +2,7 @@
 using CommandsSystem;
 using CommandsSystem.Commands;
 using Interpolation.Properties;
+using Networking;
 using UnityEngine;
 
 namespace Interpolation {
@@ -33,7 +34,7 @@ namespace Interpolation {
                 ICommand command;
                 command = property.CreateChangedCommand(curTime - lastSendState);
                 // var command = property.GetCommand();
-                sClient.commandsHandler.RunSimpleCommand(command, 0);
+                CommandsHandler.gameRoom.RunSimpleCommand(command, MessageFlags.NONE);
                 lastSendState = curTime;
             }
         }

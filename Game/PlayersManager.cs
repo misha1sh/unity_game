@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using CommandsSystem.Commands;
+using Networking;
 using UnityEngine;
 
 namespace GameMode {
@@ -24,7 +25,8 @@ namespace GameMode {
         }        
         
         public static void AddScoreToPlayer(Player player, int score) {
-            sClient.commandsHandler.RunSimpleCommand(new ChangePlayerScore(player.id, score), 1);
+            CommandsHandler.gameRoom.RunSimpleCommand(new ChangePlayerScore(player.id, score), MessageFlags.IMPORTANT);
         }
+        
     }
 }

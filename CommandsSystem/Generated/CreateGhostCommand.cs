@@ -42,6 +42,7 @@ arr[0] = (byte)(id & 0x000000ff);
         
         private static CreateGhostCommand DeserializeLittleEndian(byte[] arr) {
             var result = new CreateGhostCommand();
+            Assert.AreEqual(arr.Length, 4);
             unsafe {
 result.id = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));
 

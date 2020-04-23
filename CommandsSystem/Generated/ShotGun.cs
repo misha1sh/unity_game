@@ -126,6 +126,7 @@ arr[48] = (byte)(_state & 0x000000ff);
         
         private static ShotGun DeserializeLittleEndian(byte[] arr) {
             var result = new ShotGun();
+            Assert.AreEqual(arr.Length, 52);
             unsafe {
 int i_result__fullReloadTime;
 i_result__fullReloadTime = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));

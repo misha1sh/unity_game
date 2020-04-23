@@ -17,7 +17,7 @@ namespace Character.Guns {
                 picked = Time.time;
                 var command = new PickUpGunCommand(ObjectID.GetID(other.gameObject), ObjectID.GetID(this.gameObject));
             
-                sClient.commandsHandler.RunUniqCommand(command, 1, UniqCodes.PICK_UP_GUN, command.gun);
+                CommandsHandler.gameRoom.RunUniqCommand(command, UniqCodes.PICK_UP_GUN, command.gun, MessageFlags.IMPORTANT);
             }
         }
     }

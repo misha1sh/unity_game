@@ -8,9 +8,8 @@ using UnityEngine;
 public class sClient : MonoBehaviour {
     public const int NETWORK_FPS = 20;
     
-    public static int ID { get; private set; }
+//    public static int ID { get; private set; }
     public static System.Random random = new System.Random();
-    public static ClientCommandsRoom commandsHandler;
 
     public static int MatchmakingRoom = 1;
     public static int GameRoom = 137;
@@ -28,14 +27,12 @@ public class sClient : MonoBehaviour {
 
     private static bool initialized = false;
 
-    private static void Init() {
+    public static void Init() {
         if (initialized) return;
         initialized = true;
-        webSocketHandler = new WebSocketHandler();
-        webSocketHandler.Start();
-        commandsHandler = new ClientCommandsRoom(137);
-        commandsHandler.RunUniqCommand(new StartGameCommand(), 1, 1, 1);
-        ID = random.Next();
+        CommandsHandler.Init();
+        
+   //     ID = random.Next();
     }
 
     private void Awake() {
@@ -44,11 +41,11 @@ public class sClient : MonoBehaviour {
 
 
     void Update() {
+        CommandsHandler.Update();
         GameManager.Update();
-        HandleCommands();
     }
 
-    private static void HandleCommands() {
+  /*  private static void HandleCommands() {
         if (commandsHandler is null) return;
         webSocketHandler.Update();
 
@@ -62,10 +59,10 @@ public class sClient : MonoBehaviour {
 
             command.Run();
         }
-    }
+    }*/
 
     private void OnApplicationQuit() {
-        webSocketHandler?.Update();
+        CommandsHandler.Stop();
     }
     /*  public static sClient client { get; private set; }
       

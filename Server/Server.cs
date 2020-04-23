@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
+using System;
 
 #if UNITY_EDITOR
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -20,18 +20,18 @@ using Random = System.Random;
 ///
 ///     Client to Server
 ///         1: simple message
-///             - 4 byte message type + 4 byte room number + 1 byte need store + data
+///             - 1 byte message type + 4 byte room number + 1 flags + data
 ///             - send to all clients
 ///         2: uniq message
-///             - 4 byte message type + 4 byte room number + 1 byte need store + 8 byte uniq code(4 byte code type, 4 byte code num) + data
+///             - 1 byte message type + 4 byte room number + 1 flags + 8 byte uniq code(4 byte code type, 4 byte code num) + data
 ///             - if uniq code is new, message will be send to all clients. otherwise, message will be discarded
 ///         3: ask for new messages
-///             - 4 byte message type + 4 byte room number + 4 byte first message + 4 byte last message
+///             - 1 byte message type + 4 byte room number + 1 flags + 4 byte first message + 4 byte last message
 ///         4: join game room. if room does not exists, it must be created
-///             - 4 byte message type + 4 byte room number
+///             - 1 byte message type + 4 byte room number + 1 flags
 ///             - optional: autoremove player if he not doing anything in room for some time (ping - pong)
 ///         5: leave game room. if last player leaved room, it must be deleted;
-///             - 4 byte message type + 4 byte room number
+///             - 1 byte message type + 4 byte room number + 1 flags
 /// 
 ///    Server to Client:
 ///         - 4 byte message id + 4 byte room number + message data
@@ -39,13 +39,20 @@ using Random = System.Random;
 /// 
 /// </summary>
 
-public enum MessageType {
+public enum MessageType : byte {
     SimpleMessage = 1,
     UniqMessage = 2,
     AskMessage = 3,
     JoinGameRoom = 4,
     LeaveGameRoom = 5
 };
+
+[Flags] 
+public enum MessageFlags : byte {
+    NONE = 0,
+    IMPORTANT = 1 << 0,
+    SEND_ONLY_IMPORTANT = 1 << 1
+}
 
 
 #if UNITY_EDITOR
@@ -124,15 +131,22 @@ internal class GameServerRoom {
     
 
     
-    public void BroadcastMessage(byte[] message, byte needStore) {
-        if (needStore != 0) {
-            lock (messages) {
-                int messageId = messages.Count;
-                message = CreateMessageWithId(message, messageId, id);
-                messages.Add(message);
+    public void BroadcastMessage(byte[] message, MessageFlags flags) {
+        int messageId = lastMessageId + 1;
+        lastMessageId++;
+
+        message = CreateMessageWithId(message, messageId, id);
+        
+        if ((flags & MessageFlags.IMPORTANT) != 0 ) {
+            lock (importantMessages) {
+                importantMessages.Add(messageId, message);
             }
         } else {
-            message = CreateMessageWithId(message, -1, id);
+            lock (notImportantMessages) {
+                notImportantMessages.Add(messageId, message);                
+                if (notImportantMessages.Count > 1000)
+                    notImportantMessages.RemoveAt(0);
+            }
         }
 
 
@@ -153,32 +167,46 @@ internal class GameServerRoom {
         }
     }
 
-    public void HandleSimpleMessage(string client, MemoryStream message, byte needStore) {
+    public void HandleSimpleMessage(string client, MemoryStream message, MessageFlags needStore) {
         BroadcastMessage(message.ReadAllBytes(), needStore);
     }
 
-    public void HandleUniqMessage(string client, long uid, MemoryStream message, byte needStore) {
+    public void HandleUniqMessage(string client, long uid, MemoryStream message, MessageFlags needStore) {
         if (messagesUID.Contains(uid)) return;
         messagesUID.Add(uid);
         GameServerConnection con;
         BroadcastMessage(message.ReadAllBytes(), needStore);
     }
 
-    public void HandleAskMessage(string client, int startIndex, int endIndex) {
-        lock (messages) {
-            if (startIndex < 0 || startIndex > endIndex || endIndex >= messages.Count && endIndex != int.MaxValue) {
+    public void HandleAskMessage(string client, int startIndex, int endIndex, MessageFlags flags) {
+        lock (importantMessages)
+        lock (notImportantMessages) {
+            if (startIndex < 0 || startIndex > endIndex || endIndex > lastMessageId && endIndex != int.MaxValue) {
                 Debug.LogError($"SERVER AskMessage from {client} is incorrect. " +
-                               $"startIndex: {startIndex}, endIndex: {endIndex}, messages.Count: {messages.Count}");
+                               $"startIndex: {startIndex}, endIndex: {endIndex}, messages. lastMessageId: {lastMessageId}");
                 return;
             }
 
             if (endIndex == int.MaxValue)
-                endIndex = messages.Count - 1;
-            
-            for (int i = startIndex; i <= endIndex; i++) {
-                sessions.SendTo(messages[i], client);
+                endIndex = lastMessageId;
+
+            if (flags.HasFlag(MessageFlags.SEND_ONLY_IMPORTANT)) {
+                for (int i = startIndex; i <= endIndex; i++) {
+                    if (importantMessages.Contains(i)) {
+                        sessions.SendTo((byte[]) importantMessages[i], client);
+                    }
+                }
+            } else {
+                for (int i = startIndex; i <= endIndex; i++) {
+                    if (importantMessages.Contains(i)) {
+                        sessions.SendTo((byte[])importantMessages[i], client);
+                    } else {
+                        sessions.SendTo((byte[])notImportantMessages[i], client);
+                    }
+                }
             }
         }
+       
     }
 }
 
@@ -215,7 +243,8 @@ class GameServerConnection : WebSocketBehavior {
         var memoryStream = new MemoryStream(e.RawData);
         var messageReader = new BinaryReader(memoryStream);
 
-        int messageTypeOrd = messageReader.ReadInt32();
+        byte messageTypeOrd = messageReader.ReadByte();
+
 
         if (!Enum.IsDefined(typeof(MessageType), messageTypeOrd)) {
             Debug.LogError($"SERVER got message with unknown message type: {messageTypeOrd}");
@@ -224,34 +253,46 @@ class GameServerConnection : WebSocketBehavior {
 
         var messageType = (MessageType) messageTypeOrd;
         var roomId = messageReader.ReadInt32();
+        MessageFlags flags = (MessageFlags) messageReader.ReadByte();
+        if (flags.HasFlag(MessageFlags.IMPORTANT) || messageType != MessageType.SimpleMessage)
+            UberDebug.LogChannel("SERVER", $"client{ID}->SERVER: {messageType}  {roomId}");
 
+        
         if (messageType == MessageType.JoinGameRoom) {
-            Debug.LogError($"SERVER JoinGameRoom from {ID}" +
-                           $" has incorrect length: {memoryStream.Length}");
-            
-            if (!Server.rooms.ContainsKey(roomId))
-                Server.rooms[roomId] = new GameServerRoom(roomId);
-            Server.rooms[roomId].AddClient(ID, Sessions);
+            if (memoryStream.ReadAllBytes().Length != 0) {
+                Debug.LogError($"SERVER JoinGameRoom from {ID}" +
+                               $" has incorrect length: {memoryStream.Length}");
+            }
+
+            GameServerRoom joinRoom;
+            if (!Server.rooms.TryGetValue(roomId, out joinRoom)) {
+                joinRoom = Server.rooms[roomId] = new GameServerRoom(roomId);
+            }
+            joinRoom.AddClient(ID, Sessions);
+            rooms.Add(joinRoom);
             return;
         }
         
         GameServerRoom room = RoomById(roomId);
+
         if (room is null) {
-            Debug.LogError($"SERVER: client {ID} trying to send {messageType} to room {roomId} before joining it");
+            UberDebug.LogErrorChannel("SERVER", $"SERVER: client {ID} trying to send {messageType} to room {roomId} before joining it");
             return;
         }
+
+        
+        
         
         switch (messageType) {
             case MessageType.SimpleMessage: {
-                byte needStore = messageReader.ReadByte();
-                room.HandleSimpleMessage(ID, memoryStream, needStore);
+                
+                room.HandleSimpleMessage(ID, memoryStream, flags);
                 break;
             }
 
             case MessageType.UniqMessage: {
-                byte needStore = messageReader.ReadByte();
                 long uid = messageReader.ReadInt64();
-                room.HandleUniqMessage(ID, uid, memoryStream, needStore);
+                room.HandleUniqMessage(ID, uid, memoryStream, flags);
                 break;
             }
                 
@@ -263,7 +304,7 @@ class GameServerConnection : WebSocketBehavior {
                     Debug.LogError($"SERVER AskMessage from {ID}" +
                                    $" has incorrect length: {memoryStream.Length}");
                 }
-                room.HandleAskMessage(ID, startIndex, endIndex);
+                room.HandleAskMessage(ID, startIndex, endIndex, flags);
                 break;
             
             case MessageType.LeaveGameRoom:
@@ -272,6 +313,7 @@ class GameServerConnection : WebSocketBehavior {
                                    $" has incorrect length: {memoryStream.Length}");
                 }
                 room.RemoveClient(ID);
+                rooms.Remove(room);
                 break;
             
             default:

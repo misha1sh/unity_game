@@ -11,6 +11,8 @@ namespace GameMode {
         // 0 -- controlled by player
         // 1 -- controlled by AI
         public int controllerType;
+
+
         
         public Player() {}
 
@@ -20,6 +22,18 @@ namespace GameMode {
             this.name = "Player#" + Random.Range(0, 100);
             this.owner = owner;
             this.controllerType = controllerType;
+        }
+
+        public override string ToString() {
+            string controllerName;
+            if (controllerType == 0) {
+                controllerName = "player";
+            } else if (controllerType == 1) {
+                controllerName = "AI";
+            } else {
+                controllerName = "unknown: " + controllerType;
+            }
+            return $"Player#{id} name:{name} score:{score} owner:{owner}  controller: {controllerName}";
         }
     }
 }

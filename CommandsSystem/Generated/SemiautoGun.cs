@@ -120,6 +120,7 @@ arr[44] = (byte)(_state & 0x000000ff);
         
         private static SemiautoGun DeserializeLittleEndian(byte[] arr) {
             var result = new SemiautoGun();
+            Assert.AreEqual(arr.Length, 48);
             unsafe {
 int i_result__fullReloadTime;
 i_result__fullReloadTime = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));

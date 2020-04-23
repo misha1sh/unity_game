@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+#if UNITY_EDITOR || !UNITY_WEBGL
 namespace Fleck
 {
     public static class WebSocketStatusCodes

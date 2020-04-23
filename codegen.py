@@ -133,6 +133,7 @@ paths = {
     "HPChange": "Character/HP/HPChange.cs",
     "PlayerProperty": "Interpolation/Properties/PlayerProperty.cs",
     "Player": "Game/Player.cs",
+    "Instance": "Game/Instance.cs",
     "SpawnPrefabCommand": "CommandsSystem/Commands/SpawnPrefabCommand.cs"
 }
 
@@ -147,7 +148,8 @@ packers = {
     "HPChange": pack_custom_type("HPChange"),
     "PlayerProperty": pack_custom_type("PlayerProperty"),
     "Player": pack_custom_type("Player"),
-    "SpawnPrefabCommand": pack_custom_type("SpawnPrefabCommand")
+    "Instance": pack_custom_type("Instance"),
+    "SpawnPrefabCommand": pack_custom_type("SpawnPrefabCommand"),
 }
 
 commands = []
@@ -233,6 +235,7 @@ namespace """+namespace+""" {
         
         private static """ + command + """ DeserializeLittleEndian(byte[] arr) {
             var result = new """ + command +"""();
+            Assert.AreEqual(arr.Length, """ + str(offset) + """);
             unsafe {
 """ + deserialize + """             
                 return result;

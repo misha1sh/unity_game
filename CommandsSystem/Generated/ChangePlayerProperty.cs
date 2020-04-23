@@ -118,6 +118,7 @@ arr[41] = (byte)(i_deltaTime & 0x000000ff);
         
         private static ChangePlayerProperty DeserializeLittleEndian(byte[] arr) {
             var result = new ChangePlayerProperty();
+            Assert.AreEqual(arr.Length, 45);
             unsafe {
 result.property = new PlayerProperty();
 result.property.id = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));

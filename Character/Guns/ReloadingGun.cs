@@ -1,5 +1,6 @@
 ﻿using System;
 using CommandsSystem;
+using Networking;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -79,7 +80,7 @@ namespace Character.Guns {
 
                 id = ObjectID.RandomID;
                 this.position = player.transform.position - dir.normalized * 2  + Vector3.up;
-                sClient.commandsHandler.RunSimpleCommand(this as ICommand, 1);
+                CommandsHandler.gameRoom.RunSimpleCommand(this as ICommand, MessageFlags.IMPORTANT);
             }
  
             this.player = null;

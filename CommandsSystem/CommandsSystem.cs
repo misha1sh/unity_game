@@ -109,7 +109,7 @@ namespace CommandsSystem {
             } else
 /*END2*/
             {
-                throw new ArgumentException("Unkwown command: " + command.GetType());
+                throw new ArgumentException("Unknown command: " + command.GetType());
             }
                        
             
@@ -123,24 +123,24 @@ namespace CommandsSystem {
             _writer.Seek(0, SeekOrigin.Begin);
         }
         
-        public byte[] EncodeSimpleCommand<T>(T command, int room, byte needStore) where T : ICommand {
+        public byte[] EncodeSimpleCommand<T>(T command, int room, MessageFlags flags) where T : ICommand {
           /*  var stream = new MemoryStream();
             var writer = new BinaryWriter(stream);
             */
           ResetWriteStreams();
-            _writer.Write((int) MessageType.SimpleMessage); 
+            _writer.Write((byte) MessageType.SimpleMessage); 
             _writer.Write((int)room);
-            _writer.Write((byte)needStore);
+            _writer.Write((byte)flags);
             
             EncodeCommand(command, _stream);
             return _stream.ToArray();
         }
 
-        public byte[] EncodeUniqCommand<T>(T command, int room, byte needStore, int code1, int code2) where T : ICommand {
+        public byte[] EncodeUniqCommand<T>(T command, int room, int code1, int code2, MessageFlags flags) where T : ICommand {
             ResetWriteStreams();
-            _writer.Write((int) MessageType.UniqMessage);
+            _writer.Write((byte) MessageType.UniqMessage);
             _writer.Write(room);
-            _writer.Write((byte)needStore);
+            _writer.Write((byte)flags);
             _writer.Write(code1);
             _writer.Write(code2);
             
@@ -148,32 +148,35 @@ namespace CommandsSystem {
             return _stream.ToArray();
         }
 
-        public byte[] EncodeAskMessage(int room, int firstIndex, int lastIndex) {
+        public byte[] EncodeAskMessage(int room, int firstIndex, int lastIndex, MessageFlags flags) {
             ResetWriteStreams();
             
-            _writer.Write((int) MessageType.AskMessage);
+            _writer.Write((byte) MessageType.AskMessage);
             _writer.Write(room);
+            _writer.Write((byte)flags);
             _writer.Write(firstIndex);
             _writer.Write(lastIndex);
 
             return _stream.ToArray();
         }
 
-        public byte[] EncodeJoinGameRoomMessage(int room) {
+        public byte[] EncodeJoinGameRoomMessage(int room, MessageFlags flags) {
             ResetWriteStreams();
             
-            _writer.Write((int) MessageType.JoinGameRoom);
+            _writer.Write((byte) MessageType.JoinGameRoom);
             _writer.Write(room);
+            _writer.Write((byte)flags);
 
             return _stream.ToArray();
         }
 
-        public byte[] EncodeLeaveGameRoomMessage(int room) {
+        public byte[] EncodeLeaveGameRoomMessage(int room, MessageFlags flags) {
             ResetWriteStreams();
             
-            _writer.Write((int) MessageType.LeaveGameRoom);
+            _writer.Write((byte) MessageType.LeaveGameRoom);
             _writer.Write(room);
-
+            _writer.Write((byte)flags);
+            
             return _stream.ToArray();
         }
         
@@ -188,7 +191,7 @@ namespace CommandsSystem {
             room = reader.ReadInt32();
             
             var commandType = stream.ReadByte();
-            byte[] arr = array.Skip(5).ToArray(); // TODO: fix perfomance
+            byte[] arr = array.Skip(9).ToArray(); // TODO: fix performance
 
          /*   
             _read_stream.SetLength(0);

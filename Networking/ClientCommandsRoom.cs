@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 using CommandsSystem;
+using CommandsSystem.Commands;
 using UnityEngine;
 
 namespace Networking {
@@ -24,6 +25,7 @@ namespace Networking {
         public ClientCommandsRoom(int roomID) {
             this.roomID = roomID;
             RunJoinMessage();
+            RunAskMessage(0, int.MaxValue, MessageFlags.SEND_ONLY_IMPORTANT);
         }
 
         ~ClientCommandsRoom() {
@@ -31,78 +33,77 @@ namespace Networking {
         }
 
         
-        public void RunSimpleCommand(ICommand command, byte needStore) {
-            var data = commandsSystem.EncodeSimpleCommand(command, roomID, needStore);
+        public void RunSimpleCommand(ICommand command, MessageFlags flags) {
+            var data = commandsSystem.EncodeSimpleCommand(command, roomID, flags);
             CommandsHandler.webSocketHandler.clientToServerMessages.Enqueue(data);
-            UberDebug.LogChannel("SendCommand", $"SimpleCommand{command}");
+            if (flags.HasFlag(MessageFlags.IMPORTANT))
+                UberDebug.LogChannel("SendCommand", $"SimpleCommand {command}");
         }
 
-        public void RunUniqCommand(ICommand command, byte needStore, int i1, int i2) {
-            var data = commandsSystem.EncodeUniqCommand(command, roomID, needStore, i1, i2);
+        public void RunUniqCommand(ICommand command, int i1, int i2, MessageFlags flags) {
+            var data = commandsSystem.EncodeUniqCommand(command, roomID, i1, i2, flags);
             CommandsHandler.webSocketHandler.clientToServerMessages.Enqueue(data);
+            if (flags.HasFlag(MessageFlags.IMPORTANT))
+                UberDebug.LogChannel("SendCommand", $"UniqCommand {command} {i1} {i2}");
         }
 
-        private void RunAskMessage(int firstIndex, int lastIndex) {
-            var data = commandsSystem.EncodeAskMessage(roomID, firstIndex, lastIndex);
+        private void RunAskMessage(int firstIndex, int lastIndex, MessageFlags flags) {
+            var data = commandsSystem.EncodeAskMessage(roomID, firstIndex, lastIndex, flags);
             CommandsHandler.webSocketHandler.clientToServerMessages.Enqueue(data);
+            UberDebug.LogChannel("SendCommand", $"AskMessage {firstIndex} {lastIndex} {flags}");
         }
 
         private void RunJoinMessage() {
-            UberDebug.LogChannel("Client", $"JoinRoom{roomID}");
-            var data = commandsSystem.EncodeJoinGameRoomMessage(roomID);
+            var data = commandsSystem.EncodeJoinGameRoomMessage(roomID, MessageFlags.NONE);
             CommandsHandler.webSocketHandler.clientToServerMessages.Enqueue(data);
+            UberDebug.LogChannel("Client", $"JoinRoom {roomID}");
         }
 
         private void RunLeaveMessage() {
-            var data = commandsSystem.EncodeLeaveGameRoomMessage(roomID);
-            sClient.webSocketHandler.clientToServerMessages.Enqueue(data);
+            var data = commandsSystem.EncodeLeaveGameRoomMessage(roomID, MessageFlags.NONE);
+            CommandsHandler.webSocketHandler.clientToServerMessages.Enqueue(data);
+            UberDebug.LogChannel("Client", $"LeaveMessage {roomID}");
         }
         
-        void HandleCommand(int commandId, ICommand command) {
-            
-        }    
         
-        public IEnumerable<ICommand> GetCommands() {
-            bool loggedTwice = false;
-            byte[] data;
-            while (sClient.webSocketHandler.serverToClientMessages.TryDequeue(out data)) {
-                int commandId, roomId;
-                ICommand command = commandsSystem.DecodeCommand(data, out commandId, out roomId);
-                if (commandId <= lastMessage || losedMessages.Contains(commandId)) {
-                    if (!loggedTwice) {
-                        loggedTwice = true;
-                        Debug.LogWarning("CLIENT: Got message twice.");
-                    }
-                    continue;
-                }
-                losedMessages.Add(commandId, command);
+        public void HandleCommand(int commandId, ICommand command) {
+            if (commandId <= lastMessage || losedMessages.Contains(commandId)) {
+                Debug.LogWarning("CLIENT: Got message twice.");
+                return;
             }
 
-       
-            
+            if (commandId == lastMessage + 1) {
+                lastMessage++;
+                if (command is ChangePlayerProperty || command is DrawPositionTracerCommand ||
+                    command is DrawTargetedTracerCommand) {
+                    // skip
+                } else {
+                    UberDebug.LogChannel("RecieveCommand", command.ToString());
+                }
+                command.Run();
+            } else {
+                losedMessages.Add(commandId, command);
+            }
             
             while (losedMessages.Contains(lastMessage + 1)) {
                 lastMessage++;
-                ICommand command = (ICommand) losedMessages[(object) lastMessage];
+                ((ICommand) losedMessages[(object) lastMessage]).Run();
                 losedMessages.Remove(lastMessage);
-                
-                yield return command;
             }
             
-            if (losedMessages.Count != 0 && Time.time - lastTimeRequestSended > 1.0f) {
+            
+            if (losedMessages.Count != 0 && Time.time - lastTimeRequestSended > 2f) {
                 lastTimeRequestSended = Time.time;
 
                 var enumerator = losedMessages.GetEnumerator();
-                    enumerator.MoveNext();
-                    int currentId = (int) enumerator.Key;
- 
-                    RunAskMessage(lastMessage + 1, currentId - 1);
+                enumerator.MoveNext();
+                int currentId = (int) enumerator.Key;
+
+                RunAskMessage(lastMessage + 1, currentId - 1, MessageFlags.NONE);
                 
                 Debug.LogWarning($"Server loosed messages from {lastMessage + 1} to {currentId - 1}");
             }
-        } 
-        
-        
+        }
     }
     
   

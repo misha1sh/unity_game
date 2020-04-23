@@ -113,6 +113,7 @@ arr[65] = (byte)(playerId & 0x000000ff);
         
         private static SpawnPlayerCommand DeserializeLittleEndian(byte[] arr) {
             var result = new SpawnPlayerCommand();
+            Assert.AreEqual(arr.Length, 69);
             unsafe {
 result.command = new SpawnPrefabCommand();
 int len_result_command_prefabName;

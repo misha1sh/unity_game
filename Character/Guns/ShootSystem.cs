@@ -1,6 +1,7 @@
 ﻿using Character.HP;
 using CommandsSystem;
 using CommandsSystem.Commands;
+using Networking;
 using UnityEngine;
 using Util2;
 using Physics = UnityEngine.Physics;
@@ -60,12 +61,12 @@ namespace Character.Guns {
                         c.HpChange.source = DamageSource.Player(c.player);
                     }
                     
-                    sClient.commandsHandler.RunSimpleCommand(command, 0);
+                    CommandsHandler.gameModeRoom.RunSimpleCommand(command, MessageFlags.NONE);
                     return true;
                 }
             }
             
-            sClient.commandsHandler.RunSimpleCommand(command, 0);
+            CommandsHandler.gameModeRoom.RunSimpleCommand(command, MessageFlags.NONE);
             return false;
         }
 

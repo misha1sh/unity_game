@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+#if UNITY_EDITOR || !UNITY_WEBGL
 using System.Reflection;
 
 // Information about this assembly is defined by the following attributes. 
