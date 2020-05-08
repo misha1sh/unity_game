@@ -30,19 +30,51 @@ public class MainUIController : MonoBehaviour {
     public TextMeshProUGUI taskText;
 
 
+    public GameObject totalScorePanel;
+    public TextMeshProUGUI totalScoreText;
+
+
+    
+    private string ColorForPlayer(Player player) {
+        return PlayersManager.IsMainPlayer(player) ? "green" : "red";
+    }
     
     private void RedrawScore() {
         var text = new StringBuilder();
         text.AppendLine("<size=130%>Score</size>");
         foreach (var player in PlayersManager.players) {
-            if (PlayersManager.mainPlayer != null && player.id == PlayersManager.mainPlayer.id) {
-                text.AppendLine($"<color=green> {player.name}    <pos=65%>{player.score}</color>");
-            } else {
-                text.AppendLine($"<color=red> {player.name}    <pos=65%>{player.score}</color>");
-            }
+            text.AppendLine($"<color={ColorForPlayer(player)}> {player.name}    <pos=65%>{player.score}</color>");
         }
 
         scoreText.text = text.ToString();
+    }
+
+
+    private string totalScoreTextUnformatted = "{}";
+    public void ShowTotalScore(int gamesRemaining, int timeRemaining) {
+        totalScorePanel.SetActive(true);
+        var text = new StringBuilder();
+        text.AppendLine($"<size=130%>  Games Remaining: {gamesRemaining}");
+        text.AppendLine("  Time to next game: {0}</size>");
+        text.AppendLine();
+        text.AppendLine();
+        text.AppendLine("<size=115%>Player <pos=35%>Score <pos=65%>Total score</size>");
+        foreach (var player in PlayersManager.playersSortedByScore) {
+            text.AppendLine($"<color={ColorForPlayer(player)}> {player.name}<pos=35%> {player.score} " +
+                            $"<pos=65%>{player.totalScore}(+{PlayersManager.playersCount - player.placeInLastGame + 1})</color>");
+        }
+
+        totalScoreTextUnformatted = text.ToString();
+        
+        SetTotalScoreTimeRemaining(timeRemaining);
+    }
+
+    public void SetTotalScoreTimeRemaining(int time) {
+        totalScoreText.text = String.Format(totalScoreTextUnformatted, time);
+    }
+
+    public void HideTotalScore() {
+        totalScorePanel.SetActive(false);
     }
     
 

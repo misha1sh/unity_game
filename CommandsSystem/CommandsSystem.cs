@@ -80,58 +80,63 @@ namespace CommandsSystem {
                 var buf = playerpushcommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
-            if (command is SetGameMode setgamemode) {
+            if (command is SetAfterShowResultsCommand setaftershowresultscommand) {
                 stream.WriteByte((byte)13);
+                var buf = setaftershowresultscommand.Serialize();
+                stream.Write(buf, 0, buf.Length);
+            } else
+            if (command is SetGameMode setgamemode) {
+                stream.WriteByte((byte)14);
                 var buf = setgamemode.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is SetPlatformStateCommand setplatformstatecommand) {
-                stream.WriteByte((byte)14);
+                stream.WriteByte((byte)15);
                 var buf = setplatformstatecommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is SpawnParabolaFlyingCommand spawnparabolaflyingcommand) {
-                stream.WriteByte((byte)15);
+                stream.WriteByte((byte)16);
                 var buf = spawnparabolaflyingcommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is SpawnPlayerCommand spawnplayercommand) {
-                stream.WriteByte((byte)16);
+                stream.WriteByte((byte)17);
                 var buf = spawnplayercommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is SpawnPrefabCommand spawnprefabcommand) {
-                stream.WriteByte((byte)17);
+                stream.WriteByte((byte)18);
                 var buf = spawnprefabcommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is StartGameCommand startgamecommand) {
-                stream.WriteByte((byte)18);
+                stream.WriteByte((byte)19);
                 var buf = startgamecommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is TakeOwnCommand takeowncommand) {
-                stream.WriteByte((byte)19);
+                stream.WriteByte((byte)20);
                 var buf = takeowncommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is Pistol pistol) {
-                stream.WriteByte((byte)20);
+                stream.WriteByte((byte)21);
                 var buf = pistol.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is ShotGun shotgun) {
-                stream.WriteByte((byte)21);
+                stream.WriteByte((byte)22);
                 var buf = shotgun.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is SemiautoGun semiautogun) {
-                stream.WriteByte((byte)22);
+                stream.WriteByte((byte)23);
                 var buf = semiautogun.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is BombGun bombgun) {
-                stream.WriteByte((byte)23);
+                stream.WriteByte((byte)24);
                 var buf = bombgun.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
@@ -268,26 +273,28 @@ namespace CommandsSystem {
                  case 12:
                      return PlayerPushCommand.Deserialize(arr);
                  case 13:
-                     return SetGameMode.Deserialize(arr);
+                     return SetAfterShowResultsCommand.Deserialize(arr);
                  case 14:
-                     return SetPlatformStateCommand.Deserialize(arr);
+                     return SetGameMode.Deserialize(arr);
                  case 15:
-                     return SpawnParabolaFlyingCommand.Deserialize(arr);
+                     return SetPlatformStateCommand.Deserialize(arr);
                  case 16:
-                     return SpawnPlayerCommand.Deserialize(arr);
+                     return SpawnParabolaFlyingCommand.Deserialize(arr);
                  case 17:
-                     return SpawnPrefabCommand.Deserialize(arr);
+                     return SpawnPlayerCommand.Deserialize(arr);
                  case 18:
-                     return StartGameCommand.Deserialize(arr);
+                     return SpawnPrefabCommand.Deserialize(arr);
                  case 19:
-                     return TakeOwnCommand.Deserialize(arr);
+                     return StartGameCommand.Deserialize(arr);
                  case 20:
-                     return Pistol.Deserialize(arr);
+                     return TakeOwnCommand.Deserialize(arr);
                  case 21:
-                     return ShotGun.Deserialize(arr);
+                     return Pistol.Deserialize(arr);
                  case 22:
-                     return SemiautoGun.Deserialize(arr);
+                     return ShotGun.Deserialize(arr);
                  case 23:
+                     return SemiautoGun.Deserialize(arr);
+                 case 24:
                      return BombGun.Deserialize(arr);
     /*END1*/
                  case 255:

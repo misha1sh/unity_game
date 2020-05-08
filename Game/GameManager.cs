@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
+using Character;
 using CommandsSystem.Commands;
 using Networking;
 using UI;
@@ -10,7 +12,9 @@ using Debug = UnityEngine.Debug;
 
 namespace GameMode {
     public static class GameManager {
-
+        private const int TOTAL_GAMES_COUNT = 3;
+        
+        
         private enum STATE {
             INIT,
             WAIT_OTHERS,
@@ -20,6 +24,8 @@ namespace GameMode {
             UPDATE_GAMEMODE,
             STOP_GAMEMODE,
             SHOW_RESULTS,
+            WAIT_SHOW_RESULTS,
+            WAIT_AFTER_SHOW_RESULTS,
             AFTER_SHOW_RESULTS,
             FINISH
         }
@@ -48,6 +54,13 @@ namespace GameMode {
         public static void SetGameMode(int gamemodeCode, int roomId, int currentGameNum) {
             CommandsHandler.gameModeRoom = new ClientCommandsRoom(roomId);
             
+            
+            foreach (var player in PlayersManager.players) {
+                player.score = 0;
+                EventsManager.handler.OnPlayerScoreChanged(player, player.score);
+            }
+            
+            
             var ttest = new Stopwatch();
             ObjectID.Clear();
             SceneManager.LoadScene("neon_scene");
@@ -70,12 +83,22 @@ namespace GameMode {
             InstanceManager.currentInstance.currentLoadedGamemodeNum++;
             InstanceManager.currentInstance.Send();
 
+      
+            
+            
             state = STATE.WAIT_FOR_ALL_LOAD_GAMEMODE;
             
             Assert.AreEqual(InstanceManager.currentInstance.currentLoadedGamemodeNum, currentGameNum);
 
         }
+
+        public static void SetAfterShowResults() {
+            if (state == STATE.WAIT_AFTER_SHOW_RESULTS)
+                state = STATE.AFTER_SHOW_RESULTS;
+        }
         
+
+        private static float showResultsWaitTime;
         
         public static void Update() {
             switch (state) {
@@ -137,12 +160,33 @@ namespace GameMode {
                     }
                     break;
                 case STATE.SHOW_RESULTS: // show results
-                    // ???
-                    state = STATE.AFTER_SHOW_RESULTS;
-                    break;
-                case STATE.AFTER_SHOW_RESULTS: // go to next
+                    var players2 = PlayersManager.playersSortedByScore;
+
+                    for (int i = 0; i < players2.Count; i++) {
+                        players2[i].placeInLastGame = i + 1;
+                        players2[i].totalScore += players2.Count - i;
+                    }
+                    
                     gamesCount++;
-                    if (gamesCount > 2) {
+                    showResultsWaitTime = 10;
+                    MainUIController.mainui.ShowTotalScore(TOTAL_GAMES_COUNT - gamesCount, 
+                        (int)Math.Ceiling(showResultsWaitTime));
+                    state = STATE.WAIT_SHOW_RESULTS;
+                    break;
+                
+                case STATE.WAIT_SHOW_RESULTS:
+                    showResultsWaitTime -= Time.deltaTime;
+                    MainUIController.mainui.SetTotalScoreTimeRemaining((int)Math.Ceiling(showResultsWaitTime));
+                    if (showResultsWaitTime < 0) {
+                        state = STATE.WAIT_AFTER_SHOW_RESULTS;                       
+                        CommandsHandler.gameRoom.RunSimpleCommand(new SetAfterShowResultsCommand(), MessageFlags.IMPORTANT);
+                    }
+                    break;
+                case STATE.WAIT_AFTER_SHOW_RESULTS:
+                    break;
+
+                case STATE.AFTER_SHOW_RESULTS: // go to next
+                    if (gamesCount >= TOTAL_GAMES_COUNT) {
                         state = STATE.FINISH;
                         UberDebug.Log("finish");
                     } else {

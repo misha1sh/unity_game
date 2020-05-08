@@ -39,6 +39,9 @@ public class PlayerController : CharacterController
             target.gameObject.transform.rotation = Quaternion.LookRotation(vec3);
         //        target.CurrentRotationSpeed = Vector2.Angle(vec, Vector2.right);*/
 
+       if (sClient.isTyping)
+           Input.ResetInputAxes();
+       
        Vector2 vec = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
        var len = 1;
        

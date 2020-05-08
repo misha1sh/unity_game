@@ -59,7 +59,7 @@ namespace GameMode {
         }
 
         public float TimeLength() {
-            return 60f;
+            return 7f;
         }
     }
 }

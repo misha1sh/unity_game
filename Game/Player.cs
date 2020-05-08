@@ -13,6 +13,10 @@ namespace GameMode {
         public int controllerType;
 
 
+        public int totalScore;
+        public int placeInLastGame;
+            
+            
         
         public Player() {}
 
@@ -22,6 +26,8 @@ namespace GameMode {
             this.name = "Player#" + Random.Range(0, 100);
             this.owner = owner;
             this.controllerType = controllerType;
+            this.placeInLastGame = -1;
+            this.totalScore = 0;
         }
 
         public override string ToString() {

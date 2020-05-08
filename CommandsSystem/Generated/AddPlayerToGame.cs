@@ -21,7 +21,7 @@ namespace CommandsSystem.Commands {
 
         private byte[] SerializeLittleEndian() {
             unsafe {
-var arr = new byte[45];
+var arr = new byte[53];
 arr[0] = (byte)(player.id & 0x000000ff);
    arr[1] = (byte)((player.id & 0x0000ff00) >> 8);
    arr[2] = (byte)((player.id & 0x00ff0000) >> 16);
@@ -51,6 +51,16 @@ arr[41] = (byte)(player.controllerType & 0x000000ff);
    arr[43] = (byte)((player.controllerType & 0x00ff0000) >> 16);
    arr[44] = (byte)((player.controllerType & 0xff000000) >> 24);
 
+arr[45] = (byte)(player.totalScore & 0x000000ff);
+   arr[46] = (byte)((player.totalScore & 0x0000ff00) >> 8);
+   arr[47] = (byte)((player.totalScore & 0x00ff0000) >> 16);
+   arr[48] = (byte)((player.totalScore & 0xff000000) >> 24);
+
+arr[49] = (byte)(player.placeInLastGame & 0x000000ff);
+   arr[50] = (byte)((player.placeInLastGame & 0x0000ff00) >> 8);
+   arr[51] = (byte)((player.placeInLastGame & 0x00ff0000) >> 16);
+   arr[52] = (byte)((player.placeInLastGame & 0xff000000) >> 24);
+
 
 
                 return arr;
@@ -66,7 +76,7 @@ arr[41] = (byte)(player.controllerType & 0x000000ff);
         
         private static AddPlayerToGame DeserializeLittleEndian(byte[] arr) {
             var result = new AddPlayerToGame();
-            Assert.AreEqual(arr.Length, 45);
+            Assert.AreEqual(arr.Length, 53);
             unsafe {
 result.player = new Player();
 result.player.id = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));
@@ -80,6 +90,10 @@ result.player.name = Encoding.UTF8.GetString(arr, 12, len_result_player_name);
 result.player.owner = (arr[37] | (arr[38] << 8) | (arr[39] << 16) | (arr[40] << 24));
 
 result.player.controllerType = (arr[41] | (arr[42] << 8) | (arr[43] << 16) | (arr[44] << 24));
+
+result.player.totalScore = (arr[45] | (arr[46] << 8) | (arr[47] << 16) | (arr[48] << 24));
+
+result.player.placeInLastGame = (arr[49] | (arr[50] << 8) | (arr[51] << 16) | (arr[52] << 24));
 
 
              

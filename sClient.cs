@@ -13,17 +13,19 @@ public class sClient : MonoBehaviour {
         FIND_MATCH,
         IN_GAME
     }
-    
+
+
+    public static bool isTyping = false;
     
     public const int NETWORK_FPS = 20;
 
     public static int ID => InstanceManager.ID;
     public static System.Random random = new System.Random();
 
-    public static int MatchmakingRoom = 1;
+    /*public static int MatchmakingRoom = 1;
     public static int GameRoom = 137;
     public static int GameModeRoom;
-
+*/
 
 
     private static float gameStartTime;
@@ -54,6 +56,9 @@ public class sClient : MonoBehaviour {
 
 
     void Update() {
+        if (isTyping)
+            Input.ResetInputAxes();
+
         CommandsHandler.Update();
         RequestsManager.Update();
         switch (state) {

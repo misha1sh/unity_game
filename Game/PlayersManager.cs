@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using CommandsSystem.Commands;
 using Networking;
 using UnityEngine;
@@ -6,6 +7,15 @@ using UnityEngine;
 namespace GameMode {
     public static class PlayersManager {
         public static List<Player> players = new List<Player>();
+
+        public static List<Player> playersSortedByScore {
+            get {
+                var players2 = players.ToList();
+                players2.Sort((player1, player2) =>
+                    player2.score.CompareTo(player1.score));
+                return players2;
+            }
+        }
         public static Player mainPlayer;
 
         public static int playersCount => players.Count;
@@ -27,6 +37,11 @@ namespace GameMode {
         public static void AddScoreToPlayer(Player player, int score) {
             CommandsHandler.gameRoom.RunSimpleCommand(new ChangePlayerScore(player.id, score), MessageFlags.IMPORTANT);
         }
-        
+
+
+        public static bool IsMainPlayer(Player player) {
+            return PlayersManager.mainPlayer != null && player.id == PlayersManager.mainPlayer.id;
+        }
+
     }
 }

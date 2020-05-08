@@ -42,35 +42,8 @@ public class Client : MonoBehaviour
 
     private void Awake() {
         client = this;
-        if (FindObjectsOfType<MainUIController>().Length == 0)
-            cli
+
         sClient.Init();
-        /*
-        var ttest = new IGameObjectProperty<TransformProperty>[10];
-        for (int i = 0; i < 5; i++) {
-            ttest[i] = new TransformProperty();
-            ttest[i].FromGameObject(gameObject);
-        }
-        
-     /*   var bf = new BinaryFormatter();
-        var ms = new MemoryStream();
-        
-        bf.Serialize(ms, ttest);
-  /*      var bf = new JsonSerializer();
-        var ms = new StringWriter();
-        
-        bf.Serialize(ms, ttest);
-        
-        var tr = new StringReader(ms.ToString());
-        
-        var tttest = bf.Deserialize(tr, ttest.GetType());
-        Console.Write(tttest);*/
-        /*
-        var ms = new StringWriter();
-        Json.Serialize(new Pistol(), ms);
-        Debug.LogError(ms.ToString());
-        */
-        ///    var c = new PlayerProperty(10, new Vector3(1, 2, 3), Quaternion.identity, new PlayerAnimationState());
 
         if (spawnBorder != null) {
             List<Vector3> points = new List<Vector3>();
@@ -83,14 +56,10 @@ public class Client : MonoBehaviour
 
         foreach (var prefab in prefabsList) {
             prefabs.Add(prefab.name, prefab);
-            /*for (int i = 0; i < 100; i++)
-            {*/
-
-            // }
-
-
         }
 
+        if (FindObjectsOfType<MainUIController>().Length == 0)
+            Instantiate(prefabs["MainUI"]);
         //ObjectID.StoreObject(player, player.GetInstanceID());
 
         var c = new SpawnPrefabCommand("123123", Vector3.back, Quaternion.identity, 123, 4, 778);
@@ -103,64 +72,7 @@ public class Client : MonoBehaviour
         Debug.Log("CLIENT starting");
     }
 
-
-
-
-    /* struct CapsuleGizmos
-     {
-         public Vector3 pos1, pos2;
-         public float radius;
- 
-         public CapsuleGizmos(Vector3 pos1, Vector3 pos2, float radius)
-         {
-             this.pos1 = pos1;
-             this.pos2 = pos2;
-             this.radius = radius;
-         }
-     }
- 
-     List<CapsuleGizmos> capsules = new List<CapsuleGizmos>();
- */
-    private int lastCointId = -1;
-    void Update() {
-
-
-
-/*
-        if (Random.value < 0.05 && FindObjectsOfType<Coin>().Length < 0)
-        {
-            Vector3 pos = GameModeFunctions.FindPlaceForSpawn(10, 1);
-            sClient.commandsHandler.RunUniqCommand(new SpawnPrefabCommand("coin", pos, new Quaternion(), ObjectID.RandomID, sClient.ID), GameManager.GameModeRoom, UniqCodes.SPAWN_COIN, lastCointId++);
-        }
-        
-        if (Random.value < 0.05 && FindObjectsOfType<PistolController>().Length < 1)
-        {
-            Vector3 pos = GameModeFunctions.FindPlaceForSpawn(1, 1);
-            sClient.commandsHandler.RunUniqCommand(new SpawnPrefabCommand("pistol", pos, new Quaternion(), ObjectID.RandomID, sClient.ID), UniqCodes.SPAWN_GUN, (int) (100)); // Random.value * 
-        }
-
-        //Instantiate(myPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-        /*  if (Random.value < 0.01) {
-              Test1 a = new Test1();
-              a.a = 123;
-              a.c = "kek wer wqe rqw ewq ";
-              MemoryStream s = new MemoryStream();
-              MsgPack.Serialize(a, s);
-              await _webSocket.Send(s.ToArray());
-          }*/
-
-    }
-
-  
-
- /*   private void OnDrawGizmos()
-    {
-        foreach (var capsule in capsules)
-        {
-            DebugExtension.DrawCapsule(capsule.pos1, capsule.pos2, Color.blue, capsule.radius);
-        }
-    }
-*/
+    
 
 
 
