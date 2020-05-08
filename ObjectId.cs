@@ -5,7 +5,7 @@ using UnityEngine.Assertions;
 
 public class ObjectID: MonoBehaviour
 {
-    class Pair {
+    class ObjectData {
         private WeakReference<GameObject> weakReference;
 
         public GameObject GameObject {
@@ -17,29 +17,31 @@ public class ObjectID: MonoBehaviour
         }
 
         public int owner;
+        public int creator;
 
-        public Pair(GameObject gameObject, int owner) {
+        public ObjectData(GameObject gameObject, int owner, int creator) {
             this.weakReference = new WeakReference<GameObject>(gameObject);
             this.owner = owner;
+            this.creator = creator;
         }
     }
 
-    private static Dictionary<int, Pair> IDToObject = new Dictionary<int, Pair>();
+    private static Dictionary<int, ObjectData> IDToObject = new Dictionary<int, ObjectData>();
     private static Dictionary<int, int> UnityIDtoObjectID = new Dictionary<int, int>();
 
     private static System.Random random = new System.Random();
     public static int RandomID => random.Next();
     
-    public static void StoreObject(GameObject gameObject, int id, int owner)
+    public static void StoreObject(GameObject gameObject, int id, int owner, int creator)
     {
         Assert.IsFalse(IDToObject.ContainsKey(id), $"ID#{id} already exists");
         Assert.IsFalse(UnityIDtoObjectID.ContainsKey(gameObject.GetInstanceID()), $"InstanceID#{gameObject.GetInstanceID()} already exists");
-        IDToObject.Add(id, new Pair(gameObject, owner));
+        IDToObject.Add(id, new ObjectData(gameObject, owner, creator));
         UnityIDtoObjectID.Add(gameObject.GetInstanceID(), id);
     }
 
-    public static void StoreOwnedObject(GameObject gameObject) {
-        StoreObject(gameObject, RandomID, sClient.ID);
+    public static void StoreOwnedObject(GameObject gameObject, int creator) {
+        StoreObject(gameObject, RandomID, sClient.ID, creator);
     }
 
     public static int GetID(GameObject gameObject) {
@@ -55,7 +57,7 @@ public class ObjectID: MonoBehaviour
     }
 
     public static bool TryGetObject(int id, out GameObject gameObject) {
-        Pair go;
+        ObjectData go;
         var res = IDToObject.TryGetValue(id, out go);
         if (!res) {
             gameObject = null;
@@ -84,7 +86,7 @@ public class ObjectID: MonoBehaviour
         Assert.IsTrue(UnityIDtoObjectID.Remove(gameObject.GetInstanceID()));
     }
 
-    public static  string ToString() {
+    public new static string ToString() {
         var text = "";
         foreach (var id_obj in IDToObject) {
             var id = id_obj.Key;
@@ -97,16 +99,30 @@ public class ObjectID: MonoBehaviour
         return text;
     }
 
-    public static int GetOwner(int id) {
+    private static ObjectData GetObjectData(int id) {
         if (!IDToObject.ContainsKey(id))
         {
             throw new KeyNotFoundException($"Gameobject {id} not found in ObjectID");
         }
-        return IDToObject[id].owner;
+        return IDToObject[id];
     }
+    
 
+    private static ObjectData GetObjectData(GameObject gameObject) {
+        return GetObjectData(GetID(gameObject));
+    }
+    
+    
+    
+    public static int GetOwner(int id) {
+        return GetObjectData(id).owner;
+    }
+    public static int GetOwner(GameObject gameObject) {
+        return GetObjectData(gameObject).owner;
+    }
+    
     public static bool TryGetOwner(int id, out int owner) {
-        Pair res;
+        ObjectData res;
         if (!IDToObject.TryGetValue(id, out res) || res == null) {
             owner = 0;
             return false;
@@ -116,21 +132,48 @@ public class ObjectID: MonoBehaviour
         return true;
     }
 
-    public static int GetOwner(GameObject gameObject) {
-        return GetOwner(GetID(gameObject));
-    }
 
+    
     public static bool IsOwned(int id) {
         return GetOwner(id) == sClient.ID;
     }
-
     public static bool IsOwned(GameObject gameObject) {
         return GetOwner(gameObject) == sClient.ID;
     }
-
     public static void SetOwner(int id, int owner) {
         IDToObject[id].owner = owner;
     }
+    
+    
+    
+    public static int GetCreator(int id) {
+        return GetObjectData(id).creator;
+    }
+    public static int GetCreator(GameObject gameObject) {
+        return GetObjectData(gameObject).creator;
+    }
+    public static bool TryGetCreator(int id, out int creator) {
+        ObjectData res;
+        if (!IDToObject.TryGetValue(id, out res) || res == null) {
+            creator = 0;
+            return false;
+        }
+        creator = res.creator;
+        return true;
+    }
+    
+ 
+    
+    
+
+
+ /*   public static bool TryIsOwned(int id) {
+        int owner;
+        if (!ObjectID.tr)
+    }
+    */
+
+ 
 
     public static void Clear() {
         IDToObject.Clear();

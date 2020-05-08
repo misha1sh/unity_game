@@ -60,7 +60,12 @@ public class PlayerController : CharacterController
        /*DebugExtension.DebugPoint(pos, Color.red, 3f);
        DebugExtension.DebugArrow(target_pos, pos - target_pos, Color.magenta);*/
        motionController.TargetRotation = pos - target_pos;
-     
+       
+       
+       plane.SetNormalAndPosition(Vector3.up, target.transform.position);
+       plane.Raycast(ray, out distance);
+       actionController.Target = ray.GetPoint(distance);
+       
        /*  Vector3 tttest = Input.mousePosition;
        tttest.z = 10;
        var pos = camera.ScreenToWorldPoint(tttest);

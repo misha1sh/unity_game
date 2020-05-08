@@ -42,6 +42,8 @@ public class Client : MonoBehaviour
 
     private void Awake() {
         client = this;
+        if (FindObjectsOfType<MainUIController>().Length == 0)
+            cli
         sClient.Init();
         /*
         var ttest = new IGameObjectProperty<TransformProperty>[10];
@@ -91,7 +93,7 @@ public class Client : MonoBehaviour
 
         //ObjectID.StoreObject(player, player.GetInstanceID());
 
-        var c = new SpawnPrefabCommand("123123", Vector3.back, Quaternion.identity, 123, 4);
+        var c = new SpawnPrefabCommand("123123", Vector3.back, Quaternion.identity, 123, 4, 778);
         var f = c.Serialize();
         var d = SpawnPrefabCommand.Deserialize(f);
 
@@ -183,7 +185,7 @@ public class Client : MonoBehaviour
         }
         GameObject prefab = prefabs[command.prefabName];
         var gameObject = Instantiate(prefab, command.position, command.rotation);
-        ObjectID.StoreObject(gameObject, command.id, command.owner);
+        ObjectID.StoreObject(gameObject, command.id, command.owner, command.creator);
         Debug.Log($"Spawned {gameObject}({gameObject.GetInstanceID()}). id: {command.id}");
         return gameObject;
     }

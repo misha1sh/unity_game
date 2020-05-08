@@ -23,7 +23,8 @@ namespace UI {
         
         
             float bulletOffsetX = (panel.rect.width - image.rectTransform.rect.width) * panel.lossyScale.x / (count - 1);
-        
+            if (count == 1)
+                bulletOffsetX = 0;
             for (int i = 0; i < count; i++) {
                 var go = Instantiate(image, panel.gameObject.transform, true);
                 go.enabled = true;

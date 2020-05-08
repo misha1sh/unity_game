@@ -24,12 +24,12 @@ namespace Character.Guns {
    ///  public int id;
    ///  public int _state;
 
-   protected override void DoShoot() {
+        protected override void DoShoot() {
             ShootSystem.ShootWithDamage(player, Vector3.zero, damage);
         }
 
         public void Run() {
-            var go = Client.client.SpawnObject(new SpawnPrefabCommand("pistol", position, Quaternion.identity, id, 0));
+            var go = Client.client.SpawnObject(new SpawnPrefabCommand("pistol", position, Quaternion.identity, id, 0, 0));
             go.GetComponent<PistolController>().gun = this;
         }
     }

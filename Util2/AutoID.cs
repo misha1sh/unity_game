@@ -9,7 +9,7 @@ namespace Util2 {
         }
 
         public void Awake() {
-            ObjectID.StoreObject(gameObject, ID, 0);
+            ObjectID.StoreObject(gameObject, ID, 0, 0);
         }
 
         public void Update() {

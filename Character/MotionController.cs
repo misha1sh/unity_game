@@ -10,7 +10,7 @@ namespace Character {
     [RequireComponent(typeof(CharacterAnimator))]
     public class MotionController : MonoBehaviour {
 //        private CharacterController characterController;
-        private Rigidbody rigidbody;
+        private new Rigidbody rigidbody;
         private CapsuleCollider capsuleCollider;
         private CharacterAnimator animator;
         

@@ -60,8 +60,13 @@ public class WebSocketHandler
             /* #if UNITY_EDITOR
               Thread.Sleep(60);
             #endif  */
+            var res = "";
+            for (int i = 0; i < commands.Length; i++) {
+                res += commands[i] +" ";
+            }
+            
             sendTask = webSocket.Send(commands);
-            UberDebug.LogChannel("DEBUG", "" + commands.Length);
+//            UberDebug.LogChannel("DEBUG", commands.Length + "   s" + res);
         }
         
 

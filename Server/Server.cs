@@ -35,6 +35,7 @@ using Random = System.Random;
 /// 
 ///    Server to Client:
 ///         - 4 byte message id + 4 byte room number + message data
+///         if message id == -1 means client need to do command instantly
 ///         - optional ping: 4 byte message id + 4 byte data
 /// 
 /// </summary>
@@ -44,7 +45,8 @@ public enum MessageType : byte {
     UniqMessage = 2,
     AskMessage = 3,
     JoinGameRoom = 4,
-    LeaveGameRoom = 5
+    LeaveGameRoom = 5,
+    JSON = 6,
 };
 
 [Flags] 
@@ -54,7 +56,8 @@ public enum MessageFlags : byte {
     SEND_ONLY_IMPORTANT = 1 << 1
 }
 
-
+public class Server : MonoBehaviour { } 
+/*
 #if UNITY_EDITOR
 public static class ArrayExtension {
     public static T[] SubArray<T>(this T[] data, long index)
@@ -79,7 +82,7 @@ public static class BinaryReaderExtension {
         
     }
 }*/
-
+/*
 
 
 internal class GameServerRoom {
@@ -161,6 +164,8 @@ internal class GameServerRoom {
                         completed = true;
                     });
                     while (!completed) ;
+                    if (flags.HasFlag(MessageFlags.IMPORTANT) || true)
+                        UberDebug.LogChannel("SERVER", $"server{id}->client{client} {message.Length} {flags}");
                 } 
             }
        
@@ -174,7 +179,6 @@ internal class GameServerRoom {
     public void HandleUniqMessage(string client, long uid, MemoryStream message, MessageFlags needStore) {
         if (messagesUID.Contains(uid)) return;
         messagesUID.Add(uid);
-        GameServerConnection con;
         BroadcastMessage(message.ReadAllBytes(), needStore);
     }
 
@@ -254,7 +258,7 @@ class GameServerConnection : WebSocketBehavior {
         var messageType = (MessageType) messageTypeOrd;
         var roomId = messageReader.ReadInt32();
         MessageFlags flags = (MessageFlags) messageReader.ReadByte();
-        if (flags.HasFlag(MessageFlags.IMPORTANT) || messageType != MessageType.SimpleMessage)
+        if (flags.HasFlag(MessageFlags.IMPORTANT) || messageType!=MessageType.SimpleMessage || true)
             UberDebug.LogChannel("SERVER", $"client{ID}->SERVER: {messageType}  {roomId}");
 
         
@@ -313,7 +317,6 @@ class GameServerConnection : WebSocketBehavior {
                                    $" has incorrect length: {memoryStream.Length}");
                 }
                 room.RemoveClient(ID);
-                rooms.Remove(room);
                 break;
             
             default:
@@ -324,8 +327,6 @@ class GameServerConnection : WebSocketBehavior {
     protected override void OnMessage(MessageEventArgs e) {
 //        Debug.Log("SERVER got message");
        // Debug.Log("SERVER got message: " + e.RawData.Length + " from " + ID);
-      /* Task.Run(async () => {
-          // await Task.Delay(100);-*/
            HandleMessage(e);
       // });
     }
@@ -394,3 +395,4 @@ public class Server : MonoBehaviour
 #else
 public class Server : MonoBehaviour { }
 #endif
+*/

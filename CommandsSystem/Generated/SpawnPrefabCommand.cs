@@ -15,17 +15,18 @@ namespace CommandsSystem.Commands {
 
         public SpawnPrefabCommand(){}
         
-        public SpawnPrefabCommand(string prefabName,Vector3 position,Quaternion rotation,int id,int owner) {
+        public SpawnPrefabCommand(string prefabName,Vector3 position,Quaternion rotation,int id,int owner,int creator) {
             this.prefabName = prefabName;
 this.position = position;
 this.rotation = rotation;
 this.id = id;
 this.owner = owner;
+this.creator = creator;
         }
 
         private byte[] SerializeLittleEndian() {
             unsafe {
-var arr = new byte[65];
+var arr = new byte[69];
 var bytes_prefabName= Encoding.UTF8.GetBytes(prefabName);
     Assert.IsTrue(bytes_prefabName.Length <= 25);
 
@@ -96,6 +97,11 @@ arr[61] = (byte)(owner & 0x000000ff);
    arr[63] = (byte)((owner & 0x00ff0000) >> 16);
    arr[64] = (byte)((owner & 0xff000000) >> 24);
 
+arr[65] = (byte)(creator & 0x000000ff);
+   arr[66] = (byte)((creator & 0x0000ff00) >> 8);
+   arr[67] = (byte)((creator & 0x00ff0000) >> 16);
+   arr[68] = (byte)((creator & 0xff000000) >> 24);
+
 
                 return arr;
             }
@@ -110,7 +116,7 @@ arr[61] = (byte)(owner & 0x000000ff);
         
         private static SpawnPrefabCommand DeserializeLittleEndian(byte[] arr) {
             var result = new SpawnPrefabCommand();
-            Assert.AreEqual(arr.Length, 65);
+            Assert.AreEqual(arr.Length, 69);
             unsafe {
 int len_result_prefabName;
 len_result_prefabName = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));
@@ -159,6 +165,8 @@ result.id = (arr[57] | (arr[58] << 8) | (arr[59] << 16) | (arr[60] << 24));
 
 result.owner = (arr[61] | (arr[62] << 8) | (arr[63] << 16) | (arr[64] << 24));
 
+result.creator = (arr[65] | (arr[66] << 8) | (arr[67] << 16) | (arr[68] << 24));
+
              
                 return result;
             }
@@ -173,7 +181,7 @@ result.owner = (arr[61] | (arr[62] << 8) | (arr[63] << 16) | (arr[64] << 24));
         
         
         public string AsJson() {
-            return $"{{'prefabName':{prefabName},'position':{position},'rotation':{rotation},'id':{id},'owner':{owner}}}";
+            return $"{{'prefabName':{prefabName},'position':{position},'rotation':{rotation},'id':{id},'owner':{owner},'creator':{creator}}}";
         }
         
         public override string ToString() {

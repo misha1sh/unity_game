@@ -11,7 +11,7 @@ namespace GameMode {
             var id = ObjectID.RandomID;
             var owner = sClient.ID;
             
-            CommandsHandler.gameModeRoom.RunSimpleCommand(new SpawnPlayerCommand(new SpawnPrefabCommand("Robot", pos, rot, id, owner), 
+            CommandsHandler.gameModeRoom.RunSimpleCommand(new SpawnPlayerCommand(new SpawnPrefabCommand("Robot", pos, rot, id, owner, id), 
                 playerId), MessageFlags.IMPORTANT);
         }
 

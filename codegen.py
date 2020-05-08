@@ -15,8 +15,8 @@ def deser_int(name, offset):
 
 def pack_int(name, offset):
     return ser_int(name, offset), deser_int("result."+name, offset), offset + 4
-    
-    
+
+
 def ser_float(name, offset):
     nname = name.replace(".", "_")# +"_" + str(random.randint(0, 10000))
     f_name = "f_" + nname
@@ -101,7 +101,7 @@ def extract_fields(filename):
 
 def ser_field(typ, name, offset):
     if typ not in packers:
-        print("unkwown type: ", typ)
+        print("unknown type: ", typ)
         return "", "", offset
     
     s, d, o = packers[typ](name, offset)
@@ -113,7 +113,7 @@ def ser_field(typ, name, offset):
 
 def pack_custom_type(typename):
     def pack_custom(stname, offset):
-        ser, deser = "", ""
+        ser, deser = "", "" #, json, jsser, jsdeser = "", "", "", "", ""
         deser += "result." + stname + " = new " + typename + "();\n";
     
         for (typ, name) in extract_fields(paths[typename]):
@@ -134,6 +134,7 @@ paths = {
     "PlayerProperty": "Interpolation/Properties/PlayerProperty.cs",
     "Player": "Game/Player.cs",
     "Instance": "Game/Instance.cs",
+    "MatchInfo": "Game/MatchInfo.cs",
     "SpawnPrefabCommand": "CommandsSystem/Commands/SpawnPrefabCommand.cs"
 }
 
@@ -161,7 +162,8 @@ for i in files:
     
 for filename, path in ffiles + [("Pistol.cs", "Character/Guns/Pistol.cs"),
                                 ("ShotGun.cs", "Character/Guns/ShotGun.cs"),
-                                ("SemiautoGun.cs", "Character/Guns/SemiautoGun.cs")]:
+                                ("SemiautoGun.cs", "Character/Guns/SemiautoGun.cs"),
+                                ("BombGun.cs", "Character/Guns/BombGun.cs")]:
     if not filename.endswith(".cs"): continue
     
     with open(path) as file: inp = file.read()

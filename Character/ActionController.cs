@@ -1,4 +1,5 @@
-﻿using Character.Actions;
+﻿using System;
+using Character.Actions;
 using Character.Guns;
 using UnityEngine;
 
@@ -12,14 +13,15 @@ namespace Character {
         private CharacterAnimator animator;
         void Start() {
             animator = GetComponent<CharacterAnimator>();
-             SetAction<ShootSemiautoAction>(action => action.gun = new SemiautoGun());
+           //    SetAction<ShootPistolAction>(action => action.gun = new BombGun());
+         //      SetAction<ShootSemiautoAction>(action => action.gun = new SemiautoGun());
          //    SetAction<ShootPistolAction>(action => action.gun = new ShotGun());
           //  SetAction<ShootPistolAction>(action => action.gun = new Pistol());
             //SetAction<PushAction>(action => { });
         }
 
         private IAction currentAction = null;
-
+        public Vector3 Target; // mouse position in world coordinates
         
         private void StopCurrent() {
             if (currentAction != null) {
@@ -90,6 +92,9 @@ namespace Character {
             }
         }
 
-        
+    /*   private void OnDrawGizmos() {
+            //Gizmos.DrawSphere(Target, 0.1f);
+            DebugExtension.DebugPoint(Target, Color.magenta, 3, 10);
+        }*/
     }
 }

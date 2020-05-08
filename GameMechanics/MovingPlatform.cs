@@ -30,11 +30,11 @@ namespace GameMechanics {
 
         
         private int id;
-        private Rigidbody rigidbody;
+      //  private Rigidbody rigidbody;
         private void Start() {
             lastPosition = transform.position;
             nextPosition = nextTransform.position;
-            rigidbody = GetComponent<Rigidbody>();
+     //       rigidbody = GetComponent<Rigidbody>();
             id = ObjectID.GetID(gameObject);
             CommandsHandler.gameModeRoom.RunSimpleCommand(new TakeOwnCommand(id, sClient.ID), 
                  MessageFlags.IMPORTANT);

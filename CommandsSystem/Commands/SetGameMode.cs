@@ -2,11 +2,12 @@
 
 namespace CommandsSystem.Commands {
     public partial class SetGameMode {
-        public int gamemode;
+        public int gamemodeCode;
         public int roomId;
+        public int currentGameNum;
 
         public void Run() {
-            GameManager.SetGameMode(gamemode, roomId);
+            GameManager.SetGameMode(gamemodeCode, roomId, currentGameNum);
         }
     }
 }

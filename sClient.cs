@@ -1,14 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using CommandsSystem;
 using CommandsSystem.Commands;
+using Game;
 using GameMode;
+using JsonRequest;
 using Networking;
 using UnityEngine;
 
 public class sClient : MonoBehaviour {
-    public const int NETWORK_FPS = 20;
+    public enum STATE {
+        FIND_MATCH,
+        IN_GAME
+    }
     
-//    public static int ID { get; private set; }
+    
+    public const int NETWORK_FPS = 20;
+
+    public static int ID => InstanceManager.ID;
     public static System.Random random = new System.Random();
 
     public static int MatchmakingRoom = 1;
@@ -19,8 +28,11 @@ public class sClient : MonoBehaviour {
 
     private static float gameStartTime;
 
+    public static STATE state = STATE.FIND_MATCH;
+    
     public static void SetGameStarted() {
         gameStartTime = Time.time;
+        state = STATE.IN_GAME;
     }
 
     public static float GameTime => Time.time - gameStartTime;
@@ -30,6 +42,7 @@ public class sClient : MonoBehaviour {
     public static void Init() {
         if (initialized) return;
         initialized = true;
+        InstanceManager.Init();
         CommandsHandler.Init();
         
    //     ID = random.Next();
@@ -42,7 +55,16 @@ public class sClient : MonoBehaviour {
 
     void Update() {
         CommandsHandler.Update();
-        GameManager.Update();
+        RequestsManager.Update();
+        switch (state) {
+            case STATE.FIND_MATCH:
+                MatchesManager.Update();
+                break;
+            case STATE.IN_GAME:
+                GameManager.Update();
+                break;
+        }
+        //GameManager.Update();
     }
 
   /*  private static void HandleCommands() {

@@ -55,7 +55,7 @@ namespace Character.Guns {
                 var hp = other.GetComponent<HPController>();
 
                 if (hp != null) {
-                    float realDamage = hp.TakeDamage(damage, DamageSource.Player(gameObject));
+                    float realDamage = hp.TakeDamage(damage, DamageSource.Player(gameObject), false);
                     if (command is DrawTargetedTracerCommand c) {
                         c.HpChange.delta = -realDamage;
                         c.HpChange.source = DamageSource.Player(c.player);
@@ -75,8 +75,44 @@ namespace Character.Guns {
             float y = (float) sClient.random.NextGaussian(0, sigma);
             return new Vector3(x, y, 0);
         }
+
+   /*     // y = (kx - b)**2 - c
+        private static float calcb(float k, float x1, float y1, float x2, float y2) {
+            if (Mathf.Approximately(x1, x2)) return 0;
+            
+            return ((y1 - y2) + k * k * (x2 * x2 - x1 * x1)) /  
+                   (2 * k * (x2 - x1));
+        }
+
+        private static float calcc(float k, float b, float x1, float y1) {
+            float tmp = (k * x1 - b);
+            return tmp * tmp - y1;
+        }
+
+        private static void calcbc(float k, float x1, float y1, float x2, float y2, out float b, out float c) {
+            b = calcb(k, x1, y1, x2, y2);
+            c = calcc(k, b, x1, y1);
+        }
         
-        /*public static bool ShootRandomWithDamage(GameObject gameObject, float randomWidth, float randomDeep,
+        private static void calcInterpolation(float )*/
+
+        
+        
+        public static void ShootWithBomb(GameObject gameObject, Vector3 target, string bombPrefab) {
+            Vector3 start = GetGunPosition(gameObject.transform.position);
+            start += gameObject.transform.forward * 0.7f;
+            
+            float len = (target - start).magnitude;
+            Vector3 medium = (start + target) / 2 + Vector3.up * len;
+
+
+            float totalTime = len / 10f;
+            
+            CommandsHandler.gameModeRoom.RunSimpleCommand(new SpawnParabolaFlyingCommand(
+                new SpawnPrefabCommand(bombPrefab, start, Quaternion.identity, ObjectID.RandomID, sClient.ID, ObjectID.GetID(gameObject)),
+                medium, target, totalTime), MessageFlags.IMPORTANT);
+        }
+        /*public static bool ShootRandom)WithDamage(GameObject gameObject, float randomWidth, float randomDeep,
             float damage) {
             float randompoi
         }*/

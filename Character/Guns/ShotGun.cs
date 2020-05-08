@@ -32,7 +32,7 @@ namespace Character.Guns {
         }
         
         public void Run() {
-            var go = Client.client.SpawnObject(new SpawnPrefabCommand("shotgun", position, Quaternion.identity, id, 0));
+            var go = Client.client.SpawnObject(new SpawnPrefabCommand("shotgun", position, Quaternion.identity, id, 0, 0));
             go.GetComponent<ShotgunController>().gun = this;
         }
     }

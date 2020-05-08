@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using CommandsSystem.Commands;
+using Networking;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Character.HP {
@@ -22,17 +24,32 @@ namespace Character.HP {
         }
 
         // returns real taken damage
-        public float TakeDamage(float damage, int source) {
+        public float TakeDamage(float damage, int source, bool autoSendChange) {
             float realDamage = Mathf.Min(currentHp, damage);
-            currentHp -= realDamage;
 
-            if (currentHp == 0) {
-                // TODO        
+            if (autoSendChange) {
+                CommandsHandler.gameModeRoom.RunSimpleCommand(new ChangeHPCommand(ObjectID.GetID(gameObject), 
+                    new HPChange(-realDamage, source)), MessageFlags.IMPORTANT);
+            } else {
+                _applyHpChange(new HPChange(-realDamage, source));
             }
+        
+            
 
             return realDamage;
         }
-        
+
+        public void _applyHpChange(HPChange hpChange) {
+            currentHp += hpChange.delta;
+            if (currentHp > MaxHP)
+                currentHp = MaxHP;
+
+            EventsManager.handler.OnObjectChangedHP(gameObject, hpChange.delta, hpChange.source);
+            
+            if (currentHp <= 0) {
+                EventsManager.handler.OnObjectDead(gameObject, hpChange.source);
+            }
+        }
     }
 
 

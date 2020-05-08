@@ -77,5 +77,16 @@ namespace Interpolation {
         public static float InterpolateFloat(float last, float next, float coef) {
             return (next - last) * coef + last;
         }
+
+        public static float BezierCurve(float p0, float p1, float p2, float t) {
+            return (1 - t) * (1 - t) * p0 + 2 * (1 - t) * t * p1 + t * t * p2;
+        }
+
+        public static Vector3 BezierCurve(Vector3 p0, Vector3 p1, Vector3 p2, float t) {
+            float x = BezierCurve(p0.x, p1.x, p2.x, t);
+            float y = BezierCurve(p0.y, p1.y, p2.y, t);
+            float z = BezierCurve(p0.z, p1.z, p2.z, t);
+            return new Vector3(x, y, z);
+        }
     }
 }

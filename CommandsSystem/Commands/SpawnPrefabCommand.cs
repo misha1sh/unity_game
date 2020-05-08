@@ -7,6 +7,7 @@ namespace CommandsSystem.Commands {
         public Quaternion rotation;
         public int id;
         public int owner;
+        public int creator;
         
         private static System.Random random = new System.Random();
 
@@ -20,7 +21,7 @@ namespace CommandsSystem.Commands {
         }*/
         
         public void Run() {
-            Client.client.SpawnObject(this);
+            var go = Client.client.SpawnObject(this);
         }
         
     }

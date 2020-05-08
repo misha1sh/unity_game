@@ -18,5 +18,9 @@ namespace Character.HP {
         public static int Player(GameObject gameObject) {
             return Player(ObjectID.GetID(gameObject));
         }
+
+        public static int Bomb() {
+            return 2;
+        }
     }
 }

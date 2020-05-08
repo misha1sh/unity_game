@@ -22,7 +22,7 @@ this.playerId = playerId;
 
         private byte[] SerializeLittleEndian() {
             unsafe {
-var arr = new byte[69];
+var arr = new byte[73];
 var bytes_command_prefabName= Encoding.UTF8.GetBytes(command.prefabName);
     Assert.IsTrue(bytes_command_prefabName.Length <= 25);
 
@@ -93,11 +93,16 @@ arr[61] = (byte)(command.owner & 0x000000ff);
    arr[63] = (byte)((command.owner & 0x00ff0000) >> 16);
    arr[64] = (byte)((command.owner & 0xff000000) >> 24);
 
+arr[65] = (byte)(command.creator & 0x000000ff);
+   arr[66] = (byte)((command.creator & 0x0000ff00) >> 8);
+   arr[67] = (byte)((command.creator & 0x00ff0000) >> 16);
+   arr[68] = (byte)((command.creator & 0xff000000) >> 24);
 
-arr[65] = (byte)(playerId & 0x000000ff);
-   arr[66] = (byte)((playerId & 0x0000ff00) >> 8);
-   arr[67] = (byte)((playerId & 0x00ff0000) >> 16);
-   arr[68] = (byte)((playerId & 0xff000000) >> 24);
+
+arr[69] = (byte)(playerId & 0x000000ff);
+   arr[70] = (byte)((playerId & 0x0000ff00) >> 8);
+   arr[71] = (byte)((playerId & 0x00ff0000) >> 16);
+   arr[72] = (byte)((playerId & 0xff000000) >> 24);
 
 
                 return arr;
@@ -113,7 +118,7 @@ arr[65] = (byte)(playerId & 0x000000ff);
         
         private static SpawnPlayerCommand DeserializeLittleEndian(byte[] arr) {
             var result = new SpawnPlayerCommand();
-            Assert.AreEqual(arr.Length, 69);
+            Assert.AreEqual(arr.Length, 73);
             unsafe {
 result.command = new SpawnPrefabCommand();
 int len_result_command_prefabName;
@@ -163,8 +168,10 @@ result.command.id = (arr[57] | (arr[58] << 8) | (arr[59] << 16) | (arr[60] << 24
 
 result.command.owner = (arr[61] | (arr[62] << 8) | (arr[63] << 16) | (arr[64] << 24));
 
+result.command.creator = (arr[65] | (arr[66] << 8) | (arr[67] << 16) | (arr[68] << 24));
 
-result.playerId = (arr[65] | (arr[66] << 8) | (arr[67] << 16) | (arr[68] << 24));
+
+result.playerId = (arr[69] | (arr[70] << 8) | (arr[71] << 16) | (arr[72] << 24));
 
              
                 return result;

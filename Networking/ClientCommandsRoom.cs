@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using CommandsSystem;
 using CommandsSystem.Commands;
+using Game;
 using UnityEngine;
 
 namespace Networking {
@@ -12,6 +14,8 @@ namespace Networking {
         public static int SPAWN_GUN = 3;
 
         public static int ADD_AI_PLAYER = 4;
+        public static int CHOOSE_GAMEMODE = 5;
+        public static int EXPLODE_BOMB = 6;
     }
     
     public class ClientCommandsRoom {
@@ -22,11 +26,13 @@ namespace Networking {
         private float lastTimeRequestSended = Time.time;
 
         public int roomID;
-        public ClientCommandsRoom(int roomID) {
+        public ClientCommandsRoom(int roomID, bool alreadyJoined=false) {
             this.roomID = roomID;
-            RunJoinMessage();
-            RunAskMessage(0, int.MaxValue, MessageFlags.SEND_ONLY_IMPORTANT);
+            if (!alreadyJoined)
+               RunJoinMessage();
+            RunAskMessage(0, -1, MessageFlags.NONE); // MessageFlags.SEND_ONLY_IMPORTANT);
         }
+
 
         ~ClientCommandsRoom() {
             RunLeaveMessage();
@@ -37,20 +43,28 @@ namespace Networking {
             var data = commandsSystem.EncodeSimpleCommand(command, roomID, flags);
             CommandsHandler.webSocketHandler.clientToServerMessages.Enqueue(data);
             if (flags.HasFlag(MessageFlags.IMPORTANT))
-                UberDebug.LogChannel("SendCommand", $"SimpleCommand {command}");
+                UberDebug.LogChannel("SendCommand", "room#" +roomID+$" SimpleCommand {command} {flags}");
         }
 
         public void RunUniqCommand(ICommand command, int i1, int i2, MessageFlags flags) {
             var data = commandsSystem.EncodeUniqCommand(command, roomID, i1, i2, flags);
             CommandsHandler.webSocketHandler.clientToServerMessages.Enqueue(data);
             if (flags.HasFlag(MessageFlags.IMPORTANT))
-                UberDebug.LogChannel("SendCommand", $"UniqCommand {command} {i1} {i2}");
+                UberDebug.LogChannel("SendCommand", "room#" +roomID+$" UniqCommand {command} {i1} {i2} {flags}");
         }
 
+        public void RunJsonMessage(string json, MessageFlags flags=MessageFlags.NONE) {
+            var data = commandsSystem.EncodeJsonMessage(json, roomID, MessageFlags.NONE);
+            CommandsHandler.webSocketHandler.clientToServerMessages.Enqueue(data);
+            UberDebug.LogChannel("SendCommand", "room#" +roomID+$" JsonMessage {json} {flags}");
+        }
+        
+        
+        
         private void RunAskMessage(int firstIndex, int lastIndex, MessageFlags flags) {
             var data = commandsSystem.EncodeAskMessage(roomID, firstIndex, lastIndex, flags);
             CommandsHandler.webSocketHandler.clientToServerMessages.Enqueue(data);
-            UberDebug.LogChannel("SendCommand", $"AskMessage {firstIndex} {lastIndex} {flags}");
+            UberDebug.LogChannel("SendCommand", "room#" +roomID+$" AskMessage {firstIndex} {lastIndex} {flags}");
         }
 
         private void RunJoinMessage() {
@@ -64,30 +78,44 @@ namespace Networking {
             CommandsHandler.webSocketHandler.clientToServerMessages.Enqueue(data);
             UberDebug.LogChannel("Client", $"LeaveMessage {roomID}");
         }
-        
-        
+
+        private void ReceiveCommand(ICommand command) {
+            if (command == null) return;
+
+            if (command is ChangePlayerProperty || command is DrawPositionTracerCommand ||
+                command is DrawTargetedTracerCommand || command is SetPlatformStateCommand) { } else {
+                UberDebug.LogChannel("ReceiveCommand", command.ToString());
+            }
+            //try {
+                command.Run();
+            /*} catch (Exception e) {
+                Debug.LogException(e);
+            }*/
+        }
+
         public void HandleCommand(int commandId, ICommand command) {
+//            UberDebug.LogChannel("DEBUG", "room#" +roomID+ " commandid#" +  commandId + " " + command);
+            if (commandId == -1)
+                ReceiveCommand(command);
+            
             if (commandId <= lastMessage || losedMessages.Contains(commandId)) {
-                Debug.LogWarning("CLIENT: Got message twice.");
+                UberDebug.LogWarningChannel("ReceiveCommand", "Got message twice. " + command.ToString());
                 return;
             }
 
+
+
             if (commandId == lastMessage + 1) {
                 lastMessage++;
-                if (command is ChangePlayerProperty || command is DrawPositionTracerCommand ||
-                    command is DrawTargetedTracerCommand) {
-                    // skip
-                } else {
-                    UberDebug.LogChannel("RecieveCommand", command.ToString());
-                }
-                command.Run();
+                ReceiveCommand(command);
             } else {
                 losedMessages.Add(commandId, command);
             }
             
             while (losedMessages.Contains(lastMessage + 1)) {
                 lastMessage++;
-                ((ICommand) losedMessages[(object) lastMessage]).Run();
+                var c = ((ICommand) losedMessages[(object) lastMessage]);
+                ReceiveCommand(c);
                 losedMessages.Remove(lastMessage);
             }
             

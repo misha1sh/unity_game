@@ -1,12 +1,18 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using Character.Guns;
 using GameMode;
 using TMPro;
 using UI;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 public class MainUIController : MonoBehaviour {
+    public static MainUIController mainui;
+    public void Awake() {
+        mainui = this;
+    }
 
     public Image gunImage;
 
@@ -18,8 +24,13 @@ public class MainUIController : MonoBehaviour {
     public MultiImagePanel bulletsPanel;
     public MultiImagePanel magazinesPanel;
 
+    public GameObject gunsPanel;
+    
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI taskText;
 
+
+    
     private void RedrawScore() {
         var text = new StringBuilder();
         text.AppendLine("<size=130%>Score</size>");
@@ -58,6 +69,11 @@ public class MainUIController : MonoBehaviour {
                 case SemiautoGun semiautoGun:
                     gunImage.sprite = semiautoSprite;
                     break;
+                case BombGun bombGun:
+                    gunImage.sprite = grenadeLauncherSprite;
+                    break;
+                default:
+                    throw new Exception("Unknown gun:" + gun);
             }
 
             if (gun is ReloadingGun g) {
@@ -75,7 +91,15 @@ public class MainUIController : MonoBehaviour {
         };
         
         RedrawScore();
+        
+        Object.DontDestroyOnLoad(gameObject);
     }
+
+
+    public void SetTask(string text) {
+        taskText.text = "<align=center><size=130%>Task</size></align>\n" + text;
+    }
+
 
 
 }
