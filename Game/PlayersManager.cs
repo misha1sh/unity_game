@@ -21,7 +21,7 @@ namespace GameMode {
             get {
                 var players2 = players.ToList();
                 players2.Sort((player1, player2) =>
-                    player2.totalScore.CompareTo(player1.score));
+                    player2.totalScore.CompareTo(player1.totalScore));
                 return players2;
             }
         }

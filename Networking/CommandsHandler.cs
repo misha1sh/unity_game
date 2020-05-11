@@ -16,6 +16,10 @@ namespace Networking {
             webSocketHandler.Start();
         }
 
+        public static void Reset() {
+            matchmakingRoom = gameRoom = gameModeRoom = null;
+        }
+
         public static ClientCommandsRoom RoomById(int id) {
             if (matchmakingRoom?.roomID == id)
                 return matchmakingRoom;

@@ -35,6 +35,7 @@ public class sClient : MonoBehaviour {
     public static STATE state = STATE.START_SCREEN;
     
     public static void SetGameStarted() {
+        if (state == STATE.IN_GAME) return;
         gameStartTime = Time.time;
         state = STATE.IN_GAME;
     }
@@ -54,6 +55,8 @@ public class sClient : MonoBehaviour {
 
     public static void Reset() {
         
+        CommandsHandler.Reset();
+        MatchesManager.Reset();
         PlayersManager.Reset();
         InstanceManager.Reset();
         GameManager.Reset();

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Text;
 using CommandsSystem;
+using Events;
+using Game;
 
 namespace JsonRequest {
     public class Response : ICommand {
@@ -26,7 +28,14 @@ namespace JsonRequest {
         }
 
         public void Run() {
-            RequestsManager.openedRequests[_id].GotResponse(this);
+            switch (_id) {
+                case -1: // changed match players
+                    MatchesManager.HandleJsonMatchChanged(json);
+                    break;
+                default:
+                    RequestsManager.openedRequests[_id].GotResponse(this);
+                    break;
+            }
         }
 
         public override string ToString() {

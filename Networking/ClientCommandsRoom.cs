@@ -95,8 +95,10 @@ namespace Networking {
 
         public void HandleCommand(int commandId, ICommand command) {
 //            UberDebug.LogChannel("DEBUG", "room#" +roomID+ " commandid#" +  commandId + " " + command);
-            if (commandId == -1)
+            if (commandId == -1) {
                 ReceiveCommand(command);
+                return;
+            }
             
             if (commandId <= lastMessage || losedMessages.Contains(commandId)) {
                 UberDebug.LogWarningChannel("ReceiveCommand", "Got message twice. " + command.ToString());

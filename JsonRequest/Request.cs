@@ -7,7 +7,8 @@ namespace JsonRequest {
     public enum RequestType {
         GetMatchesList,
         CreateMatch,
-        JoinMatch
+        JoinMatch,
+        ChangeMatchState
     }
     
     public class Request {

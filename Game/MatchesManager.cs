@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using CommandsSystem;
 using CommandsSystem.Commands;
+using Events;
 using GameMode;
 using JsonRequest;
 using LightJson;
@@ -16,6 +17,8 @@ namespace Game {
             WAIT_MATCHES_INFO,
             IN_MATCH
         }
+        
+        
         
         
         public static List<MatchInfo> matches = new List<MatchInfo>();
@@ -53,6 +56,7 @@ namespace Game {
             UberDebug.LogChannel("Matchmaking", "Joining match#" + matchid);
             var json = new JsonObject();
             json["matchid"] = matchid;
+            json["name"] = PlayersManager.mainPlayer.name;
             RequestsManager.Send(new Request(CommandsHandler.matchmakingRoom, RequestType.JoinMatch,
                 json, response => {
                     if (response["result"] != "success") {
@@ -66,12 +70,10 @@ namespace Game {
                     
                     CommandsHandler.gameRoom = new ClientCommandsRoom(matchid);
                     
+                    HandleJsonMatchChanged(response);
                     
-                    
-                    currentMatch = MatchInfo.FromJson(response["match"]);
-                    if (currentMatch.playersCount >= currentMatch.maxPlayersCount) {
-                        CommandsHandler.gameRoom.RunSimpleCommand(new StartGameCommand(123), MessageFlags.NONE);
-                    }
+                   /* currentMatch = MatchInfo.FromJson(response["match"]);
+                    EventsManager.handler.OnCurrentMatchChanged(currentMatch);*/
                 }));
         }
 
@@ -87,15 +89,38 @@ namespace Game {
                     UberDebug.LogChannel("Matchmaking", "Available matches: " + response["matches"].ToString());
                     foreach (var matchJson in response["matches"].AsJsonArray) {
                         var match = MatchInfo.FromJson(matchJson);
-                        if (match.playersCount < match.maxPlayersCount) {
+                        if (match.players.Count < match.maxPlayersCount) {
                             JoinMatch(match.roomid);
                             return;
                         }
                     }
-                                        
-                    var matchInfo = new MatchInfo("ser", ObjectID.RandomID, 2, 0);
+
+                    int mid = ObjectID.RandomID;
+                    var matchInfo = new MatchInfo("Match#" + mid, mid, 2, new List<string>(), 0);
                     CreateMatch(matchInfo);
                 }));
+        }
+
+        public static void StartGame() {
+            var json = new JsonObject();
+            json["matchid"] = currentMatch.roomid;
+            json["state"] = 1;
+            UberDebug.LogChannel("Matchmaking", "Starting game");
+            RequestsManager.Send(new Request(CommandsHandler.matchmakingRoom, RequestType.ChangeMatchState,
+                json, response => {
+                    if (response["result"] != "success") {
+                        UberDebug.LogErrorChannel("Matchmaking", "Error in json request: " + response.ToString());
+                        GameManager.Reset();
+                        return;
+                    }
+                    UberDebug.LogChannel("Matchmaking", "Started match: " + response["match"]);
+                }));
+
+        }
+        
+        public static void HandleJsonMatchChanged(JsonValue json) {
+            currentMatch = MatchInfo.FromJson(json["match"]);
+            EventsManager.handler.OnCurrentMatchChanged(currentMatch);
         }
         
         public static void Update() {
@@ -140,6 +165,10 @@ namespace Game {
                     break;
             }*/
 
+        }
+
+        public static void Reset() {
+            _state = STATE.START_FIND;
         }
     }
 }

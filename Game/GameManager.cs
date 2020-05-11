@@ -180,7 +180,13 @@ namespace GameMode {
                     }
                     
                     gamesCount++;
-                    showResultsWaitTime = 10;
+                    if (gamesCount == TOTAL_GAMES_COUNT) {
+                        MainUIController.mainui.ShowFinalResults();
+                        state = STATE.FINISH;
+                        break;
+                    }
+                    
+                    showResultsWaitTime = 3;
                     MainUIController.mainui.ShowTotalScore(TOTAL_GAMES_COUNT - gamesCount, 
                         (int)Math.Ceiling(showResultsWaitTime));
                     state = STATE.WAIT_SHOW_RESULTS;

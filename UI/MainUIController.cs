@@ -59,7 +59,7 @@ public class MainUIController : MonoBehaviour {
     public List<string> chatMessages = new List<string>();
 
 
-    private string ColorForPlayer(Player player) {
+    public string ColorForPlayer(Player player) {
         return PlayersManager.IsMainPlayer(player) ? "green" : "red";
     }
     
@@ -108,7 +108,8 @@ public class MainUIController : MonoBehaviour {
         exitButton.gameObject.SetActive(true);
         var text = new StringBuilder();
         text.AppendLine($"<size=130%>  Game Finished");
-        text.AppendLine($"Winner: {PlayersManager.playersSortedByTotalScore[0].name}</size>");
+        var winner = PlayersManager.playersSortedByTotalScore[0];
+        text.AppendLine($"  Winner: <color={ColorForPlayer(winner)}>{winner.name}</color></size>");
         text.AppendLine();
         text.AppendLine();
         text.AppendLine("<size=115%>Player <pos=35%>Score <pos=65%>Total score</size>");
@@ -122,7 +123,7 @@ public class MainUIController : MonoBehaviour {
     }
 
     public void ExitButtonClicked() {
-        
+        sClient.Reset();
     }
 
 

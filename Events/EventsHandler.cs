@@ -1,4 +1,5 @@
 ﻿using Character.Guns;
+using Game;
 using GameMode;
 using UnityEngine;
 
@@ -22,6 +23,11 @@ namespace Events {
 
         public delegate void ObjectGotDamage(GameObject go, float damage, int damageSource);
         public ObjectGotDamage OnObjectChangedHP = delegate { };
+
+
+
+        public delegate void CurrentMatchChanged(MatchInfo matchInfo);
+        public CurrentMatchChanged OnCurrentMatchChanged = delegate { };
         /*   public void (GameObject player, int bulletsCount) {
            
        }
