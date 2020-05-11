@@ -7,9 +7,11 @@ using GameMode;
 using JsonRequest;
 using Networking;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class sClient : MonoBehaviour {
     public enum STATE {
+        START_SCREEN,
         FIND_MATCH,
         IN_GAME
     }
@@ -30,7 +32,7 @@ public class sClient : MonoBehaviour {
 
     private static float gameStartTime;
 
-    public static STATE state = STATE.FIND_MATCH;
+    public static STATE state = STATE.START_SCREEN;
     
     public static void SetGameStarted() {
         gameStartTime = Time.time;
@@ -46,10 +48,23 @@ public class sClient : MonoBehaviour {
         initialized = true;
         InstanceManager.Init();
         CommandsHandler.Init();
-        
+        PlayersManager.mainPlayer = new Player(sClient.ID, sClient.ID, 0);
    //     ID = random.Next();
     }
 
+    public static void Reset() {
+        
+        PlayersManager.Reset();
+        InstanceManager.Reset();
+        GameManager.Reset();
+        state = STATE.START_SCREEN;
+        SceneManager.LoadScene("start_scene");
+    }
+
+    public static void StartFindingMatch() {
+        state = STATE.FIND_MATCH;
+    }
+    
     private void Awake() {
         Init();
     }

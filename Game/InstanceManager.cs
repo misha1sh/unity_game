@@ -11,5 +11,12 @@ namespace GameMode {
             instances.Add(currentInstance);
         }
 
+        public static void Reset() {
+            instances.Clear();
+            if (currentInstance != null) {
+                instances.Add(currentInstance);
+                currentInstance.currentLoadedGamemodeNum = -1;
+            }
+        }
     }
 }

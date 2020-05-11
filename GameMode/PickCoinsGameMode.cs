@@ -1,5 +1,6 @@
 ﻿using System;
 using CommandsSystem.Commands;
+using Events;
 using Networking;
 using UnityEngine;
 
@@ -59,7 +60,7 @@ namespace GameMode {
         }
 
         public float TimeLength() {
-            return 7f;
+            return 15f;
         }
     }
 }

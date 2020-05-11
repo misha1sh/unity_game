@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Events;
+using UnityEngine;
 
 namespace CommandsSystem.Commands {
     public partial class PickCoinCommand

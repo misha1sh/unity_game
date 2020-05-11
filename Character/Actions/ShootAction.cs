@@ -1,4 +1,5 @@
 ﻿using Character.Guns;
+using Events;
 using UnityEngine;
 
 namespace Character.Actions {

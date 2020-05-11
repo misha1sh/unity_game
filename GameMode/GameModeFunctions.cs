@@ -34,7 +34,11 @@ namespace GameMode {
                 pos1 = pos2 = Client.client.spawnPolygon.RandomPoint();
                 pos1.y = -3;
                 pos2.y = height;
-                Assert.IsTrue(iterCount++ < 100, $"Unable to find free place for object with height: {height:F2}, radius: {radius:F2}");
+                if (iterCount++ >= 100) {
+                    Debug.LogError($"Unable to find free place for object with height: {height:F2}, radius: {radius:F2}");
+                    return new Vector3(0, height  + Random.value * 10, 0);
+                }
+               // Assert.IsTrue(iterCount++ < 100, $"Unable to find free place for object with height: {height:F2}, radius: {radius:F2}");
                 var intersections = Physics.OverlapCapsule(pos1, pos2, radius, layerMask, QueryTriggerInteraction.Ignore);
                 if (intersections.Length != 1) continue;
                 var b = intersections[0];

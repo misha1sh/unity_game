@@ -1,4 +1,5 @@
-﻿using GameMode;
+﻿using Events;
+using GameMode;
 
 namespace CommandsSystem.Commands {
     public partial class ChangePlayerScore {

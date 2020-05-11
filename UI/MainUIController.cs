@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using Character.Guns;
+using CommandsSystem.Commands;
+using Events;
 using GameMode;
+using Networking;
 using TMPro;
 using UI;
 using UnityEngine;
@@ -9,9 +14,21 @@ using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 public class MainUIController : MonoBehaviour {
-    public static MainUIController mainui;
-    public void Awake() {
-        mainui = this;
+    private static MainUIController _mainui;
+    private static bool spawned = false;
+    public static MainUIController mainui {
+        get {
+            if (_mainui != null) return _mainui;
+            
+            _mainui = FindObjectOfType<MainUIController>();
+            if (_mainui != null) return _mainui;
+            if (spawned) return null; // means unity destroying scene
+            
+            var go = Client.client.SpawnPrefab("MainUI");
+            _mainui = go.GetComponent<MainUIController>();
+
+            return _mainui;
+        }
     }
 
     public Image gunImage;
@@ -32,9 +49,16 @@ public class MainUIController : MonoBehaviour {
 
     public GameObject totalScorePanel;
     public TextMeshProUGUI totalScoreText;
+    public Button exitButton;
 
 
+    public GameObject chatPanel;
+    public TMP_InputField chatInput;
+    public TextMeshProUGUI chatText;
     
+    public List<string> chatMessages = new List<string>();
+
+
     private string ColorForPlayer(Player player) {
         return PlayersManager.IsMainPlayer(player) ? "green" : "red";
     }
@@ -53,6 +77,8 @@ public class MainUIController : MonoBehaviour {
     private string totalScoreTextUnformatted = "{}";
     public void ShowTotalScore(int gamesRemaining, int timeRemaining) {
         totalScorePanel.SetActive(true);
+        exitButton.gameObject.SetActive(false);
+        
         var text = new StringBuilder();
         text.AppendLine($"<size=130%>  Games Remaining: {gamesRemaining}");
         text.AppendLine("  Time to next game: {0}</size>");
@@ -76,10 +102,31 @@ public class MainUIController : MonoBehaviour {
     public void HideTotalScore() {
         totalScorePanel.SetActive(false);
     }
-    
 
-    private void Start() {
+    public void ShowFinalResults() {
+        totalScorePanel.SetActive(true);
+        exitButton.gameObject.SetActive(true);
+        var text = new StringBuilder();
+        text.AppendLine($"<size=130%>  Game Finished");
+        text.AppendLine($"Winner: {PlayersManager.playersSortedByTotalScore[0].name}</size>");
+        text.AppendLine();
+        text.AppendLine();
+        text.AppendLine("<size=115%>Player <pos=35%>Score <pos=65%>Total score</size>");
+        
+        foreach (var player in PlayersManager.playersSortedByTotalScore) {
+            text.AppendLine($"<color={ColorForPlayer(player)}> {player.name}<pos=35%> {player.score} " +
+                            $"<pos=65%>{player.totalScore}(+{PlayersManager.playersCount - player.placeInLastGame + 1})</color>");
+        }
 
+        totalScoreText.text = text.ToString();
+    }
+
+    public void ExitButtonClicked() {
+        
+    }
+
+
+    public void SetupHandlers() {
         EventsManager.handler.OnPlayerBulletsCountChanged += (player, count) => {
             if (player != Client.client.mainPlayerObj) return;
             bulletsPanel.SetActiveImagesCount(count);
@@ -121,10 +168,14 @@ public class MainUIController : MonoBehaviour {
         EventsManager.handler.OnPlayerScoreChanged += (_player, score) => {
             RedrawScore();
         };
-        
-        RedrawScore();
-        
+    }
+
+    private void Awake() {
         Object.DontDestroyOnLoad(gameObject);
+        spawned = true;
+        RedrawScore();
+        RedrawChat();
+        
     }
 
 
@@ -133,5 +184,47 @@ public class MainUIController : MonoBehaviour {
     }
 
 
+    public void StartTyping() {
+        sClient.isTyping = true;
+    }
 
+    public void StopTyping() {
+        sClient.isTyping = false;
+    }
+
+    public void SendToChat() {
+        //chatText.text = chatInput.text;
+        string message = chatInput.text;
+        CommandsHandler.gameRoom.RunSimpleCommand(new CreateChatMessageCommand(PlayersManager.mainPlayer.id, message), 
+            MessageFlags.NONE);
+            
+        chatInput.text = "";
+        StopTyping();
+        chatInput.DeactivateInputField(true); 
+    }
+
+    public void AddChatMessage(Player player, string message) {
+        message = $"<color={ColorForPlayer(player)}>{player.name}: {message}</color>";
+        chatMessages.Add(message);
+        if (chatMessages.Count > 5)
+            chatMessages.RemoveAt(0);
+        
+        RedrawChat();
+        StartCoroutine(DeleteMessageAfterTime(7, message));
+    }
+
+    private IEnumerator DeleteMessageAfterTime(float time, string message) {
+        yield return new WaitForSeconds(time);
+        chatMessages.Remove(message);
+        RedrawChat();
+    }
+
+    public void RedrawChat() {
+        var text = new StringBuilder();
+        foreach (var message in chatMessages) {
+            text.AppendLine(message);
+        }
+
+        chatText.text = text.ToString();
+    }
 }

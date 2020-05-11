@@ -16,6 +16,16 @@ namespace GameMode {
                 return players2;
             }
         }
+        
+        public static List<Player> playersSortedByTotalScore {
+            get {
+                var players2 = players.ToList();
+                players2.Sort((player1, player2) =>
+                    player2.totalScore.CompareTo(player1.score));
+                return players2;
+            }
+        }
+        
         public static Player mainPlayer;
 
         public static int playersCount => players.Count;
@@ -43,5 +53,10 @@ namespace GameMode {
             return PlayersManager.mainPlayer != null && player.id == PlayersManager.mainPlayer.id;
         }
 
+        public static void Reset() {
+            players.Clear();
+            if (mainPlayer != null)
+                players.Add(mainPlayer);
+        }
     }
 }

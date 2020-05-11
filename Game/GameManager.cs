@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using Character;
 using CommandsSystem.Commands;
+using Events;
 using Networking;
 using UI;
 using UnityEngine;
@@ -82,6 +83,9 @@ namespace GameMode {
            
             InstanceManager.currentInstance.currentLoadedGamemodeNum++;
             InstanceManager.currentInstance.Send();
+           
+            
+            MainUIController.mainui.HideTotalScore();
 
       
             
@@ -95,10 +99,17 @@ namespace GameMode {
         public static void SetAfterShowResults() {
             if (state == STATE.WAIT_AFTER_SHOW_RESULTS)
                 state = STATE.AFTER_SHOW_RESULTS;
+            MainUIController.mainui.HideTotalScore();
         }
         
 
         private static float showResultsWaitTime;
+
+        public static void Reset() {
+            state = STATE.INIT;
+            gamesCount = 0;
+            gameMode = null;
+        }
         
         public static void Update() {
             switch (state) {
@@ -108,7 +119,8 @@ namespace GameMode {
                     
                     InstanceManager.currentInstance.Send();
                     
-                    PlayersManager.mainPlayer = new Player(sClient.ID, sClient.ID, 0);
+                 
+                 
                     CommandsHandler.gameRoom.RunSimpleCommand(new AddPlayerToGame(PlayersManager.mainPlayer), MessageFlags.IMPORTANT);
                     for (int i = 0; i < 2; i++) {
                         var ai = new Player(ObjectID.RandomID, sClient.ID, 1);

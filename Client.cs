@@ -58,8 +58,7 @@ public class Client : MonoBehaviour
             prefabs.Add(prefab.name, prefab);
         }
 
-        if (FindObjectsOfType<MainUIController>().Length == 0)
-            Instantiate(prefabs["MainUI"]);
+
         //ObjectID.StoreObject(player, player.GetInstanceID());
 
         var c = new SpawnPrefabCommand("123123", Vector3.back, Quaternion.identity, 123, 4, 778);
@@ -102,6 +101,10 @@ public class Client : MonoBehaviour
         return gameObject;
     }
 
+    public GameObject SpawnPrefab(string name, Vector3 position = new Vector3(),
+        Quaternion rotation = new Quaternion()) {
+        return Instantiate(prefabs[name], position, rotation);
+    }
 
 
 //#endif
