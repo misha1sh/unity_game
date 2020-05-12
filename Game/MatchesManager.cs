@@ -15,7 +15,9 @@ namespace Game {
         public enum STATE {
             START_FIND,
             WAIT_MATCHES_INFO,
-            IN_MATCH
+            WAIT_PLAYERS_IN_MATCH,
+            WAIT_STARTING_MATCH,
+            PLAYING_MATCH
         }
         
         
@@ -66,7 +68,7 @@ namespace Game {
                     }
                     UberDebug.LogChannel("Matchmaking", "Joined match#" + matchid);
                     
-                    state = STATE.IN_MATCH;
+                    state = STATE.WAIT_PLAYERS_IN_MATCH;
                     
                     CommandsHandler.gameRoom = new ClientCommandsRoom(matchid);
                     
@@ -101,7 +103,16 @@ namespace Game {
                 }));
         }
 
-        public static void StartGame() {
+        public static void SendStartGame() {
+            if (state == STATE.WAIT_STARTING_MATCH) return;
+            if (state == STATE.PLAYING_MATCH) return;
+            if (state != STATE.WAIT_PLAYERS_IN_MATCH) {
+                UberDebug.LogErrorChannel("Matchmaking", $"Invalid state of MatchesManager: {state} while trying to start match!");
+                return;
+            }
+
+            state = STATE.WAIT_STARTING_MATCH;
+            
             var json = new JsonObject();
             json["matchid"] = currentMatch.roomid;
             json["state"] = 1;
@@ -113,14 +124,23 @@ namespace Game {
                         GameManager.Reset();
                         return;
                     }
-                    UberDebug.LogChannel("Matchmaking", "Started match: " + response["match"]);
+                    UberDebug.LogChannel("Matchmaking", "Started match: " + response["match"].ToString());
                 }));
 
         }
+
+        public static void SetMatchIsPlaying() {
+            state = STATE.PLAYING_MATCH;
+        }
         
         public static void HandleJsonMatchChanged(JsonValue json) {
-            currentMatch = MatchInfo.FromJson(json["match"]);
-            EventsManager.handler.OnCurrentMatchChanged(currentMatch);
+            UberDebug.LogChannel("Matchmaking", "Match changed " + json.ToString());
+            var mi = MatchInfo.FromJson(json["match"]);
+
+            var last = currentMatch;
+            currentMatch = mi;
+
+            EventsManager.handler.OnCurrentMatchChanged(last, currentMatch);
         }
         
         public static void Update() {
@@ -133,7 +153,11 @@ namespace Game {
                     break;
                 case STATE.WAIT_MATCHES_INFO:
                     break;
-                case STATE.IN_MATCH:
+                case STATE.WAIT_PLAYERS_IN_MATCH:
+                    break;
+                case STATE.WAIT_STARTING_MATCH:
+                    break;
+                case STATE.PLAYING_MATCH:
                     break;
             }
            /* switch (state) {

@@ -30,7 +30,7 @@ namespace UI {
         private void Start() {
             MainUIController.mainui.gameObject.SetActive(false);
 
-            EventsManager.handler.OnCurrentMatchChanged += currentMatch => {
+            EventsManager.handler.OnCurrentMatchChanged += (last, currentMatch) => {
 
                 var text = new StringBuilder();
                 text.AppendLine(currentMatch.name);
@@ -40,16 +40,14 @@ namespace UI {
                     text.AppendLine($"<color={color}> -{player}</color>");
                 }
                 matchInfoText.SetText(text.ToString());
+                
+                
+                
                 if (currentMatch.players.Count >= currentMatch.maxPlayersCount) {
-                    MatchesManager.StartGame();
+                    MatchesManager.SendStartGame();
                 }
 
-                if (currentMatch.state == 1) {
-                    CommandsHandler.gameRoom.RunSimpleCommand(new StartGameCommand(123), MessageFlags.NONE);
-                }
-
-
-                MatchesManager.currentMatch = currentMatch;
+      
             };
         }
 

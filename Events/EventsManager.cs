@@ -15,6 +15,7 @@ namespace Events {
             //  m_handler = new EventsHandler();
             handler = new EventsHandler();
             MainUIController.mainui.SetupHandlers();
+            sClient.SetupHandlers();
         }
     }
 }

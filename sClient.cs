@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using CommandsSystem;
 using CommandsSystem.Commands;
+using Events;
 using Game;
 using GameMode;
 using JsonRequest;
@@ -13,6 +14,7 @@ public class sClient : MonoBehaviour {
     public enum STATE {
         START_SCREEN,
         FIND_MATCH,
+        WAITING_FOR_START,
         IN_GAME
     }
 
@@ -34,10 +36,14 @@ public class sClient : MonoBehaviour {
 
     public static STATE state = STATE.START_SCREEN;
     
+    
+    
     public static void SetGameStarted() {
-        if (state == STATE.IN_GAME) return;
+        if (state != STATE.WAITING_FOR_START) 
+            Debug.LogError("Called SetGameStarted but sClient state is " + state);
         gameStartTime = Time.time;
         state = STATE.IN_GAME;
+        MatchesManager.SetMatchIsPlaying();
     }
 
     public static float GameTime => Time.time - gameStartTime;
@@ -67,7 +73,18 @@ public class sClient : MonoBehaviour {
     public static void StartFindingMatch() {
         state = STATE.FIND_MATCH;
     }
-    
+
+    public static void SetupHandlers() {
+        EventsManager.handler.OnCurrentMatchChanged += (last, current) => {
+            if (last != null && current != null && last.state == 0 && current.state == 1) {
+                state = STATE.WAITING_FOR_START;
+                CommandsHandler.gameRoom.RunUniqCommand(new StartGameCommand(123), UniqCodes.START_GAME, 0,
+                    MessageFlags.NONE);
+            }
+        };
+    }
+
+
     private void Awake() {
         Init();
     }
@@ -80,8 +97,12 @@ public class sClient : MonoBehaviour {
         CommandsHandler.Update();
         RequestsManager.Update();
         switch (state) {
+            case STATE.START_SCREEN:
+                break;
             case STATE.FIND_MATCH:
                 MatchesManager.Update();
+                break;
+            case STATE.WAITING_FOR_START:
                 break;
             case STATE.IN_GAME:
                 GameManager.Update();

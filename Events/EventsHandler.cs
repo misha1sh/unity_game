@@ -26,7 +26,7 @@ namespace Events {
 
 
 
-        public delegate void CurrentMatchChanged(MatchInfo matchInfo);
+        public delegate void CurrentMatchChanged(MatchInfo last, MatchInfo current);
         public CurrentMatchChanged OnCurrentMatchChanged = delegate { };
         /*   public void (GameObject player, int bulletsCount) {
            

@@ -16,6 +16,7 @@ namespace Networking {
         public static int ADD_AI_PLAYER = 4;
         public static int CHOOSE_GAMEMODE = 5;
         public static int EXPLODE_BOMB = 6;
+        public static int START_GAME = 7;
     }
     
     public class ClientCommandsRoom {
