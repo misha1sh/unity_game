@@ -45,6 +45,7 @@ public class MainUIController : MonoBehaviour {
     
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI taskText;
+    public TextMeshProUGUI timerText;
 
 
     public GameObject totalScorePanel;
@@ -65,7 +66,7 @@ public class MainUIController : MonoBehaviour {
     
     private void RedrawScore() {
         var text = new StringBuilder();
-        text.AppendLine("<size=130%>Score</size>");
+        text.AppendLine("<size=130%><align=center>Score</align></size>");
         foreach (var player in PlayersManager.players) {
             text.AppendLine($"<color={ColorForPlayer(player)}> {player.name}    <pos=65%>{player.score}</color>");
         }
@@ -73,8 +74,20 @@ public class MainUIController : MonoBehaviour {
         scoreText.text = text.ToString();
     }
 
+    
+    
 
     private string totalScoreTextUnformatted = "{}";
+
+    private void AddScoreTable(StringBuilder text) {
+        text.AppendLine("<size=110%>Player <pos=23%>Score in last game <pos=65%>Total score</size>");
+        text.AppendLine();
+        foreach (var player in PlayersManager.playersSortedByScore) {
+            text.AppendLine($"<color={ColorForPlayer(player)}> {player.name}<pos=23%> {player.score} " +
+                            $"<pos=65%>{player.totalScore}(+{PlayersManager.playersCount - player.placeInLastGame + 1})</color>");
+        }
+    }
+    
     public void ShowTotalScore(int gamesRemaining, int timeRemaining) {
         totalScorePanel.SetActive(true);
         exitButton.gameObject.SetActive(false);
@@ -84,11 +97,7 @@ public class MainUIController : MonoBehaviour {
         text.AppendLine("  Time to next game: {0}</size>");
         text.AppendLine();
         text.AppendLine();
-        text.AppendLine("<size=115%>Player <pos=35%>Score <pos=65%>Total score</size>");
-        foreach (var player in PlayersManager.playersSortedByScore) {
-            text.AppendLine($"<color={ColorForPlayer(player)}> {player.name}<pos=35%> {player.score} " +
-                            $"<pos=65%>{player.totalScore}(+{PlayersManager.playersCount - player.placeInLastGame + 1})</color>");
-        }
+        AddScoreTable(text);
 
         totalScoreTextUnformatted = text.ToString();
         
@@ -112,17 +121,13 @@ public class MainUIController : MonoBehaviour {
         text.AppendLine($"  Winner: <color={ColorForPlayer(winner)}>{winner.name}</color></size>");
         text.AppendLine();
         text.AppendLine();
-        text.AppendLine("<size=115%>Player <pos=35%>Score <pos=65%>Total score</size>");
-        
-        foreach (var player in PlayersManager.playersSortedByTotalScore) {
-            text.AppendLine($"<color={ColorForPlayer(player)}> {player.name}<pos=35%> {player.score} " +
-                            $"<pos=65%>{player.totalScore}(+{PlayersManager.playersCount - player.placeInLastGame + 1})</color>");
-        }
+        AddScoreTable(text);
 
         totalScoreText.text = text.ToString();
     }
 
     public void ExitButtonClicked() {
+        UberDebug.Log("Client", "exiting match");
         sClient.Reset();
     }
 
@@ -164,7 +169,10 @@ public class MainUIController : MonoBehaviour {
             }
         };
 
-        EventsManager.handler.OnPlayerDroppedGun += (player, gun) => { gunImage.enabled = false; };
+        EventsManager.handler.OnPlayerDroppedGun += (player, gun) => {
+            if (player != Client.client.mainPlayerObj) return;
+            gunImage.enabled = false;
+        };
 
         EventsManager.handler.OnPlayerScoreChanged += (_player, score) => {
             RedrawScore();
@@ -172,7 +180,7 @@ public class MainUIController : MonoBehaviour {
     }
 
     private void Awake() {
-        Object.DontDestroyOnLoad(gameObject);
+       Object.DontDestroyOnLoad(gameObject);
         spawned = true;
         RedrawScore();
         RedrawChat();
@@ -189,15 +197,18 @@ public class MainUIController : MonoBehaviour {
         sClient.isTyping = true;
     }
 
+    private bool recentlyStoppedTyping = false;
     public void StopTyping() {
+        recentlyStoppedTyping = true;
         sClient.isTyping = false;
     }
 
     public void SendToChat() {
         //chatText.text = chatInput.text;
         string message = chatInput.text;
-        CommandsHandler.gameRoom.RunSimpleCommand(new CreateChatMessageCommand(PlayersManager.mainPlayer.id, message), 
-            MessageFlags.NONE);
+        if (message != "")
+            CommandsHandler.gameRoom.RunSimpleCommand(new CreateChatMessageCommand(PlayersManager.mainPlayer.id, message), 
+                MessageFlags.NONE);
             
         chatInput.text = "";
         StopTyping();
@@ -207,7 +218,7 @@ public class MainUIController : MonoBehaviour {
     public void AddChatMessage(Player player, string message) {
         message = $"<color={ColorForPlayer(player)}>{player.name}: {message}</color>";
         chatMessages.Add(message);
-        if (chatMessages.Count > 5)
+        if (chatMessages.Count > 4)
             chatMessages.RemoveAt(0);
         
         RedrawChat();
@@ -227,5 +238,26 @@ public class MainUIController : MonoBehaviour {
         }
 
         chatText.text = text.ToString();
+    }
+
+    private int lasttime = -1;
+    public void SetTimerTime(int time) {
+        if (lasttime == time) return;
+        lasttime = time;
+
+        int minutes = time / 60;
+        int seconds = time % 60;
+        timerText.text = $"{minutes:00}:{seconds:00}";
+    }
+
+
+    private void Update() {
+        if (recentlyStoppedTyping) {
+            recentlyStoppedTyping = false;
+        } else {
+            if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) && !sClient.isTyping) {
+                chatInput.ActivateInputField();
+            }
+        }
     }
 }

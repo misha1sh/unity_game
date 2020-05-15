@@ -1,6 +1,7 @@
 ﻿using System;
 using CommandsSystem;
 using Events;
+using Interpolation.Managers;
 using Networking;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -28,19 +29,19 @@ namespace Character.Guns {
             private set {
                 _bulletsCount = value;
                 if (player != null) {
-                    EventsManager.handler.OnPlayerBulletsCountChanged(player, _bulletsCount);
+                    EventsManager.handler.OnPlayerBulletsCountChanged(player.gameObject, _bulletsCount);
                 }
             } 
         }
 
         // not includes current magazine
-        public int _magazinesCount = 3;
+        public int _magazinesCount = 1;
         public int magazinesCount {
             get => _magazinesCount;
             private set {
                 _magazinesCount = value;
                 if (player != null) {
-                    EventsManager.handler.OnPlayerMagazinesCountChanged(player, _magazinesCount);
+                    EventsManager.handler.OnPlayerMagazinesCountChanged(player.gameObject, _magazinesCount);
                 }
             }
         }
@@ -56,9 +57,9 @@ namespace Character.Guns {
         }
 
 
-        protected GameObject player;
+        protected MotionController player;
         public void OnPickedUp(GameObject player) {
-            this.player = player;
+            this.player = player.GetComponent<MotionController>();
             if (bulletsCount == 0) {
                 SetReloadMagazine();
             }            
@@ -66,23 +67,24 @@ namespace Character.Guns {
 
         public bool IsEmpty() => bulletsCount == 0 && magazinesCount == 0;
 
-        public void OnDropped() {
-            if (!IsEmpty()) // just destroy it
-            {
-                var motionController = player.GetComponent<MotionController>();
-                Vector3 dir;
-               /* var dir = motionController.TargetDirection;
-                if (dir.sqrMagnitude < 0.01f) {*/
-                    var rig = player.GetComponent<Rigidbody>();
-                    dir = rig.velocity;
-                    if (dir.sqrMagnitude < 0.01f)
-                        dir = new Vector3(Random.value - 0.5f, 0, Random.value - 0.5f);//player.transform.forward;
-                //}
+        private void Spawn() {
+            Vector3 dir;
+            var rig = player.GetComponent<Rigidbody>();
+            dir = rig.velocity;
+            if (dir.sqrMagnitude < 0.01f)
+                dir = new Vector3(Random.value - 0.5f, 0, Random.value - 0.5f);//player.transform.forward;
+            //}
 
-                id = ObjectID.RandomID;
-                this.position = player.transform.position - dir.normalized * 2  + Vector3.up;
-                CommandsHandler.gameRoom.RunSimpleCommand(this as ICommand, MessageFlags.IMPORTANT);
-            }
+            id = ObjectID.RandomID;
+            this.position = player.transform.position - dir.normalized * 2  + Vector3.up;
+            CommandsHandler.gameRoom.RunSimpleCommand(this as ICommand, MessageFlags.IMPORTANT);
+        }
+        
+        public void OnDropped() {
+         /*   if (!IsEmpty()) // just destroy it
+            {
+                Spawn();
+            }*/
  
             this.player = null;
           /*  

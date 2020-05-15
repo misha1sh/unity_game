@@ -24,7 +24,7 @@ namespace Character.Guns {
         ///  public int _state;
 
         protected override void DoShoot() {
-            ShootSystem.ShootWithBomb(player, player.GetComponent<ActionController>().Target, "bomb");
+            ShootSystem.ShootWithBomb(player.gameObject, player.GetComponent<ActionController>().Target, "bomb");
         }
 
         public void Run() {

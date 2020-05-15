@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Character;
@@ -9,11 +10,13 @@ using UI;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
+using Util2;
 using Debug = UnityEngine.Debug;
+using Random = UnityEngine.Random;
 
 namespace GameMode {
     public static class GameManager {
-        private const int TOTAL_GAMES_COUNT = 3;
+        private const int TOTAL_GAMES_COUNT = 2;
         
         
         private enum STATE {
@@ -30,9 +33,9 @@ namespace GameMode {
             AFTER_SHOW_RESULTS,
             FINISH
         }
-        
-        
 
+
+        public static bool sceneReloaded = false;
         
         public static int gamesCount = 0;
         
@@ -64,21 +67,23 @@ namespace GameMode {
             
             var ttest = new Stopwatch();
             ObjectID.Clear();
-            SceneManager.LoadScene("neon_scene");
+            sceneReloaded = true;
+            sClient.LoadScene("new_scene1");
             Debug.LogError("Loaded scene in " + ttest.ElapsedMilliseconds);
 
 
             switch (gamemodeCode) {
-                case 1:
+                case 0:
                     gameMode = new ShooterGameMode();
                     break;
-                case 2:
+                case 1:
                     gameMode = new PickCoinsGameMode();
                     break;
                 default:
                     throw new ArgumentException($"Unknown gamemodeCode: {gamemodeCode}");
             }
 
+            availableGameModes.Remove(gamemodeCode);
   
            
             InstanceManager.currentInstance.currentLoadedGamemodeNum++;
@@ -111,32 +116,55 @@ namespace GameMode {
             gameMode = null;
         }
         
+        
+        
+        private static List<int> availableGameModes = new List<int>();
+
+        private static int ChooseGameMode() {
+            if (availableGameModes.Count == 0) {
+                Debug.LogError("no available game modes. choosing random one");
+                return Random.Range(0, 2);
+            }
+
+            var index = Random.Range(0, availableGameModes.Count);
+            return availableGameModes[index];
+        }
+
         public static void Update() {
             switch (state) {
                 case STATE.INIT:
-                 //   CommandsHandler.gameRoom = new ClientCommandsRoom(137);
-                    CommandsHandler.gameRoom.RunUniqCommand(new StartGameCommand(), 1, 1, MessageFlags.IMPORTANT);
+                    //   CommandsHandler.gameRoom = new ClientCommandsRoom(137);
+                    //    CommandsHandler.gameRoom.RunUniqCommand(new StartGameCommand(), 1, 1, MessageFlags.IMPORTANT);
+
+                    availableGameModes.Clear();
+                    availableGameModes.Add(0);
+                    availableGameModes.Add(1);
                     
                     InstanceManager.currentInstance.Send();
-                    
-                 
-                 
-                    CommandsHandler.gameRoom.RunSimpleCommand(new AddPlayerToGame(PlayersManager.mainPlayer), MessageFlags.IMPORTANT);
-                    for (int i = 0; i < 2; i++) {
+
+
+
+                    CommandsHandler.gameRoom.RunSimpleCommand(new AddPlayerToGame(PlayersManager.mainPlayer),
+                        MessageFlags.IMPORTANT);
+                    int cnt = 2;
+                    if (AutoMatchJoiner.isRunning && !AutoMatchJoiner.sneedWaitOtherPlayers)
+                        cnt = 3;
+                    for (int i = 0; i < cnt; i++) {
                         var ai = new Player(ObjectID.RandomID, sClient.ID, 1);
-                        CommandsHandler.gameRoom.RunUniqCommand(new AddPlayerToGame(ai), UniqCodes.ADD_AI_PLAYER, i, MessageFlags.IMPORTANT);
+                        CommandsHandler.gameRoom.RunUniqCommand(new AddPlayerToGame(ai), UniqCodes.ADD_AI_PLAYER, i,
+                            MessageFlags.IMPORTANT);
                     }
-                    
+
                     state = STATE.WAIT_OTHERS;
                     break;
                 case STATE.WAIT_OTHERS:
                     if (PlayersManager.playersCount == 4)
                         state = STATE.CHOOSE_GAMEMODE;
                     break;
-                case STATE.CHOOSE_GAMEMODE: // choose gamemode
-                    int gamemode = 2;
-                    CommandsHandler.gameRoom.RunUniqCommand(new SetGameMode(gamemode, sClient.random.Next(), 
-                        InstanceManager.currentInstance.currentLoadedGamemodeNum + 1), 
+                case STATE.CHOOSE_GAMEMODE:
+                    int gamemode = ChooseGameMode();
+                    CommandsHandler.gameRoom.RunUniqCommand(new SetGameMode(gamemode, sClient.random.Next(),
+                            InstanceManager.currentInstance.currentLoadedGamemodeNum + 1),
                         UniqCodes.CHOOSE_GAMEMODE, InstanceManager.currentInstance.currentLoadedGamemodeNum + 1,
                         MessageFlags.IMPORTANT);
                     state = STATE.WAIT_CHOOSING_GAMEMODE;
@@ -146,7 +174,7 @@ namespace GameMode {
                 case STATE.WAIT_FOR_ALL_LOAD_GAMEMODE:
                     bool allLoaded = true;
                     foreach (var instance in InstanceManager.instances) {
-                        if (instance.currentLoadedGamemodeNum != 
+                        if (instance.currentLoadedGamemodeNum !=
                             InstanceManager.currentInstance.currentLoadedGamemodeNum)
                             allLoaded = false;
                     }
@@ -155,63 +183,74 @@ namespace GameMode {
                         timeEnd = Time.time + gameMode.TimeLength();
                         state = STATE.UPDATE_GAMEMODE;
                     }
+
                     break;
-                case STATE.UPDATE_GAMEMODE: // update gamemode
+                case STATE.UPDATE_GAMEMODE:
+                    sceneReloaded = false;
+
                     var res = gameMode.Update();
                     if (!res) {
                         state = STATE.STOP_GAMEMODE;
                     }
+                    
+                    MainUIController.mainui.SetTimerTime((int) (timeEnd - Time.time));
+
                     if (timeEnd < Time.time) {
                         state = STATE.STOP_GAMEMODE;
                     }
+
                     break;
-                case STATE.STOP_GAMEMODE: // stop gamemode
+                case STATE.STOP_GAMEMODE:
                     var res2 = gameMode.Stop();
                     if (!res2) {
                         state = STATE.SHOW_RESULTS;
                     }
+
                     break;
-                case STATE.SHOW_RESULTS: // show results
+                case STATE.SHOW_RESULTS: 
                     var players2 = PlayersManager.playersSortedByScore;
 
                     for (int i = 0; i < players2.Count; i++) {
                         players2[i].placeInLastGame = i + 1;
                         players2[i].totalScore += players2.Count - i;
                     }
-                    
+
                     gamesCount++;
                     if (gamesCount == TOTAL_GAMES_COUNT) {
                         MainUIController.mainui.ShowFinalResults();
                         state = STATE.FINISH;
                         break;
                     }
-                    
-                    showResultsWaitTime = 3;
-                    MainUIController.mainui.ShowTotalScore(TOTAL_GAMES_COUNT - gamesCount, 
-                        (int)Math.Ceiling(showResultsWaitTime));
+
+                    showResultsWaitTime = 8;
+                    MainUIController.mainui.ShowTotalScore(TOTAL_GAMES_COUNT - gamesCount,
+                        (int) Math.Ceiling(showResultsWaitTime));
                     state = STATE.WAIT_SHOW_RESULTS;
                     break;
-                
+
                 case STATE.WAIT_SHOW_RESULTS:
                     showResultsWaitTime -= Time.deltaTime;
-                    MainUIController.mainui.SetTotalScoreTimeRemaining((int)Math.Ceiling(showResultsWaitTime));
+                    MainUIController.mainui.SetTotalScoreTimeRemaining((int) Math.Ceiling(showResultsWaitTime));
                     if (showResultsWaitTime < 0) {
-                        state = STATE.WAIT_AFTER_SHOW_RESULTS;                       
-                        CommandsHandler.gameRoom.RunSimpleCommand(new SetAfterShowResultsCommand(), MessageFlags.IMPORTANT);
+                        state = STATE.WAIT_AFTER_SHOW_RESULTS;
+                        CommandsHandler.gameRoom.RunSimpleCommand(new SetAfterShowResultsCommand(),
+                            MessageFlags.IMPORTANT);
                     }
+
                     break;
                 case STATE.WAIT_AFTER_SHOW_RESULTS:
                     break;
 
-                case STATE.AFTER_SHOW_RESULTS: // go to next
+                case STATE.AFTER_SHOW_RESULTS:
                     if (gamesCount >= TOTAL_GAMES_COUNT) {
                         state = STATE.FINISH;
                         UberDebug.Log("finish");
                     } else {
                         state = STATE.CHOOSE_GAMEMODE;
                     }
+
                     break;
-                case STATE.FINISH: // finish
+                case STATE.FINISH:
                     // ???
                     return;
                 default:

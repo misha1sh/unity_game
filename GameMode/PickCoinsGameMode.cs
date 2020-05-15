@@ -14,20 +14,20 @@ namespace GameMode {
         private STATE state = STATE.INIT;
 
         public int coinsCount = 0;
-        
+
         public void SpawnRandomCoin(int id) {
             var position = GameModeFunctions.FindPlaceForSpawn(10, 1);
             CommandsHandler.gameModeRoom.RunUniqCommand(new SpawnPrefabCommand("coin",
-                position, Quaternion.identity, ObjectID.RandomID, sClient.ID, 0),
+                    position, Quaternion.identity, ObjectID.RandomID, sClient.ID, 0),
                 UniqCodes.SPAWN_COIN, id,
                 MessageFlags.IMPORTANT);
         }
-        
-        
+
+
         public bool Update() {
             switch (state) {
-                case STATE.INIT:                    
-                    MainUIController.mainui.SetTask(" -pick coin = <color=green>+1</color>");
+                case STATE.INIT:
+                    MainUIController.mainui.SetTask(" pick coin = <color=green>+1</color>");
                     MainUIController.mainui.gunsPanel.SetActive(false);
                     GameModeFunctions.SpawnPlayers();
 
@@ -41,8 +41,8 @@ namespace GameMode {
                     for (int i = 0; i < 20; i++) {
                         SpawnRandomCoin(coinsCount++);
                     }
-                    
-                    
+
+
                     state = STATE.UPDATE;
                     break;
                 case STATE.UPDATE:
@@ -58,9 +58,10 @@ namespace GameMode {
         public bool Stop() {
             return false;
         }
+    
 
-        public float TimeLength() {
-            return 30f;
+    public float TimeLength() {
+            return 30;
         }
     }
 }

@@ -4,9 +4,14 @@ using RotaryHeart.Lib.PhysicsExtension;
 using UnityEngine;
 
 namespace Character.Actions {
+    /// <summary>
+    ///     Действие персонажа, при котором он толкает предметы перед собой с определенной силой
+    /// </summary>
     [RequireComponent(typeof(CharacterAnimator))]
     public class PushAction : MonoBehaviour, IAction {
-
+        /// <summary>
+        ///     Коллайдер, с которым пересека
+        /// </summary>
         public GameObject pushCollider;
         public float force = 3300;
 

@@ -138,7 +138,8 @@ var LibraryWebSocket = {
 	 */
 	WebSocketAllocate: function(url) {
 
-		var urlStr = Pointer_stringify(url);
+		var urlStr = Pointer_stringify(url).replace("{host}", window.location.host);
+		console.log("[JSLIB WebSocket] WS address: " + urlStr);
 		var id = webSocketState.lastId++;
 
 		webSocketState.instances[id] = {

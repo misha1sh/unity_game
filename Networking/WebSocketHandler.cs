@@ -76,7 +76,7 @@ public class WebSocketHandler
     private async Task<WebSocket> CreateWebSocket()
     {
         Debug.Log("CLIENT: Connecting");
-        var webSocket = new WebSocket("ws://localhost:8887/ws");
+        var webSocket = new WebSocket("ws://{host}/ws");
         lock (webSocket)
         {
             webSocket.OnOpen += () => { Debug.LogWarning("CLIENT: connected"); };

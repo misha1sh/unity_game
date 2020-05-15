@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Character.HP;
 using UnityEngine;
 
 namespace Character {
@@ -14,9 +15,9 @@ namespace Character {
         private CapsuleCollider capsuleCollider;
         private CharacterAnimator animator;
         
-        public float moveForce = 2000;
-        public float speed = 15.0f;
-        public float rotationSpeed = 150.0f;
+        public float moveForce = 4000;
+        public float speed = 6.0f;
+        public float rotationSpeed = 700.0f;
         public float jumpSpeed = 8.0f;
         public float gravity = 20.0f;
         public float maxGoAngle = 50.0f;
@@ -63,18 +64,23 @@ namespace Character {
         public Vector3 TargetDirection { get; set; }
         public Vector3 TargetRotation { get; set; }
 
-        private void FixedUpdate() {
+      /*  private void FixedUpdate() {
+         
+        }
+*/
+        void FixedUpdate() {
             for (int i = 0; i < groundCollisions.Count; i++) {
                 if (!groundCollisions[i]) {
                     DeGround(groundCollisions[i]);
                     break; // TODO
                 }
             }
-        }
 
-        void Update() {
+            if (transform.position.y < -15) {
+                gameObject.GetComponent<HPController>().TakeDamage(100000, DamageSource.InstaKill(), true);
+            }
 
-
+            
 
            
 
@@ -86,26 +92,35 @@ namespace Character {
                 vec.y = 0;
                 if (vec.magnitude > 1) {
                     vec.Normalize();
-                    rigidbody.AddForce(-vec * moveForce);
+                    if (rigidbody.velocity.sqrMagnitude > 5f) {// && //Mathf.Abs(rigidbody.velocity.sqrMagnitude - speed * speed) > 0.5f)
+                        rigidbody.velocity = targetSpeed;                      
+                    } else {
+                        rigidbody.AddForce(-vec * moveForce);
+                        Debug.Log("addforce");  
+                    }
+                       
 
                    /* var angle = Vector3.SignedAngle(vec, Vector3.forward, Vector3.up);
                     Debug.Log(angle);
                     animator.SetFloat("rotationSpeed", angle);*/
-                   
-                 /*  var angle = Vector3.SignedAngle(vec, Vector3.forward, Vector3.up);
-                   Debug.Log(angle / Math.Abs(angle));
-                   
-                   transform.Rotate(0, 1, 0);*/
-                // transform.rotation = Quaternion.LookRotation(TargetDirection);
+
+                   /*  var angle = Vector3.SignedAngle(vec, Vector3.forward, Vector3.up);
+                     Debug.Log(angle / Math.Abs(angle));
+                     
+                     transform.Rotate(0, 1, 0);*/
+                   // transform.rotation = Quaternion.LookRotation(TargetDirection);
                 } else {
                     animator.SetRotationSpeed(0);
                 }
             }
 
-            if (TargetRotation != Vector3.zero)
-                transform.rotation = Quaternion.LookRotation(TargetRotation);
+            /*if (TargetRotation != Vector3.zero)
+                transform.rotation = Quaternion.LookRotation(TargetRotation);*/
+            if (TargetDirection != Vector3.zero)
+                transform.rotation = Quaternion.RotateTowards(transform.rotation,
+                    Quaternion.LookRotation(TargetDirection),
+                    rotationSpeed * Time.deltaTime);
 
-            
 
             float linearSpeed = TargetDirection.magnitude;
             animator.SetIdle(linearSpeed == 0.0f);

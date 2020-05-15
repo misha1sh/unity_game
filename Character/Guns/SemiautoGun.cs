@@ -5,11 +5,11 @@ using UnityEngine;
 namespace Character.Guns {
     [Serializable]
     public partial class  SemiautoGun : ReloadingGun {
-        public float _fullReloadTime = 10.0f;
+        public float _fullReloadTime = 7.0f;
         public float _reloadTime = 0.06f;
         public int _bulletsInMagazine = 50;
 
-        public float damage = 2;
+        public float damage = 3;
         public float accurancy = 50f;
         
         public override float GetFullReloadTime() => _fullReloadTime;
@@ -26,7 +26,7 @@ namespace Character.Guns {
         
         protected override void DoShoot() {
             Vector3 random_delta = ShootSystem.RandomDelta(1 / accurancy);
-            ShootSystem.ShootWithDamage(player, random_delta, damage);
+            ShootSystem.ShootWithDamage(player.gameObject, Quaternion.LookRotation(player.TargetRotation), random_delta, damage);
         }
         
         public void Run() {

@@ -20,9 +20,9 @@ namespace Character.Guns {
                 drawDuration: 100f, preview: PreviewCondition.Both);*/
         }
         
-        public static bool SimpleRaycast(Transform transform, Vector3 directionDelta, out RaycastHit raycastRes, out ICommand command) {
+        public static bool SimpleRaycast(Transform transform, Quaternion rotation, Vector3 directionDelta, out RaycastHit raycastRes, out ICommand command) {
             var position = GetGunPosition(transform.position);
-            var direction = transform.rotation * (Vector3.forward + directionDelta);
+            var direction = rotation * (Vector3.forward + directionDelta);
 
             /*RotaryHeart.Lib.PhysicsExtension.Physics.Raycast(position, direction, drawDuration: 0.1f,
                 hitColor: Color.red, noHitColor: Color.white, preview: PreviewCondition.Both);*/
@@ -46,9 +46,9 @@ namespace Character.Guns {
         }
 
         private static RaycastHit _raycastHit;
-        public static bool ShootWithDamage(GameObject gameObject, Vector3 directionDelta, float damage) {
+        public static bool ShootWithDamage(GameObject gameObject, Quaternion rotation, Vector3 directionDelta, float damage) {
             ICommand command;
-            var raycastRes = SimpleRaycast(gameObject.transform, directionDelta,  out _raycastHit, out command);
+            var raycastRes = SimpleRaycast(gameObject.transform, rotation, directionDelta,  out _raycastHit, out command);
             
             if (raycastRes != false) {
                 var other = _raycastHit.collider.gameObject;
@@ -100,7 +100,7 @@ namespace Character.Guns {
         
         public static void ShootWithBomb(GameObject gameObject, Vector3 target, string bombPrefab) {
             Vector3 start = GetGunPosition(gameObject.transform.position);
-            start += gameObject.transform.forward * 0.7f;
+            start += (target - start).normalized * 0.7f;
             
             float len = (target - start).magnitude;
             Vector3 medium = (start + target) / 2 + Vector3.up * len;

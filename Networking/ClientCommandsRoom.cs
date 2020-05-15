@@ -17,6 +17,11 @@ namespace Networking {
         public static int CHOOSE_GAMEMODE = 5;
         public static int EXPLODE_BOMB = 6;
         public static int START_GAME = 7;
+
+        public static int SPAWN_PISTOL = 8;
+        public static int SPAWN_SEMIAUTO = 9;
+        public static int SPAWN_SHOTGUN = 10;
+        public static int SPAWN_BOMBGUN = 11;
     }
     
     public class ClientCommandsRoom {

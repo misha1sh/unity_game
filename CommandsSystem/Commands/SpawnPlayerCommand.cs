@@ -1,5 +1,6 @@
 ﻿
 using Character;
+using Events;
 using GameMode;
 using UnityEngine;
 
@@ -25,7 +26,7 @@ namespace CommandsSystem.Commands {
                     command.prefabName += "WithAI";
                     go = Client.client.SpawnObject(command);
                 }
-                
+
             } else {
                 command.prefabName += "Ghost";
                 go = Client.client.SpawnObject(command);
@@ -33,18 +34,19 @@ namespace CommandsSystem.Commands {
 
             go.GetComponent<PlayerStorage>().Player = player;
 
-       /*     if (ObjectID.IsOwned(go)) {
-                switch (controllerType) {
-                    case 0:
-                        
-                        break;
-                    case 1:
-                        
-                        break;
-                }
-            }
-           */ 
-            
+            EventsManager.handler.OnSpawnedPlayer(go, player);
+            /*     if (ObjectID.IsOwned(go)) {
+                     switch (controllerType) {
+                         case 0:
+                             
+                             break;
+                         case 1:
+                             
+                             break;
+                     }
+                 }
+                */
+
         }
     }
 }

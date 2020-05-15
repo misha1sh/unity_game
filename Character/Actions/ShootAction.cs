@@ -1,5 +1,6 @@
 ﻿using Character.Guns;
 using Events;
+using GameMode;
 using UnityEngine;
 
 namespace Character.Actions {
@@ -17,6 +18,7 @@ namespace Character.Actions {
         }
 
         private void OnDisable() {
+            if (GameManager.sceneReloaded) return;
             if (gun != null) {
                 gun.OnDropped();
                 EventsManager.handler.OnPlayerDroppedGun(gameObject, gun);

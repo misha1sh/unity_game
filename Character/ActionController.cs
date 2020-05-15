@@ -4,6 +4,10 @@ using Character.Guns;
 using UnityEngine;
 
 namespace Character {
+
+
+    
+    
     [RequireComponent(typeof(CharacterAnimator))]
     [RequireComponent(typeof(PushAction))]
     [RequireComponent(typeof(ShootPistolAction))]
@@ -29,7 +33,7 @@ namespace Character {
                 (currentAction as MonoBehaviour).enabled = false;
             }
         }
-        
+
         
         public void SetAction<T>(System.Action<T> setup)
             where T: MonoBehaviour, IAction {

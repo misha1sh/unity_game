@@ -125,6 +125,8 @@ namespace Game {
                         return;
                     }
                     UberDebug.LogChannel("Matchmaking", "Started match: " + response["match"].ToString());
+                    CommandsHandler.gameRoom.RunUniqCommand(new StartGameCommand(123), UniqCodes.START_GAME, 0,
+                        MessageFlags.NONE);
                 }));
 
         }

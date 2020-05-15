@@ -6,22 +6,35 @@ using UnityEngine.UI;
 
 namespace Character.HP {
     public class HPController : MonoBehaviour {
-        public float MaxHP;
+        public float MaxHP = 100f;
+        public float HPAnimationSpeed = 140;
 
         public Image hpImage;
 
-        private float _currentHp;
+        
 
-        public float currentHp {
-            get => _currentHp;
-            set {
-                _currentHp = value;
-                hpImage.fillAmount = _currentHp / MaxHP;
-            }
-        }
+        private bool dead = false;
+
+        public float currentHp;
 
         void Start() {
             currentHp = MaxHP;
+            hpOnBar = currentHp;
+        }
+
+        private float _hpOnBar;
+        private float hpOnBar {
+            get => _hpOnBar;
+            set {
+                _hpOnBar = value;
+                hpImage.fillAmount = value / MaxHP;
+            }
+        }
+
+        void Update() {
+            if (hpOnBar != currentHp) {
+                hpOnBar = Mathf.MoveTowards(hpOnBar, currentHp, HPAnimationSpeed * Time.deltaTime);
+            }
         }
 
         // returns real taken damage
@@ -47,7 +60,8 @@ namespace Character.HP {
 
             EventsManager.handler.OnObjectChangedHP(gameObject, hpChange.delta, hpChange.source);
             
-            if (currentHp <= 0) {
+            if (!dead && currentHp <= 0) {
+                dead = true;
                 EventsManager.handler.OnObjectDead(gameObject, hpChange.source);
             }
         }

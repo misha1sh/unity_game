@@ -105,6 +105,8 @@ public class Client : MonoBehaviour
         Quaternion rotation = new Quaternion()) {
         return Instantiate(prefabs[name], position, rotation);
     }
+    
+    
 
 
 //#endif

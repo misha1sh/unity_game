@@ -271,7 +271,7 @@ namespace NativeWebSocket
         // private ClientWebSocket m_Socket = new ClientWebSocket();
 
         public WebSocket(string url) {
-            uri = new Uri(url);
+            uri = new Uri(url.Replace("{host}", "localhost:8080"));
 
             string protocol = uri.Scheme;
             if (!protocol.Equals("ws") && !protocol.Equals("wss"))

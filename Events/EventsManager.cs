@@ -10,10 +10,12 @@ namespace Events {
 
         public static EventsHandler handler;
         //private EventsHandler m_handler;
-    
+
         private void Awake() {
             //  m_handler = new EventsHandler();
             handler = new EventsHandler();
+        }
+        private void Start() {
             MainUIController.mainui.SetupHandlers();
             sClient.SetupHandlers();
         }

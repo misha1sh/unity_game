@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using CharacterController = Character.CharacterController;
 
 
@@ -41,6 +42,13 @@ public class PlayerController : CharacterController
 
        if (sClient.isTyping)
            Input.ResetInputAxes();
+
+      /* var h = Input.GetAxis("Horizontal");
+       if (h != 0)
+           h /= Math.Abs(h);
+       var v = Input.GetAxis("Vertical");
+       if (v != 0)
+           v /= Math.Abs(v);*/
        
        Vector2 vec = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
        var len = 1;
@@ -53,7 +61,6 @@ public class PlayerController : CharacterController
        motionController.TargetDirection = vec3;
 
        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
        var target_pos = target.transform.position + Vector3.up * 1.5f;
        plane.SetNormalAndPosition(Vector3.up, target_pos);
 

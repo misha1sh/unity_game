@@ -67,5 +67,11 @@ namespace UI {
         private void OnDestroy() {
             MainUIController.mainui.gameObject.SetActive(true);
         }
+        
+        private void Update() {
+            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) {
+                OnPlayClicked();
+            }
+        }
     }
 }

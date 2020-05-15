@@ -41,7 +41,6 @@ namespace CommandsSystem.Commands {
             }
             
             Client.client.RemoveObject(gunObject);
-
             // managed.SetAction<();
         }
     }

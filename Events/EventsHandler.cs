@@ -21,13 +21,19 @@ namespace Events {
         public delegate void ObjectDead(GameObject go, int killSource);
         public ObjectDead OnObjectDead = delegate { };
 
-        public delegate void ObjectGotDamage(GameObject go, float damage, int damageSource);
+        public delegate void ObjectGotDamage(GameObject go, float delta, int damageSource);
         public ObjectGotDamage OnObjectChangedHP = delegate { };
 
 
 
         public delegate void CurrentMatchChanged(MatchInfo last, MatchInfo current);
         public CurrentMatchChanged OnCurrentMatchChanged = delegate { };
+
+
+        public delegate void SpawnedPlayer(GameObject gameObject, Player player);
+
+        public SpawnedPlayer OnSpawnedPlayer = delegate { };
+
         /*   public void (GameObject player, int bulletsCount) {
            
        }

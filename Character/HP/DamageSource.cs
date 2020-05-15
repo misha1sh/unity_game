@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using GameMode;
+using UnityEngine;
 
 namespace Character.HP {
     public static class DamageSource {
@@ -22,5 +23,12 @@ namespace Character.HP {
         public static int Bomb() {
             return 2;
         }
+
+        public static GameObject GetSourceGO(int damageSource) {
+            GameObject res;
+            if (ObjectID.TryGetObject(damageSource, out res))
+                return res;
+            return null;
+        } 
     }
 }

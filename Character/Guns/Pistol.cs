@@ -7,11 +7,11 @@ namespace Character.Guns {
     
     [Serializable]
     public partial class Pistol : ReloadingGun {
-        public float _fullReloadTime = 10.0f;
+        public float _fullReloadTime = 4.0f;
         public float _reloadTime = 0.3f;
-        public int _bulletsInMagazine = 8;
+        public int _bulletsInMagazine = 5;
 
-        public float damage = 10;
+        public float damage = 25;
         
         public override float GetFullReloadTime() => _fullReloadTime;
         public override float GetReloadTime() => _reloadTime;
@@ -25,7 +25,7 @@ namespace Character.Guns {
    ///  public int _state;
 
         protected override void DoShoot() {
-            ShootSystem.ShootWithDamage(player, Vector3.zero, damage);
+            ShootSystem.ShootWithDamage(player.gameObject, Quaternion.LookRotation(player.TargetRotation), Vector3.zero, damage);
         }
 
         public void Run() {

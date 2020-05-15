@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 namespace GameMode {
     public static class GameModeFunctions {
         public static void SpawnPlayer(int playerId) {
-            var pos = FindPlaceForSpawn(0, 0.5f);
+            var pos = FindPlaceForSpawn(1, 0.5f);
             var rot = new Quaternion();
             var id = ObjectID.RandomID;
             var owner = sClient.ID;
