@@ -2,24 +2,53 @@
 using CommandsSystem;
 
 namespace Networking {
+    /// <summary>
+    ///     Класс для обработки команд с сервера
+    /// </summary>
     public static class CommandsHandler {
+        /// <summary>
+        ///     Обработчик WebSocket
+        /// </summary>
         public static WebSocketHandler webSocketHandler = new WebSocketHandler();
+        /// <summary>
+        ///     CommandsSystem для сериализации команд
+        /// </summary>
         private static CommandsSystem.CommandsSystem commandsSystem = new CommandsSystem.CommandsSystem();
 
 
+        /// <summary>
+        ///     Комната для поиска матча
+        /// </summary>
         public static ClientCommandsRoom matchmakingRoom;
 
-        public static ClientCommandsRoom gameRoom; // current game
-        public static ClientCommandsRoom gameModeRoom; // current gamemode
+        /// <summary>
+        ///     Комната для матча (игры)
+        /// </summary>
+        public static ClientCommandsRoom gameRoom;
+        /// <summary>
+        ///     Комната для игрового режима
+        /// </summary>
+        public static ClientCommandsRoom gameModeRoom;
         
+        /// <summary>
+        ///     Инициализирует переменные
+        /// </summary>
         public static void Init() {
             webSocketHandler.Start();
         }
 
+        /// <summary>
+        ///     Сбрасывает значения переменных
+        /// </summary>
         public static void Reset() {
             matchmakingRoom = gameRoom = gameModeRoom = null;
         }
 
+        /// <summary>
+        ///     Полчает комнату по ID
+        /// </summary>
+        /// <param name="id">ID комнаты</param>
+        /// <returns>Комнату</returns>
         public static ClientCommandsRoom RoomById(int id) {
             if (matchmakingRoom?.roomID == id)
                 return matchmakingRoom;
@@ -30,6 +59,9 @@ namespace Networking {
             return null;
         }
 
+        /// <summary>
+        ///     Получает и отправляет команды
+        /// </summary>
         public static void Update() {
             webSocketHandler.Update();
             byte[] data;
@@ -46,6 +78,9 @@ namespace Networking {
             }
         }
 
+        /// <summary>
+        ///     Отключается от сервера
+        /// </summary>
         public static void Stop() {
             webSocketHandler?.Stop();
         }

@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 
 namespace Character.Guns {
-    public class BombGunController : GunController<BombGun> {
-        
-    }
+    /// <summary>
+    ///     Класс для гранатомета, расположенного в виде игрового объекта на поле
+    /// </summary>
+    public class BombGunController : GunController<BombGun> {}
 }

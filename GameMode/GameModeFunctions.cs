@@ -4,7 +4,14 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace GameMode {
+    /// <summary>
+    ///     Класс с функциями для игровых режимов
+    /// </summary>
     public static class GameModeFunctions {
+        /// <summary>
+        ///     Создает персонажа в случайном месте
+        /// </summary>
+        /// <param name="playerId">ID игрока</param>
         public static void SpawnPlayer(int playerId) {
             var pos = FindPlaceForSpawn(1, 0.5f);
             var rot = new Quaternion();
@@ -15,6 +22,9 @@ namespace GameMode {
                 playerId), MessageFlags.IMPORTANT);
         }
 
+        /// <summary>
+        ///     Создаёт персонажа для каждого из игроков
+        /// </summary>
         public static void SpawnPlayers() {
             foreach (var player in PlayersManager.players) {
                 if (player.owner == sClient.ID) {
@@ -23,12 +33,21 @@ namespace GameMode {
             }
         }
 
+        /// <summary>
+        ///     RaycastHit для внутреннего использования (нужен, чтобы уменьшить нагрузку на сборщик мусора)
+        /// </summary>
         private static RaycastHit _raycastHitInfo;
-        // (possible) TODO: reserve space on network before spawn 
+        
+        /// <summary>
+        ///     Ищет место для создания объекта заданного размера
+        /// </summary>
+        /// <param name="height">Высота, на которой нужно создать объект</param>
+        /// <param name="radius">Радиус объекта</param>
+        /// <returns></returns>
         public static Vector3 FindPlaceForSpawn(float height, float radius) {
             int layerMask = 1 << 9;
             layerMask = ~layerMask;
-            
+            // (possible) TODO: reserve space on network before spawn 
             Vector3 pos1, pos2;
             for (int iterCount = 0; ; iterCount++) {
                 pos1 = pos2 = Client.client.spawnPolygon.RandomPoint();

@@ -2,8 +2,14 @@
 using UnityEngine;
 
 namespace GameMechanics {
+    /// <summary>
+    ///     Компонента для взрыва бомбы при столкновении с объектом
+    /// </summary>
     [RequireComponent(typeof(Bomb))]
     public class BombOnCollisionExploder : MonoBehaviour {
+        /// <summary>
+        ///     Настраивает физику, чтобы бомба не сталкивалась с персонажем, создавшем её
+        /// </summary>
         public void Start() {
             var creator = ObjectID.GetCreator(gameObject);
             if (creator != 0) {
@@ -17,7 +23,11 @@ namespace GameMechanics {
             }
      
         }
-
+        
+        /// <summary>
+        ///     Взрывает бомбу. Автоматически вызывается Unity при столкновении с другим объектом
+        /// </summary>
+        /// <param name="other">Информация о столкновении</param>
         public void OnCollisionEnter(Collision other) {
             GetComponent<Bomb>().Explode();
         }

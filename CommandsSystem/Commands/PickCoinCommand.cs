@@ -2,12 +2,22 @@
 using UnityEngine;
 
 namespace CommandsSystem.Commands {
-    public partial class PickCoinCommand
-    {
+    /// <summary>
+    ///     Команда, сообщающая, что игрок подобрал монетку
+    /// </summary>
+    public partial class PickCoinCommand {
+        /// <summary>
+        ///     Id игрока, подобравшего монетку
+        /// </summary>
         public int player;
+        /// <summary>
+        ///     Id подобранной монетки
+        /// </summary>
         public int coin;
 
-
+        /// <summary>
+        ///     Подбирает монетку
+        /// </summary>
         public void Run()
         {
             var player = ObjectID.GetObject(this.player);

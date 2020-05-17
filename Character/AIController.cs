@@ -1,9 +1,14 @@
 ﻿using UnityEngine;
 using CharacterController = Character.CharacterController;
 
+/// <summary>
+///     Класс для игрока, управлемого искуственным интеллектом
+/// </summary>
 public class AIController : CharacterController {
 
-
+    /// <summary>
+    ///     Изменяет параметры игрока на основе ИИ. Автоматически вызывается Unity каждый кадр
+    /// </summary>
     void Update()
     {
         if (false && Random.value < 0.01f) {

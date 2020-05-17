@@ -7,26 +7,39 @@ namespace Character {
 
 
     
-    
+    /// <summary>
+    ///     Компонента для обработки действий, которые может делать игрок
+    /// </summary>
     [RequireComponent(typeof(CharacterAnimator))]
     [RequireComponent(typeof(PushAction))]
     [RequireComponent(typeof(ShootPistolAction))]
     [RequireComponent(typeof(ShootSemiautoAction))]
     public class ActionController : MonoBehaviour {
         
+        /// <summary>
+        ///     Ссылка на CharacterAnimator игрока
+        /// </summary>
         private CharacterAnimator animator;
+        
+        /// <summary>
+        ///     Инициализирует переменны
+        /// </summary>
         void Start() {
             animator = GetComponent<CharacterAnimator>();
-           //    SetAction<ShootPistolAction>(action => action.gun = new BombGun());
-         //      SetAction<ShootSemiautoAction>(action => action.gun = new SemiautoGun());
-         //    SetAction<ShootPistolAction>(action => action.gun = new ShotGun());
-          //  SetAction<ShootPistolAction>(action => action.gun = new Pistol());
-            //SetAction<PushAction>(action => { });
         }
 
+        /// <summary>
+        ///     Текущее действие
+        /// </summary>
         private IAction currentAction = null;
-        public Vector3 Target; // mouse position in world coordinates
+        /// <summary>
+        ///     Координата, в которую направлен прицел игрока
+        /// </summary>
+        public Vector3 Target;
         
+        /// <summary>
+        ///    Прекращает выполнение текущего действия
+        /// </summary>
         private void StopCurrent() {
             if (currentAction != null) {
                 DoAction = false;
@@ -34,7 +47,11 @@ namespace Character {
             }
         }
 
-        
+        /// <summary>
+        ///     Изменяет действие персонажа
+        /// </summary>
+        /// <param name="setup">Функция для инициализации нового действия</param>
+        /// <typeparam name="T">Тип нового действия, должен быть MonoBehaivour и IAction</typeparam>
         public void SetAction<T>(System.Action<T> setup)
             where T: MonoBehaviour, IAction {
             StopCurrent();
@@ -46,43 +63,23 @@ namespace Character {
             currentAction = action;
         }
         
- /*       public void SetPushAction() {
-            SetAction<PushAction>();
-        }
 
-        public void SetPistolAction(Pistol pistol) {
-            StopCurrent();
-            var shootPistolAction = gameObject.GetComponent<ShootPistolAction>();
-            shootPistolAction.gun = pistol;
-
-            shootPistolAction.enabled = true;
-            currentAction = shootPistolAction;
-        }*/
-
+        /// <summary>
+        ///     Изменяет действие перонажа на пустое
+        /// </summary>
         public void SetNothing() {
             StopCurrent();
             currentAction = null;
         }
-   /*     private ActionType _actionType;
-        public ActionType ActionType {
-            get => _actionType;
-            set {
-                if (currentAction != null)
-                    (currentAction as Behaviour).enabled = false;
-    
-                switch (value) {
-                    case ActionType.PUSH:
-                        currentAction = GetComponent<PushAction>();
-                        (currentAction as Behaviour).enabled = true;
-                        break;
-                    default:
-                        throw new ArgumentException($"Unknown action type: {value}");
-                }
-                _actionType = value;
-            }
-        }*/
 
+        /// <summary>
+        ///     Переменная для хранения DoAction
+        /// </summary>
         private bool _actionDoing = false;
+        
+        /// <summary>
+        ///     Автоматическая переменная, устанавливающая выполняет ли сейчас действие игрок
+        /// </summary>
         public bool DoAction {
             get => _actionDoing;
             set {
@@ -95,10 +92,5 @@ namespace Character {
                 }
             }
         }
-
-    /*   private void OnDrawGizmos() {
-            //Gizmos.DrawSphere(Target, 0.1f);
-            DebugExtension.DebugPoint(Target, Color.magenta, 3, 10);
-        }*/
     }
 }

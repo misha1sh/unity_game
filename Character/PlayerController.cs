@@ -2,8 +2,16 @@
 using UnityEngine;
 using CharacterController = Character.CharacterController;
 
-
+/// <summary>
+///     Класс с дополнительными функциями для Vector2
+/// </summary>
 public static class Vector2Extension {
+    /// <summary>
+    ///     Поворачиает вектор
+    /// </summary>
+    /// <param name="v">Вектор</param>
+    /// <param name="degrees">Угол в градусах</param>
+    /// <returns>Повернутый вектор</returns>
     public static Vector2 Rotate(this Vector2 v, float degrees) {
         float radians = degrees * Mathf.Deg2Rad;
         float sin = Mathf.Sin(radians);
@@ -16,12 +24,18 @@ public static class Vector2Extension {
     }
 }
 
-
-public class PlayerController : CharacterController
-{
-    
+/// <summary>
+///     Компонента для персонажа, управляемого человеком
+/// </summary>
+public class PlayerController : CharacterController {
+    /// <summary>
+    ///     Переменная для внутреннего использования (нужна для уменьшения нагрузки на сборщик мусора)
+    /// </summary>
     private Plane plane;
 
+    /// <summary>
+    ///     Инициализирует переменные
+    /// </summary>
     protected override void Start()
     {
         base.Start();
@@ -29,28 +43,14 @@ public class PlayerController : CharacterController
         transform.parent = null;
     }
 
-    
+    /// <summary>
+    ///     Управляет персонажем в соответвии с положением мышки и нажатыми клавишами. Автоматически вызывается Unity каждый кадр
+    /// </summary>
     void Update() {
-       /* Vector2 vec = new Vector2( Input.GetAxis("Horizontal"),Input.GetAxis("Vertical"));
-        var vec3 = new Vector3(vec.x, 0, vec.y);
-        vec3 = camera.transform.rotation * vec3;
-        vec3.y = 0;
-        target.CurrentSpeed = vec.magnitude;
-        if (vec3 != Vector3.zero)
-            target.gameObject.transform.rotation = Quaternion.LookRotation(vec3);
-        //        target.CurrentRotationSpeed = Vector2.Angle(vec, Vector2.right);*/
-
-       if (sClient.isTyping)
+        if (sClient.isTyping)
            Input.ResetInputAxes();
 
-      /* var h = Input.GetAxis("Horizontal");
-       if (h != 0)
-           h /= Math.Abs(h);
-       var v = Input.GetAxis("Vertical");
-       if (v != 0)
-           v /= Math.Abs(v);*/
-       
-       Vector2 vec = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        Vector2 vec = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
        var len = 1;
        
        var vec3 = new Vector3(vec.x, 0, vec.y);
@@ -67,50 +67,13 @@ public class PlayerController : CharacterController
        float distance;
        plane.Raycast(ray, out distance);
        var pos = ray.GetPoint(distance);
-       /*DebugExtension.DebugPoint(pos, Color.red, 3f);
-       DebugExtension.DebugArrow(target_pos, pos - target_pos, Color.magenta);*/
        motionController.TargetRotation = pos - target_pos;
        
        
        plane.SetNormalAndPosition(Vector3.up, target.transform.position);
        plane.Raycast(ray, out distance);
        actionController.Target = ray.GetPoint(distance);
-       
-       /*  Vector3 tttest = Input.mousePosition;
-       tttest.z = 10;
-       var pos = camera.ScreenToWorldPoint(tttest);
-    //   var rotation = camera.transform.rotation
-//       var pos2 = ().//camera.transform.position + camera.transform.forward * 10;
-       DebugExtension.DebugPoint(pos, Color.red, 3f);
-  //     DebugExtension.DebugPoint(pos2, Color.magenta, 3f);
-
-        var pos3 = Quaternion.Inverse()
-       
-       motionController.TargetRotation = pos - pos2;
-
-/*
-    
-  */
-        
-        /*
-
-       if (Input.GetMouseButton(0)) {
-           GameObject.CreatePrimitive(PrimitiveType.Cube).transform.position = pos;
-           
-       }
-       
-       pos.x -= 0.5f;
-       pos.y -= 0.5f;
-       pos.z = pos.y;
-       pos.y = 0;
-
-       pos = camera.transform.rotation * pos;
-       pos.y = 0;
-       motionController.TargetRotation = pos;*/
-
 
        actionController.DoAction = Input.GetMouseButton(0);
-//       var rot = Input.mousePosition;
-//       target.TargetRotation = 
     }
 }

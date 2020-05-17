@@ -1,20 +1,26 @@
 ﻿using UnityEngine;
 
 namespace Events {
-    public delegate void PlayerObjParameterChanged<T>(GameObject player, T parameter);
-
-    
+    /// <summary>
+    ///     Класс для управления обработкой событии
+    /// </summary>
     public class EventsManager : MonoBehaviour {
 
-//    public GameObject ui;
-
+        /// <summary>
+        ///     Текущий обработчик событий
+        /// </summary>
         public static EventsHandler handler;
-        //private EventsHandler m_handler;
 
+        /// <summary>
+        ///     Инициализирует переменные. Автоматически вызывается Unity
+        /// </summary>
         private void Awake() {
-            //  m_handler = new EventsHandler();
             handler = new EventsHandler();
         }
+
+        /// <summary>
+        ///     Устанавливает обработчики событий
+        /// </summary>
         private void Start() {
             MainUIController.mainui.SetupHandlers();
             sClient.SetupHandlers();

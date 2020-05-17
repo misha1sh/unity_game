@@ -12,34 +12,50 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Util2;
 
+/// <summary>
+///     Главный класс, управляющий игрой, выбором матча
+/// </summary>
 public class sClient : MonoBehaviour {
+    /// <summary>
+    ///     Состояние
+    /// </summary>
     public enum STATE {
         START_SCREEN,
         FIND_MATCH,
-     //   WAITING_FOR_START,
         IN_GAME
     }
 
-
+    /// <summary>
+    ///     Набирает ли пользователь сейчас тект
+    /// </summary>
     public static bool isTyping = false;
-    
+    /// <summary>
+    ///     Количество сообщений в секунду, отправляемых по сети для синхронизации
+    /// </summary>
     public const int NETWORK_FPS = 20;
 
+    /// <summary>
+    ///     ID клиента
+    /// </summary>
     public static int ID => InstanceManager.ID;
+    /// <summary>
+    ///     Генератор случайных чисел
+    /// </summary>
     public static System.Random random = new System.Random();
 
-    /*public static int MatchmakingRoom = 1;
-    public static int GameRoom = 137;
-    public static int GameModeRoom;
-*/
-
-
+    /// <summary>
+    ///     Время, когда началась игра
+    /// </summary>
     private static float gameStartTime;
 
+    /// <summary>
+    ///     Текущее состояния
+    /// </summary>
     public static STATE state = STATE.START_SCREEN;
     
-    
-    
+    /// <summary>
+    ///     Переключает состояние на начало игры
+    /// </summary>
     public static void SetGameStarted() {
         if (state != STATE.FIND_MATCH) 
             Debug.LogError("Called SetGameStarted but sClient state is " + state);
@@ -48,19 +64,30 @@ public class sClient : MonoBehaviour {
         MatchesManager.SetMatchIsPlaying();
     }
 
+    /// <summary>
+    ///     Время, прошедшее с начала игры
+    /// </summary>
     public static float GameTime => Time.time - gameStartTime;
 
+    /// <summary>
+    ///     Был ли инициализирован этот класс
+    /// </summary>
     private static bool initialized = false;
 
+    /// <summary>
+    ///     Инициализирует переменные
+    /// </summary>
     public static void Init() {
         if (initialized) return;
         initialized = true;
         InstanceManager.Init();
         CommandsHandler.Init();
         PlayersManager.mainPlayer = new Player(sClient.ID, sClient.ID, 0);
-   //     ID = random.Next();
     }
 
+    /// <summary>
+    ///     Сбрасывает значения переменных
+    /// </summary>
     public static void Reset() {
         
         CommandsHandler.Reset();
@@ -68,6 +95,7 @@ public class sClient : MonoBehaviour {
         PlayersManager.Reset();
         InstanceManager.Reset();
         GameManager.Reset();
+        ObjectId.Reset();
         state = STATE.START_SCREEN;
         if (AutoMatchJoiner.isRunning) {
             sClient.LoadScene("empty_scene");
@@ -76,30 +104,24 @@ public class sClient : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    ///     Переключает состояние в поиск матча
+    /// </summary>
     public static void StartFindingMatch() {
         state = STATE.FIND_MATCH;
     }
-
-    public static void SetupHandlers() {
-   /*     EventsManager.handler.OnCurrentMatchChanged += (last, current) => {
-            if (state == STATE.FIND_MATCH && current.state == 1) {
-                state = STATE.WAITING_FOR_START;
-                CommandsHandler.gameRoom.RunUniqCommand(new StartGameCommand(123), UniqCodes.START_GAME, 0,
-                    MessageFlags.NONE);
-            }
-        };*/
-    }
-
-
+    
+    /// <summary>
+    ///     Инициалилизирует переменные при запуске игры
+    /// </summary>
     private void Awake() {
         Init();
     }
+    
 
-    /*private void Start() {
-        Client.client.SpawnPrefab("empty_canvas");
-    }
-*/
-
+    /// <summary>
+    ///     Обновляет состояние
+    /// </summary>
     void Update() {
         if (isTyping)
             Input.ResetInputAxes();
@@ -112,45 +134,25 @@ public class sClient : MonoBehaviour {
             case STATE.FIND_MATCH:
                 MatchesManager.Update();
                 break;
-       /*     case STATE.WAITING_FOR_START:
-                break;*/
             case STATE.IN_GAME:
                 GameManager.Update();
                 break;
         }
-        //GameManager.Update();
     }
-
-  /*  private static void HandleCommands() {
-        if (commandsHandler is null) return;
-        webSocketHandler.Update();
-
-        foreach (var command in commandsHandler.GetCommands()) {
-            if (command is ChangePlayerProperty || command is DrawTargetedTracerCommand ||
-                command is DrawPositionTracerCommand) { //command is ChangeGameObjectStateCommand) {
-//                Debug.Log("Client got command: ChangeCharacterStateCommand " + (command as ChangeCharacterStateCommand).state.id);
-            } else {
-                Debug.Log("Client got command: " + command);
-            }
-
-            command.Run();
-        }
-    }*/
-
+    
+    /// <summary>
+    ///     Обрабатывает выход из приложения
+    /// </summary>
     private void OnApplicationQuit() {
         CommandsHandler.Stop();
     }
     
-    
+    /// <summary>
+    ///     Загружает сцену
+    /// </summary>
+    /// <param name="sceneName"></param>
     public static void LoadScene(string sceneName) {
         UberDebug.LogChannel("Client", "Loading scene " + sceneName);
         SceneManager.LoadScene(sceneName);
     }
-    /*  public static sClient client { get; private set; }
-      
-  
-      private void Init() {
-          if (client == this) return;
-          client = this;
-      }*/
 }

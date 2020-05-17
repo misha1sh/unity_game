@@ -1,14 +1,30 @@
 ﻿using UnityEngine;
 
 namespace CommandsSystem.Commands {
+    /// <summary>
+    ///     Команда, сообщающая, что к игровому объекту нужно применить силу
+    /// </summary>
     public partial class ApplyForceCommand {
+        /// <summary>
+        ///     Id игрового объекта, к которму нужно применить силу
+        /// </summary>
         public int objectId;
+        /// <summary>
+        ///     Сила
+        /// </summary>
         public Vector3 force;
-
-
+        
+        /// <summary>
+        ///     Конструктор команды
+        /// </summary>
+        /// <param name="gameObject">Игровой объект, к которму нужно применить силу</param>
+        /// <param name="force">Сила</param>
         public ApplyForceCommand(GameObject gameObject, Vector3 force) :
             this(ObjectID.GetID(gameObject), force) {}
 
+        /// <summary>
+        ///     Применяет силу, если объект обрабатывается на данном клиенте
+        /// </summary>
         public void Run() {
             var gameObject = ObjectID.GetObject(objectId);
             if (gameObject == null) {

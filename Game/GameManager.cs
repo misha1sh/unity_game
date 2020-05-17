@@ -15,10 +15,18 @@ using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 namespace GameMode {
+    /// <summary>
+    ///     Класс для управления игрой
+    /// </summary>
     public static class GameManager {
+        /// <summary>
+        ///     Количество игр, которое нужно сыграть
+        /// </summary>
         private const int TOTAL_GAMES_COUNT = 2;
         
-        
+        /// <summary>
+        ///     Перечисление возможных состояний игры
+        /// </summary>
         private enum STATE {
             INIT,
             WAIT_OTHERS,
@@ -34,13 +42,22 @@ namespace GameMode {
             FINISH
         }
 
-
+        /// <summary>
+        ///     Переменная, хранящая была ли загружена новая сцена на предыдущем кадре
+        /// </summary>
         public static bool sceneReloaded = false;
-        
+        /// <summary>
+        ///     Количество сыгранных игр
+        /// </summary>
         public static int gamesCount = 0;
         
+        /// <summary>
+        ///     Переменная для хранения состояния игры
+        /// </summary>
         private static STATE _state;
-
+        /// <summary>
+        ///     Текущее состояние игры
+        /// </summary>
         private static STATE state {
             get => _state;
             set {
@@ -49,12 +66,22 @@ namespace GameMode {
             }
         }
 
-        //public static Player currentPlayer;
-        
-        
+        /// <summary>
+        ///     Текущий игровой режим
+        /// </summary>
         public static IGameMode gameMode;
+        
+        /// <summary>
+        ///     Время, когда должен закончиться игровой режим
+        /// </summary>
         public static float timeEnd = -1;
 
+        /// <summary>
+        ///     Изменяет игровой режим
+        /// </summary>
+        /// <param name="gamemodeCode">Код игрового режима</param>
+        /// <param name="roomId">Номер комнаты, в которой будет проводиться данный игровой режим</param>
+        /// <param name="currentGameNum">Номер игры по порядку</param>
         public static void SetGameMode(int gamemodeCode, int roomId, int currentGameNum) {
             CommandsHandler.gameModeRoom = new ClientCommandsRoom(roomId);
             
@@ -101,25 +128,39 @@ namespace GameMode {
 
         }
 
+        
+        /// <summary>
+        ///     Перестаёт показывать результаты игры
+        /// </summary>
         public static void SetAfterShowResults() {
             if (state == STATE.WAIT_AFTER_SHOW_RESULTS)
                 state = STATE.AFTER_SHOW_RESULTS;
             MainUIController.mainui.HideTotalScore();
         }
         
-
+        /// <summary>
+        ///     Время, которое осталось до конца показа результатов
+        /// </summary>
         private static float showResultsWaitTime;
 
+        /// <summary>
+        ///     Сбрасывает состояние переменных
+        /// </summary>
         public static void Reset() {
             state = STATE.INIT;
             gamesCount = 0;
             gameMode = null;
         }
         
-        
-        
+        /// <summary>
+        ///     Игровые режимы, которые можно запустить
+        /// </summary>
         private static List<int> availableGameModes = new List<int>();
 
+        /// <summary>
+        ///     Выбирает один из возможных режимов
+        /// </summary>
+        /// <returns>Выбраыннй игровой режим</returns>
         private static int ChooseGameMode() {
             if (availableGameModes.Count == 0) {
                 Debug.LogError("no available game modes. choosing random one");
@@ -130,6 +171,10 @@ namespace GameMode {
             return availableGameModes[index];
         }
 
+        /// <summary>
+        ///     Обновляет состояние игры
+        /// </summary>
+        /// <exception cref="Exception"></exception>
         public static void Update() {
             switch (state) {
                 case STATE.INIT:

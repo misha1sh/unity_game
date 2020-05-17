@@ -12,23 +12,37 @@ using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 namespace GameMode {
+    /// <summary>
+    ///     Класс для игрового режима в формате шутера
+    /// </summary>
     public class ShooterGameMode : IGameMode {
-
+        /// <summary>
+        ///     Перечисление состояния игрового режима
+        /// </summary>
         private enum STATE {
             INIT,
             UPDATE
         }
 
+        /// <summary>
+        ///     Текущее состояние игрового режима
+        /// </summary>
         private STATE state = STATE.INIT;
 
-       /* private int spawnedPistolsCount = 0;
-        private int spawnedShotgunsCount = 0;
-        private int spawnedSemiAutoCount = 0;
-        */
-       private int spawnedGunsCount = 0;
-       private float timeToSpawnNextGun = 0f;
+        /// <summary>
+        ///     Количество созданного на игровом поле оружия
+        /// </summary>
+        private int spawnedGunsCount = 0;
+        /// <summary>
+        ///     Время, через которое нужно создать следующее оружие
+        /// </summary>
+        private float timeToSpawnNextGun = 0f;
 
-       private void SpawnRandomGun(int id) {
+        /// <summary>
+        ///     Создаёт случайное оружие на игровом поле
+        /// </summary>
+        /// <param name="num">Порядковый номер создаваемого оружия (нужен чтобы не создать одно и то же два раза)</param>
+        private void SpawnRandomGun(int num) {
            var position = GameModeFunctions.FindPlaceForSpawn(0.1f, 1);
            
            int gunType = Random.Range(0, 3);
@@ -48,13 +62,15 @@ namespace GameMode {
            }
            CommandsHandler.gameModeRoom.RunUniqCommand(new SpawnPrefabCommand(gunName,
                    position, Quaternion.identity, ObjectID.RandomID, sClient.ID, 0),
-               UniqCodes.SPAWN_GUN, id,
+               UniqCodes.SPAWN_GUN, num,
                MessageFlags.IMPORTANT);
        }
 
-       public bool Update() {
-        
-
+        /// <summary>
+        ///     Обновляет состояние игрового режима
+        /// </summary>
+        /// <returns>false, если режим закончился. Иначе true</returns>
+        public bool Update() {
             switch (state) {
                 case STATE.INIT:
                     MainUIController.mainui.SetTask( "   Kill enemy = <color=green>+100</color>\n" +
@@ -119,13 +135,17 @@ namespace GameMode {
             return true;
         }
 
+        /// <summary>
+        ///     Завершает выполнение игрового режима
+        /// </summary>
+        /// <returns>false, если режим закончился. true, если надо ещё подождать</returns>
         public bool Stop() {
             return false;
         }
 
-
-        public float TimeLength() {
-            return 140;
-        }
+        /// <summary>
+        ///    Время в секундах, которое длится игровой режим 
+        /// </summary>
+        public float TimeLength => 140;
     }
 }

@@ -9,11 +9,18 @@ using JsonRequest;
 
 namespace CommandsSystem {
     
-    
+    /// <summary>
+    ///     Класс для сериализации и десериализации команд
+    /// </summary>
     public class CommandsSystem {
+        /// <summary>
+        ///     Кодирует заданную команду в бинарный вид и записывает в stream.
+        ///     Данный метод использует кодогенерацию
+        /// </summary>
+        /// <param name="command">Команда</param>
+        /// <param name="stream">Поток, в который нужно записать команду</param>
+        /// <typeparam name="T">Тип команды</typeparam>
         private void EncodeCommand<T>(T command, Stream stream) where T : ICommand {
-
-            
 /*BEGIN2*/
             if (command is AddOrChangeInstance addorchangeinstance) {
                 stream.WriteByte((byte)0);
@@ -153,18 +160,32 @@ namespace CommandsSystem {
             
         }
         
+        /// <summary>
+        ///     MemoryStream для внутреннего использования (нужен для уменьшения нагрузки на сборщик мусора)
+        /// </summary>
         private static MemoryStream _stream = new MemoryStream();
+        /// <summary>
+        ///     BinaryWriter для внутреннего использования (нужен для уменьшения нагрузки на сборщик мусора)
+        /// </summary>
         private static BinaryWriter _writer = new BinaryWriter(_stream);
 
+        /// <summary>
+        ///     Очищает потоки для записи команд от данных
+        /// </summary>
         private void ResetWriteStreams() {
             _stream.SetLength(0);
             _writer.Seek(0, SeekOrigin.Begin);
         }
         
+        /// <summary>
+        ///     Кодирует обычную команду
+        /// </summary>
+        /// <param name="command">Команда</param>
+        /// <param name="room">Комната, в которую нужно отправить команду</param>
+        /// <param name="flags">Флаги отправки</param>
+        /// <typeparam name="T">Тип команды</typeparam>
+        /// <returns>Закодировннаую в бинарный вид команду</returns>
         public byte[] EncodeSimpleCommand<T>(T command, int room, MessageFlags flags) where T : ICommand {
-          /*  var stream = new MemoryStream();
-            var writer = new BinaryWriter(stream);
-            */
             ResetWriteStreams();
             _writer.Write((byte) MessageType.SimpleMessage); 
             _writer.Write((int)room);
@@ -174,6 +195,16 @@ namespace CommandsSystem {
             return _stream.ToArray();
         }
 
+        /// <summary>
+        ///     Кодирует уникальную команду
+        /// </summary>
+        /// <param name="command">Команда</param>
+        /// <param name="room">Комната, в которую нужно отправить команду</param>
+        /// <param name="code1">Первая половина уникального кода</param>
+        /// <param name="code2">Вторая половина уникального кода</param>
+        /// <param name="flags">Флаги отправки</param>
+        /// <typeparam name="T">Тип команды</typeparam>
+        /// <returns>Закодировннаую в бинарный вид команду</returns>
         public byte[] EncodeUniqCommand<T>(T command, int room, int code1, int code2, MessageFlags flags) where T : ICommand {
             ResetWriteStreams();
             _writer.Write((byte) MessageType.UniqMessage);
@@ -186,6 +217,14 @@ namespace CommandsSystem {
             return _stream.ToArray();
         }
 
+        /// <summary>
+        ///     Кодирует команду запроса сообщений с сервера
+        /// </summary>
+        /// <param name="room">Комната из которой запрашиваются сообщения</param>
+        /// <param name="firstIndex">Индекс первого сообщения, которое нужно отправить</param>
+        /// <param name="lastIndex">Индекс последнего сообщения, которое нужно отправить</param>
+        /// <param name="flags">Флаги</param>
+        /// <returns>Закодированную в бинарный вид команду</returns>
         public byte[] EncodeAskMessage(int room, int firstIndex, int lastIndex, MessageFlags flags) {
             ResetWriteStreams();
             
@@ -198,6 +237,12 @@ namespace CommandsSystem {
             return _stream.ToArray();
         }
 
+        /// <summary>
+        ///     Кодирует команду присоединения к игровой комнате
+        /// </summary>
+        /// <param name="room">Комната, к которой нужно присоединиться</param>
+        /// <param name="flags">Флаги</param>
+        /// <returns>Закодированную в бинарный вид команду</returns>
         public byte[] EncodeJoinGameRoomMessage(int room, MessageFlags flags) {
             ResetWriteStreams();
             
@@ -208,6 +253,12 @@ namespace CommandsSystem {
             return _stream.ToArray();
         }
 
+        /// <summary>
+        ///     Кодирует команду покидания игровой комнаты
+        /// </summary>
+        /// <param name="room">Комната, которую нужно покинуть</param>
+        /// <param name="flags">Флаги</param>
+        /// <returns>Закодированную в бинарный вид команду</returns>
         public byte[] EncodeLeaveGameRoomMessage(int room, MessageFlags flags) {
             ResetWriteStreams();
             
@@ -218,6 +269,13 @@ namespace CommandsSystem {
             return _stream.ToArray();
         }
 
+        /// <summary>
+        ///     Кодирует JSON-сообщение на сервер
+        /// </summary>
+        /// <param name="json">JSON строка</param>
+        /// <param name="room">Комната, в которую нужно отправить сообщение</param>
+        /// <param name="flags">Флаги</param>
+        /// <returns>Закодированное в бинарный вид сообщение</returns>
         public byte[] EncodeJsonMessage(string json, int room, MessageFlags flags) {
             ResetWriteStreams();
             
@@ -230,10 +288,14 @@ namespace CommandsSystem {
             return _stream.ToArray();
         }
         
-        
-        
-        private static MemoryStream _read_stream = new MemoryStream();
-        
+        /// <summary>
+        ///     Декодирует команду с сервера
+        ///     В данном методе используется кодогенерация
+        /// </summary>
+        /// <param name="array">Закодированная команда</param>
+        /// <param name="num">Номер команды</param>
+        /// <param name="room">Комната, в которую пришла команда</param>
+        /// <returns>Декодированную команду</returns>
         public ICommand DecodeCommand(byte[] array, out int num, out int room) {
             var stream = new MemoryStream(array);
             
@@ -244,12 +306,7 @@ namespace CommandsSystem {
             
             byte commandType = (byte) stream.ReadByte();
             byte[] arr = array.Skip(9).ToArray(); // TODO: fix performance
-//            UberDebug.LogChannel("DEBUG", room + " " + num);
-         /*   
-            _read_stream.SetLength(0);
-            _read_stream*/
-             switch (commandType) {
-
+            switch (commandType) {
 /*BEGIN1*/
              case 0:
                      return AddOrChangeInstance.Deserialize(arr);

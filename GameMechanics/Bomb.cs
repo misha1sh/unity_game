@@ -9,25 +9,52 @@ using UnityEngine.Jobs;
 using Object = System.Object;
 
 namespace GameMechanics {
+    /// <summary>
+    ///     Класс для бобмы
+    /// </summary>
     public class Bomb : MonoBehaviour {
+        /// <summary>
+        ///     Урон от попадания
+        /// </summary>
         public float damage;
+        /// <summary>
+        ///     Сила взрыва
+        /// </summary>
         public float explosionForce = 400;
+        /// <summary>
+        ///     Сфера, внутри которой взрывается бобма
+        /// </summary>
         public SphereCollider area;
 
+        /// <summary>
+        ///     Должна ли бомба наносить урон игроку, который её создал (false, если должна)
+        /// </summary>
         public bool noDamageToCreator = false;
 
+        /// <summary>
+        ///     Радиус взрыва
+        /// </summary>
         [NonSerialized]
         public float radius;
 
+        /// <summary>
+        ///     Инициализирует переменные
+        /// </summary>
         public void Start() {
             radius = transform.lossyScale.x * area.radius;
         }
 
+        /// <summary>
+        ///     Синхронно взрывает бомбу
+        /// </summary>
         public void Explode() {
             int id = ObjectID.GetID(gameObject);
             CommandsHandler.gameModeRoom.RunUniqCommand(new ExplodeBombCommand(id), UniqCodes.EXPLODE_BOMB, id, MessageFlags.IMPORTANT);
         }
         
+        /// <summary>
+        ///     Взрывает бомбу локально
+        /// </summary>
         public void RealExplode() {
             var creatorId = ObjectID.GetCreator(gameObject);
 
