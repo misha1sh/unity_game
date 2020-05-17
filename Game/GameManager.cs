@@ -68,7 +68,7 @@ namespace GameMode {
             var ttest = new Stopwatch();
             ObjectID.Clear();
             sceneReloaded = true;
-            sClient.LoadScene("new_scene1");
+            sClient.LoadScene("new_scene2");
             Debug.LogError("Loaded scene in " + ttest.ElapsedMilliseconds);
 
 
