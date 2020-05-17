@@ -81,7 +81,6 @@ public class sClient : MonoBehaviour {
         if (initialized) return;
         initialized = true;
         InstanceManager.Init();
-        CommandsHandler.Init();
         PlayersManager.mainPlayer = new Player(sClient.ID, sClient.ID, 0);
     }
 
@@ -95,7 +94,7 @@ public class sClient : MonoBehaviour {
         PlayersManager.Reset();
         InstanceManager.Reset();
         GameManager.Reset();
-        ObjectId.Reset();
+        ObjectID.Clear();
         state = STATE.START_SCREEN;
         if (AutoMatchJoiner.isRunning) {
             sClient.LoadScene("empty_scene");

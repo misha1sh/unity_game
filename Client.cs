@@ -25,7 +25,7 @@ public class Client : MonoBehaviour
     /// <summary>
     ///     Рендерер следов от пуль
     /// </summary>
-    public testscript TrailRenderer;
+    public BulletTrailRenderer bulletTrailRenderer;
 
     /// <summary>
     ///     Объект, хранящиц границу внутри которой можно создавать объекты

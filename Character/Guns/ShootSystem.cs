@@ -27,7 +27,7 @@ namespace Character.Guns {
         /// <param name="start">Координата, откуда был произведен выстрел</param>
         /// <param name="stop">Координата, куда попал выстрел</param>
         public static void DrawTracer(Vector3 start, Vector3 stop) {
-            Client.client.TrailRenderer.MoveFromTo(start, stop);
+            Client.client.bulletTrailRenderer.MoveFromTo(start, stop);
            // DebugExtension.DrawArrow(start, stop - start);
           /*  RotaryHeart.Lib.PhysicsExtension.DebugExtensions.DebugCapsule(start, stop, Color.magenta,
                 drawDuration: 100f, preview: PreviewCondition.Both);*/

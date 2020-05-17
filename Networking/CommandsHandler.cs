@@ -30,12 +30,6 @@ namespace Networking {
         /// </summary>
         public static ClientCommandsRoom gameModeRoom;
         
-        /// <summary>
-        ///     Инициализирует переменные
-        /// </summary>
-        public static void Init() {
-            webSocketHandler.Start();
-        }
 
         /// <summary>
         ///     Сбрасывает значения переменных

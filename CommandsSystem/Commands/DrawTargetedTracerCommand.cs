@@ -34,7 +34,7 @@ namespace CommandsSystem.Commands {
             ShootSystem.DrawTracer(ShootSystem.GetGunPosition(player.transform.position),
                 ShootSystem.GetGunPosition(target.transform.position));
             
-            HPSystem.ApplyHPChange(target, HpChange);
+            HPController.ApplyHPChange(target, HpChange);
         }
     }
 }

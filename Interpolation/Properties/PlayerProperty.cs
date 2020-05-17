@@ -53,7 +53,7 @@ namespace CommandsSystem.Commands {
             position = gameObject.transform.position;
             rotation = gameObject.transform.rotation; 
             if (characterAnimator is null) characterAnimator = gameObject.GetComponent<CharacterAnimator>();
-            animationState = characterAnimator.GetAnimationState();
+            animationState = characterAnimator.animationState;
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace CommandsSystem.Commands {
             gameObject.transform.position = position;
             gameObject.transform.rotation = rotation;
             if (characterAnimator is null) characterAnimator = gameObject.GetComponent<CharacterAnimator>();
-            characterAnimator.SetAnimationState(animationState);
+            characterAnimator.animationState = animationState;
         }
 
         /// <summary>

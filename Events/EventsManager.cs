@@ -23,7 +23,6 @@ namespace Events {
         /// </summary>
         private void Start() {
             MainUIController.mainui.SetupHandlers();
-            sClient.SetupHandlers();
         }
     }
 }

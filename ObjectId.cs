@@ -246,10 +246,10 @@ public class ObjectID: MonoBehaviour
     /// <summary>
     ///     Проверяет, владеет ли данный клиент объектом
     /// </summary>
-    /// <param name="gameOject">Объект</param>
+    /// <param name="go">Объект</param>
     /// <returns>true, если владеет. Иначе false</returns>
-    public static bool IsOwned(GameObject gameOject) {
-        return GetOwner(gameObject) == sClient.ID;
+    public static bool IsOwned(GameObject go) {
+        return GetOwner(go) == sClient.ID;
     }
     
     /// <summary>

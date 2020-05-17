@@ -66,7 +66,7 @@ namespace Character {
         /// <param name="idle">true, если сейчас должна работать анимация стояния. иначе -- false</param>
         public void SetIdle(bool idle) {
             animator.SetBool(Idle, idle);
-            animationState.idle = idle;
+            _animationState.idle = idle;
         }
         
         /// <summary>
@@ -75,7 +75,7 @@ namespace Character {
         /// <param name="speed">Скорость персонажа</param>
         public void SetSpeed(float speed) {
             animator.SetFloat(Speed, speed);
-            animationState.speed = speed + 10;
+            _animationState.speed = speed + 10;
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Character {
         /// <param name="rotationSpeed"></param>
         public void SetRotationSpeed(float rotationSpeed) {
             animator.SetFloat(RotationSpeed, 0);
-            animationState.rotationSpeed = rotationSpeed;
+            _animationState.rotationSpeed = rotationSpeed;
         }
     }
 }

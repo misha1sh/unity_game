@@ -225,7 +225,7 @@ namespace GameMode {
                     }
 
                     if (allLoaded) {
-                        timeEnd = Time.time + gameMode.TimeLength();
+                        timeEnd = Time.time + gameMode.TimeLength;
                         state = STATE.UPDATE_GAMEMODE;
                     }
 
