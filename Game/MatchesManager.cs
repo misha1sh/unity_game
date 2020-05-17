@@ -10,8 +10,13 @@ using UI;
 using UnityEngine;
 
 namespace Game {
-
+    /// <summary>
+    ///     Класс для управления и присоединения к игровым матчам
+    /// </summary>
     public static class MatchesManager {
+        /// <summary>
+        ///     Перечисление возможных состояний менеджера матчей
+        /// </summary>
         public enum STATE {
             START_FIND,
             WAIT_MATCHES_INFO,
@@ -20,14 +25,14 @@ namespace Game {
             PLAYING_MATCH
         }
         
-        
-        
-        
-        public static List<MatchInfo> matches = new List<MatchInfo>();
-        private static SortedSet<int> bannedMatches = new SortedSet<int>();
-        
+        /// <summary>
+        ///     Переменная для хранения состояния менеджера матчей
+        /// </summary>        
         private static STATE _state = STATE.START_FIND;
 
+        /// <summary>
+        ///     Состояние менеджера матчей
+        /// </summary>
         private static STATE state {
             get => _state;
             set {
@@ -36,10 +41,15 @@ namespace Game {
             }
         }
 
-     //   private static float waitTime = -1f;
-
+        /// <summary>
+        ///     Информация о текущем матче
+        /// </summary>
         public static MatchInfo currentMatch;
 
+        /// <summary>
+        ///     Создаёт матч с заданными параметрами
+        /// </summary>
+        /// <param name="matchInfo">Параметры создаваемого матча</param>
         private static void CreateMatch(MatchInfo matchInfo) {
             UberDebug.LogChannel("Matchmaking", "Creating match with params: " + matchInfo.ToJson().ToString());
             RequestsManager.Send(new Request(CommandsHandler.matchmakingRoom,  RequestType.CreateMatch, 
@@ -54,6 +64,10 @@ namespace Game {
                 } ));
         }
 
+        /// <summary>
+        ///     Присоединяется к заданному матчу
+        /// </summary>
+        /// <param name="matchid">ID матча, к которому нужно присоединиться</param>
         private static void JoinMatch(int matchid) {
             UberDebug.LogChannel("Matchmaking", "Joining match#" + matchid);
             var json = new JsonObject();
@@ -74,11 +88,12 @@ namespace Game {
                     
                     HandleJsonMatchChanged(response);
                     
-                   /* currentMatch = MatchInfo.FromJson(response["match"]);
-                    EventsManager.handler.OnCurrentMatchChanged(currentMatch);*/
                 }));
         }
 
+        /// <summary>
+        ///     Получает список матчей и автоматически присоединяется к одному из возможных
+        /// </summary>
         private static void GetMatchesList() {
             RequestsManager.Send(new Request(CommandsHandler.matchmakingRoom, RequestType.GetMatchesList, new JsonObject(), 
                 response => {
@@ -103,6 +118,9 @@ namespace Game {
                 }));
         }
 
+        /// <summary>
+        ///     Посылает сообщение о старте матча
+        /// </summary>
         public static void SendStartGame() {
             if (state == STATE.WAIT_STARTING_MATCH) return;
             if (state == STATE.PLAYING_MATCH) return;
@@ -131,10 +149,17 @@ namespace Game {
 
         }
 
+        /// <summary>
+        ///     Устанавливает локальное состояние матча на PLAYING
+        /// </summary>
         public static void SetMatchIsPlaying() {
             state = STATE.PLAYING_MATCH;
         }
         
+        /// <summary>
+        ///     Обрабатывает JSON-сообщение, что текущий матч изменился
+        /// </summary>
+        /// <param name="json">JSON-сообщение</param>
         public static void HandleJsonMatchChanged(JsonValue json) {
             UberDebug.LogChannel("Matchmaking", "Match changed " + json.ToString());
             var mi = MatchInfo.FromJson(json["match"]);
@@ -145,6 +170,9 @@ namespace Game {
             EventsManager.handler.OnCurrentMatchChanged(last, currentMatch);
         }
         
+        /// <summary>
+        ///     Обновляет состояние менеджера матчей
+        /// </summary>
         public static void Update() {
             switch (state) {
                 case STATE.START_FIND:
@@ -162,35 +190,6 @@ namespace Game {
                 case STATE.PLAYING_MATCH:
                     break;
             }
-           /* switch (state) {
-                case STATE.START_FINDING:
-                    hostMatch = new MatchInfo(1, 2, ObjectID.RandomID);
-                    matches = new List<MatchInfo>();
-                    
-                    CommandsHandler.matchmakingRoom = new ClientCommandsRoom(42);
-                    CommandsHandler.matchmakingRoom.RunSimpleCommand(new AskMatches(), MessageFlags.NONE);
-                    waitTime = 1;
-                    break;
-                
-                case STATE.WAITING_RESPONSES:
-                    foreach (var match in matches) {
-                        if (bannedMatches.Contains(match.roomId)) continue;
-                        if (match.roomId == hostMatch.roomId) continue;
-                        if (match.playersCount >= match.maxPlayersCount) continue;
-                        CommandsHandler.matchmakingRoom.RunSimpleCommand(new );
-                    }
-                    
-                    waitTime -= Time.deltaTime;
-                    if (waitTime < 0) {
-                        CommandsHandler.matchmakingRoom.RunSimpleCommand(new AskMatches(), MessageFlags.NONE);
-                        waitTime = 1;
-                    }
-                    break;
-                
-                case STATE.MATCH_FOUND:
-                    break;
-            }*/
-
         }
 
         public static void Reset() {

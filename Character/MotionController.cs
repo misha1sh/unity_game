@@ -3,47 +3,64 @@ using Character.HP;
 using UnityEngine;
 
 namespace Character {
-
     
-
-//    [RequireComponent(typeof(CharacterController))]
+    /// <summary>
+    ///     Компонента для передвижения персонажа по игровому полю
+    /// </summary>
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(CharacterAnimator))]
     public class MotionController : MonoBehaviour {
-//        private CharacterController characterController;
+        /// <summary>
+        ///     Ссылка на Rigidbody персонажа
+        /// </summary>
         private new Rigidbody rigidbody;
+        /// <summary>
+        ///     Ссылка на CapsuleCollider персонажа
+        /// </summary>
         private CapsuleCollider capsuleCollider;
+        /// <summary>
+        ///     Ссылка на CharacterAnimator персонажа
+        /// </summary>
         private CharacterAnimator animator;
         
+        /// <summary>
+        ///     Сила, которая изменяет скорость персонажа
+        /// </summary>
         public float moveForce = 4000;
+        /// <summary>
+        ///     Максимальная скорость персонажа
+        /// </summary>
         public float speed = 6.0f;
+        /// <summary>
+        ///     Скорость поворота персонажа
+        /// </summary>
         public float rotationSpeed = 700.0f;
-        public float jumpSpeed = 8.0f;
-        public float gravity = 20.0f;
-        public float maxGoAngle = 50.0f;
-
-
         
 
+        /// <summary>
+        ///     Инициализирует переменные
+        /// </summary>
         void Start() {
-
-
-            //            characterController = GetComponent<CharacterController>();
             rigidbody = GetComponent<Rigidbody>();
             capsuleCollider = GetComponent<CapsuleCollider>();
             animator = GetComponent<CharacterAnimator>();
-            
-            
         }
 
         private List<GameObject> groundCollisions = new List<GameObject>();
 
+        /// <summary>
+        ///     Провряет, что персонаж всё еще стоит на земле.
+        /// </summary>
+        /// <param name="gameObject">Объект, на котором персонаж прекратил стоять</param>
         private void DeGround(GameObject gameObject) {
             if (!groundCollisions.Remove(gameObject)) return;
             isGrounded = groundCollisions.Count != 0;
-            //            Debug.Log((isGrounded ? "still grounded" : "lose ground ") + gameObject.name);
         }
 
+        /// <summary>
+        ///     Сообщает, что персонаж всё ещё стоит на данном коллайдере. Автоматически вызывается Unity
+        /// </summary>
+        /// <param name="other">Коллайдер</param>
         private void OnTriggerStay(Collider other) {
             if (!groundCollisions.Contains(other.gameObject)) {
                 groundCollisions.Add(other.gameObject);
@@ -51,38 +68,43 @@ namespace Character {
             }
         }
 
+        /// <summary>
+        ///     Сообщает, что персонаж больше не стоит на данном коллайдере . Автоматически вызывается Unity
+        /// </summary>
+        /// <param name="other">Коллайдер</param>
         private void OnTriggerExit(Collider other) {
-           // Debug.LogError(other.name);
             DeGround(other.gameObject);
         }
+        
+        /// <summary>
+        ///     Находится ли персонаж на земле
+        /// </summary>
         private bool isGrounded = true;
         
-
         /// <summary>
-        ///     from -1 to 1
+        ///     Направление, в котором должен двигаться персонаж
         /// </summary>
         public Vector3 TargetDirection { get; set; }
+        /// <summary>
+        ///     Направление, в котором смотрит персонаж
+        /// </summary>
         public Vector3 TargetRotation { get; set; }
 
-      /*  private void FixedUpdate() {
-         
-        }
-*/
+      
+        /// <summary>
+        ///     Производит передвижение персонажа. Автоматически вызывается Unity при каждой обработке физики
+        /// </summary>
         void FixedUpdate() {
             for (int i = 0; i < groundCollisions.Count; i++) {
                 if (!groundCollisions[i]) {
                     DeGround(groundCollisions[i]);
-                    break; // TODO
+                    break;
                 }
             }
 
             if (transform.position.y < -15) {
                 gameObject.GetComponent<HPController>().TakeDamage(100000, DamageSource.InstaKill(), true);
             }
-
-            
-
-           
 
             if (isGrounded) {
                 var targetSpeed = speed * TargetDirection;
@@ -98,24 +120,11 @@ namespace Character {
                         rigidbody.AddForce(-vec * moveForce);
                         Debug.Log("addforce");  
                     }
-                       
-
-                   /* var angle = Vector3.SignedAngle(vec, Vector3.forward, Vector3.up);
-                    Debug.Log(angle);
-                    animator.SetFloat("rotationSpeed", angle);*/
-
-                   /*  var angle = Vector3.SignedAngle(vec, Vector3.forward, Vector3.up);
-                     Debug.Log(angle / Math.Abs(angle));
-                     
-                     transform.Rotate(0, 1, 0);*/
-                   // transform.rotation = Quaternion.LookRotation(TargetDirection);
                 } else {
                     animator.SetRotationSpeed(0);
                 }
             }
 
-            /*if (TargetRotation != Vector3.zero)
-                transform.rotation = Quaternion.LookRotation(TargetRotation);*/
             if (TargetDirection != Vector3.zero)
                 transform.rotation = Quaternion.RotateTowards(transform.rotation,
                     Quaternion.LookRotation(TargetDirection),
@@ -125,38 +134,11 @@ namespace Character {
             float linearSpeed = TargetDirection.magnitude;
             animator.SetIdle(linearSpeed == 0.0f);
             animator.SetSpeed(linearSpeed);
-
-
-
-
-
-            //            rigidbody.AddForce(moveDirection);
-
-            /* float curRotationSpeed = Input.GetAxis("Horizontal") * rotationSpeed * Time.deltaTime;
-             animator.SetFloat("rotationSpeed", Input.GetAxis("Horizontal"));
-
-             transform.Rotate(0, curRotationSpeed, 0);*/
-
-
-            /*   int layerMask = 1 << 8;
-
-               layerMask = ~layerMask;
-
-               RaycastHit hit;
-               Vector3 pos = transform.position + capsuleCollider.center;
-               Vector3 rot = transform.rotation * Vector3.forward;
-               if (Physics.Raycast(pos, rot, out hit, Mathf.Infinity, layerMask)) {
-                   Debug.DrawRay(pos, rot * hit.distance, Color.yellow);
-               } else {
-                   Debug.DrawRay(pos, rot * 1000, Color.white);
-               }*/
-
-
-
-
-
         }
 
+        /// <summary>
+        ///     Отрисовывает отладочную информацию о состоянии игрока. Автоматически вызывается средой Unity
+        /// </summary>
         private void OnDrawGizmos() {
 
             if (!Application.isPlaying) return;
@@ -172,67 +154,7 @@ namespace Character {
 
             DebugExtension.DebugArrow(pos, TargetDirection * 1f, Color.blue);
             DebugExtension.DebugArrow(pos, TargetRotation.normalized / 2, Color.red);
-
         }
-
-
     }
 }
 
-
-
-
-/*    
-
-
-    private void OnTriggerStay(Collider collider) {
-        var v = new Vector3(0, capsuleCollider.radius, 0) + transform.position;
-        Vector3 p;
-        if (collider is BoxCollider ||
-            collider is SphereCollider ||
-            collider is CapsuleCollider ||
-            (collider is MeshCollider meshCollider &&
-             meshCollider.convex)) {
-            p = collider.ClosestPoint(v);
-        }
-        collider.
-    }*/
-
-    /*    private void OnCollisionStay(Collision other) {
-            var v = new Vector3(0, capsuleCollider.radius, 0) + transform.position;
-            Vector3 p;
-            if (other.collider is BoxCollider ||
-                other.collider is SphereCollider ||
-                other.collider is CapsuleCollider ||
-                (other.collider is MeshCollider meshCollider &&
-                 meshCollider.convex)) {
-                p = other.collider.ClosestPoint(v);
-            } else {
-                p = other.GetContact(0).point;
-            }
-            var downVec = p - v; //- (transform.position);//other.ClosestPoint(transform.position));
-            CalcGroundedPoint(downVec, other.gameObject);
-//             RaycastHit res;
-//             if (!Physics.Raycast(v, Vector3.down, out res)) return;
-
-        }
-*/
-    /*    private void CalcGroundedPoint(Vector3 downVec, GameObject gameObject) {
-
-             var angle = Vector3.Angle(downVec, Vector3.down);
-             
-
-             if (angle < maxGoAngle) {
-                 if (groundCollisions.Contains(gameObject)) return;
-                 Debug.Log("gr " + downVec + " " + angle);
-                 groundCollisions.Add(gameObject);
-                 isGrounded = true;
-                 Debug.Log("Grounded " + gameObject.name);
-             } else {
-                 Debug.Log("de " + downVec + " " + angle);
-
-                 DeGround(gameObject);
-             }
-        }
-
-         */

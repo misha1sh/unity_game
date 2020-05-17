@@ -1,4 +1,6 @@
 ﻿namespace Character.Guns {
-    public class PistolController : GunController<Pistol> {
-    }
+    /// <summary>
+    ///     Класс для пистолета, расположенного в виде игрового объекта на поле
+    /// </summary>
+    public class PistolController : GunController<Pistol> { }
 }

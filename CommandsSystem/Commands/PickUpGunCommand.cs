@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace CommandsSystem.Commands {
+    /// <summary>
+    ///     
+    /// </summary>
     public partial class PickUpGunCommand {
         public int player;
         public int gun;

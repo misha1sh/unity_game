@@ -1,7 +1,8 @@
 ﻿using CommandsSystem.Commands;
 
 namespace Interpolation.Managers {
-    public class PlayerManagedGameObject : ManagedGameObject<PlayerProperty> {
-        
-    }
+    /// <summary>
+    ///     Компонента для персонажа, управляемого из текущего клиента
+    /// </summary>
+    public class PlayerManagedGameObject : ManagedGameObject<PlayerProperty> { }
 }

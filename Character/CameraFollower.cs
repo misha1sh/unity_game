@@ -1,27 +1,28 @@
 ﻿using UnityEngine;
 
 namespace Character {
+    /// <summary>
+    ///     Компонента для следования камеры за игроком
+    /// </summary>
     public class CameraFollower : MonoBehaviour {
-
+        /// <summary>
+        ///     Игрок, за которым должна следовать камера
+        /// </summary>
         public GameObject character;
 
+        /// <summary>
+        ///     Высота относительно игрока, на которой должна располагаться камера
+        /// </summary>
         public float yLevel = 0;
-        // Start is called before the first frame update
-        void Start()
-        {
-        
-        }
 
-        // Update is called once per frame
+        /// <summary>
+        ///     Перемещает камеру в позицию над игроком. Автоматически вызывается Unity каждый кадр
+        /// </summary>
         void LateUpdate() {
             if (character == null) return;
             var position = character.transform.position;
             var vec = new Vector3(position.x, yLevel, position.z);
             transform.position = vec;
-//            var rot = gameObject.transform.eulerAngles;
-            // rot.y = character.transform.rotation.eulerAngles.y;
-//            gameObject.transform.eulerAngles = rot;
-            // gameObject.transform.Rotate(0.0f, 1.0f, 0.0f);
         }
     }
 }

@@ -12,34 +12,56 @@ using Networking;
 
 using Debug = UnityEngine.Debug;
 
+/// <summary>
+///     Класс с функциями для работы с игровым полем
+/// </summary>
 public class Client : MonoBehaviour
 {
-    //#if UNITY_WEBGL// && !UNITY_EDITOR
+    /// <summary>
+    ///     Статическая ссылка на Client (синглтон)
+    /// </summary>
     public static Client client { get; private set; }
 
-
+    /// <summary>
+    ///     Рендерер следов от пуль
+    /// </summary>
     public testscript TrailRenderer;
-    
 
+    /// <summary>
+    ///     Объект, хранящиц границу внутри которой можно создавать объекты
+    /// </summary>
     public GameObject spawnBorder = null;
    
-
-
+    
+    /// <summary>
+    ///     Граница игрового поля
+    /// </summary>
     public TrianglePolygon spawnPolygon;
     
+    /// <summary>
+    ///    Главный персонаж 
+    /// </summary>
     public GameObject mainPlayerObj;
+    /// <summary>
+    ///     Камера
+    /// </summary>
     public GameObject cameraObj;
-
-
-
-
+    
+    /// <summary>
+    ///     Слоаврь префабов, которые можно создавать на игровом поле
+    /// </summary>
     private Dictionary<string, GameObject> prefabs = new Dictionary<string, GameObject>();
+    /// <summary>
+    ///     Список префабов, которые можно создавать на игровом поле
+    /// </summary>
     public List<GameObject> prefabsList = new List<GameObject>();
 
 
 
 
-
+    /// <summary>
+    ///     Инициализирует переменные
+    /// </summary>
     private void Awake() {
         client = this;
 
@@ -59,8 +81,6 @@ public class Client : MonoBehaviour
         }
 
 
-        //ObjectID.StoreObject(player, player.GetInstanceID());
-
         var c = new SpawnPrefabCommand("123123", Vector3.back, Quaternion.identity, 123, 4, 778);
         var f = c.Serialize();
         var d = SpawnPrefabCommand.Deserialize(f);
@@ -74,21 +94,20 @@ public class Client : MonoBehaviour
     
 
 
-
+    /// <summary>
+    ///     Удаляет объект с игрового поля
+    /// </summary>
+    /// <param name="gameObject">Объект</param>
     public void RemoveObject(GameObject gameObject) {
-     /*   if (gameObject.TryGetComponent<Rigidbody>(out var r)) {// need to fire ontriggerexitevent
-            r.position = new Vector3(Random.Range(-100000, 100000),
-                -10000,
-                Random.Range(-100000, 100000));
-        } else {
-            gameObject.transform.position = new Vector3(Random.Range(-100000, 100000),
-                -10000,
-                Random.Range(-100000, 100000));
-        }*/
         ObjectID.RemoveObject(gameObject);
-       Destroy(gameObject);
+        Destroy(gameObject);
     }
 
+    /// <summary>
+    ///     Создаёт объект на игровом поле
+    /// </summary>
+    /// <param name="command">Команда для создание объекта</param>
+    /// <returns>Созданный объект</returns>
     public GameObject SpawnObject(SpawnPrefabCommand command)
     {
         if (!prefabs.ContainsKey(command.prefabName)) {
@@ -101,13 +120,15 @@ public class Client : MonoBehaviour
         return gameObject;
     }
 
+    /// <summary>
+    ///     Создаёт объект на игровом поле
+    /// </summary>
+    /// <param name="name">Название префаба</param>
+    /// <param name="position">Положение объекта</param>
+    /// <param name="rotation">Поворот объекта</param>
+    /// <returns>Созданный объект</returns>
     public GameObject SpawnPrefab(string name, Vector3 position = new Vector3(),
         Quaternion rotation = new Quaternion()) {
         return Instantiate(prefabs[name], position, rotation);
     }
-    
-    
-
-
-//#endif
 }

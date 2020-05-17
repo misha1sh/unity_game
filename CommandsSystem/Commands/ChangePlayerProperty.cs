@@ -2,25 +2,26 @@
 using UnityEngine;
 
 namespace CommandsSystem.Commands {
+    /// <summary>
+    ///     Класс для хранения и синхронизации состояния игрока
+    /// </summary>
     public partial class ChangePlayerProperty {
+        /// <summary>
+        ///     Состояние игрока
+        /// </summary>
         public PlayerProperty property;
+        /// <summary>
+        ///     Время, которое прошло с последнего изменения состояния
+        /// </summary>
         public float deltaTime;
         
+        /// <summary>
+        ///     Применяет изменение состояния
+        /// </summary>
         public void Run() {
             GameObject gameObject;
             if (!ObjectID.TryGetObject(property.id, out gameObject))
             {
-             /*   var spawnCommand = new SpawnPrefabCommand {
-                    id = property.id, 
-                    position = property.position, 
-                    rotation = property.rotation, 
-                    prefabName = "RobotGhost"
-                };
-
-      
-                
-                
-                gameObject = Client.client.SpawnObject(spawnCommand);*/
                 return;
             }
 
@@ -30,12 +31,6 @@ namespace CommandsSystem.Commands {
 #if DEBUG_INTERPOLATION              
             DebugExtension.DebugPoint(property.position, Color.red, 0.1f, 3);
 #endif
-            /*    GhostController controller = character.GetComponent<GhostController>();
-                if (controller is null) return;
-                controller.SetStateAnimated(state);
-    */
-
-            /// Assert. (!character.CompareTag("EntityPlayer")) return;
         }
     }
 }

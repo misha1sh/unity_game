@@ -5,13 +5,23 @@ using GameMode;
 using UnityEngine;
 
 namespace CommandsSystem.Commands {
+    /// <summary>
+    ///     Команда для создания на игровом поле персонажа
+    /// </summary>
     public partial class SpawnPlayerCommand {
+        /// <summary>
+        ///     Базовая команда для создания объекта 
+        /// </summary>
         public SpawnPrefabCommand command;
-
+        
+        /// <summary>
+        ///     Id игрока, который будет управлять данным персонажем
+        /// </summary>
         public int playerId;
   
-        
-        
+        /// <summary>
+        ///     Создает персонажа с заданными параметрами
+        /// </summary>
         public void Run() {
             Player player = PlayersManager.GetPlayerById(playerId);
 

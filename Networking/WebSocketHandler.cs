@@ -4,7 +4,17 @@ using UnityEngine;
 using System.Threading.Tasks;
 using NativeWebSocket;
 
+/// <summary>
+///     Класс с дополнительными функциями для очериди
+/// </summary>
 public static class QueueExtension {
+    /// <summary>
+    ///     Пытается достать элемент из очереди
+    /// </summary>
+    /// <param name="queue">Очередь</param>
+    /// <param name="res">Элемент</param>
+    /// <typeparam name="T">Тип элемента</typeparam>
+    /// <returns>true, если очердь была не пустая. Иначе false</returns>
     public static bool TryDequeue<T>(this Queue<T> queue, out T res) {
         if (queue.Count == 0) {
             res = default(T);
@@ -16,27 +26,45 @@ public static class QueueExtension {
     }
 }
 
-public class WebSocketHandler
-{
-
-
+/// <summary>
+///     Класс для работы с WebSocket
+/// </summary>
+public class WebSocketHandler {
+    /// <summary>
+    ///     Очередь сообщений с клиента на сервер
+    /// </summary>
     public Queue<byte[]> clientToServerMessages = new Queue<byte[]>();
+    /// <summary>
+    ///     Очередь сообщений с сервера на клиент
+    /// </summary>
     public Queue<byte[]> serverToClientMessages = new Queue<byte[]>();
-
     
+    /// <summary>
+    ///     Ассинхронная задача подключиться к серверу
+    /// </summary>
     private Task<WebSocket> connectTask;
-  //  private Task receiveTask = Task.CompletedTask;
+
+    /// <summary>
+    ///     Асинхронная задача отправить сообщение на сервер
+    /// </summary>
     private Task sendTask = Task.CompletedTask;
     
+    /// <summary>
+    ///     Вебсокет для общения с сервером
+    /// </summary>
     private WebSocket webSocket;
 
-    public void Start() {}
-
+    /// <summary>
+    ///     Отключается от сервера
+    /// </summary>
     public void Stop() {
         Debug.Log("CLIENT: WebSocket closed");
         webSocket?.Close();
     }
     
+    /// <summary>
+    ///     Обновляет состояние вебсокета
+    /// </summary>
     public void Update() {
         if (webSocket is null || webSocket.State == WebSocketState.Closed) {
             if (connectTask is null) {
@@ -50,13 +78,9 @@ public class WebSocketHandler
 
             return;
         }
-
-        //if (!socketTask.IsCompleted) return;
-       // recieveTask = webSocket.Receive();
         
         byte[] commands;
         while (sendTask.IsCompleted && clientToServerMessages.TryDequeue(out commands)) {
-//            Debug.Log("CLIENT: start sending"); 
             /* #if UNITY_EDITOR
               Thread.Sleep(60);
             #endif  */
@@ -66,15 +90,14 @@ public class WebSocketHandler
             }
             
             sendTask = webSocket.Send(commands);
-//            UberDebug.LogChannel("DEBUG", commands.Length + "   s" + res);
         }
-        
-
     }
 
-
-    private async Task<WebSocket> CreateWebSocket()
-    {
+    /// <summary>
+    ///     Создаёт вебсокет
+    /// </summary>
+    /// <returns>Асинхронную задачу создания вебсокета</returns>
+    private async Task<WebSocket> CreateWebSocket() {
         Debug.Log("CLIENT: Connecting");
         var webSocket = new WebSocket("ws://{host}/ws");
         lock (webSocket)
@@ -95,6 +118,10 @@ public class WebSocketHandler
 
 
 
+    /// <summary>
+    ///     Обрабатывает сообщение, пришедшее в вебсокет
+    /// </summary>
+    /// <param name="data">Массив байт с данными</param>
     private void HandleWebSocketMessage(byte[] data)
     {/*
 #if UNITY_EDITOR
