@@ -10,16 +10,16 @@ using JsonRequest;
 namespace CommandsSystem {
     
     /// <summary>
-    ///     РљР»Р°СЃСЃ РґР»СЏ СЃРµСЂРёР°Р»РёР·Р°С†РёРё Рё РґРµСЃРµСЂРёР°Р»РёР·Р°С†РёРё РєРѕРјР°РЅРґ
+    ///     Класс для сериализации и десериализации команд
     /// </summary>
     public class CommandsSystem {
         /// <summary>
-        ///     РљРѕРґРёСЂСѓРµС‚ Р·Р°РґР°РЅРЅСѓСЋ РєРѕРјР°РЅРґСѓ РІ Р±РёРЅР°СЂРЅС‹Р№ РІРёРґ Рё Р·Р°РїРёСЃС‹РІР°РµС‚ РІ stream.
-        ///     Р”Р°РЅРЅС‹Р№ РјРµС‚РѕРґ РёСЃРїРѕР»СЊР·СѓРµС‚ РєРѕРґРѕРіРµРЅРµСЂР°С†РёСЋ
+        ///     Кодирует заданную команду в бинарный вид и записывает в stream.
+        ///     Данный метод использует кодогенерацию
         /// </summary>
-        /// <param name="command">РљРѕРјР°РЅРґР°</param>
-        /// <param name="stream">РџРѕС‚РѕРє, РІ РєРѕС‚РѕСЂС‹Р№ РЅСѓР¶РЅРѕ Р·Р°РїРёСЃР°С‚СЊ РєРѕРјР°РЅРґСѓ</param>
-        /// <typeparam name="T">РўРёРї РєРѕРјР°РЅРґС‹</typeparam>
+        /// <param name="command">Команда</param>
+        /// <param name="stream">Поток, в который нужно записать команду</param>
+        /// <typeparam name="T">Тип команды</typeparam>
         private void EncodeCommand<T>(T command, Stream stream) where T : ICommand {
 /*BEGIN2*/
             if (command is AddOrChangeInstance addorchangeinstance) {
@@ -57,98 +57,93 @@ namespace CommandsSystem {
                 var buf = createchatmessagecommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
-            if (command is CreateGhostCommand createghostcommand) {
-                stream.WriteByte((byte)7);
-                var buf = createghostcommand.Serialize();
-                stream.Write(buf, 0, buf.Length);
-            } else
             if (command is DrawPositionTracerCommand drawpositiontracercommand) {
-                stream.WriteByte((byte)8);
+                stream.WriteByte((byte)7);
                 var buf = drawpositiontracercommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is DrawTargetedTracerCommand drawtargetedtracercommand) {
-                stream.WriteByte((byte)9);
+                stream.WriteByte((byte)8);
                 var buf = drawtargetedtracercommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is ExplodeBombCommand explodebombcommand) {
-                stream.WriteByte((byte)10);
+                stream.WriteByte((byte)9);
                 var buf = explodebombcommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is PickCoinCommand pickcoincommand) {
-                stream.WriteByte((byte)11);
+                stream.WriteByte((byte)10);
                 var buf = pickcoincommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is PickUpGunCommand pickupguncommand) {
-                stream.WriteByte((byte)12);
+                stream.WriteByte((byte)11);
                 var buf = pickupguncommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is PlayerPushCommand playerpushcommand) {
-                stream.WriteByte((byte)13);
+                stream.WriteByte((byte)12);
                 var buf = playerpushcommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is SetAfterShowResultsCommand setaftershowresultscommand) {
-                stream.WriteByte((byte)14);
+                stream.WriteByte((byte)13);
                 var buf = setaftershowresultscommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is SetGameMode setgamemode) {
-                stream.WriteByte((byte)15);
+                stream.WriteByte((byte)14);
                 var buf = setgamemode.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is SetPlatformStateCommand setplatformstatecommand) {
-                stream.WriteByte((byte)16);
+                stream.WriteByte((byte)15);
                 var buf = setplatformstatecommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is SpawnParabolaFlyingCommand spawnparabolaflyingcommand) {
-                stream.WriteByte((byte)17);
+                stream.WriteByte((byte)16);
                 var buf = spawnparabolaflyingcommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is SpawnPlayerCommand spawnplayercommand) {
-                stream.WriteByte((byte)18);
+                stream.WriteByte((byte)17);
                 var buf = spawnplayercommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is SpawnPrefabCommand spawnprefabcommand) {
-                stream.WriteByte((byte)19);
+                stream.WriteByte((byte)18);
                 var buf = spawnprefabcommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is StartGameCommand startgamecommand) {
-                stream.WriteByte((byte)20);
+                stream.WriteByte((byte)19);
                 var buf = startgamecommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is TakeOwnCommand takeowncommand) {
-                stream.WriteByte((byte)21);
+                stream.WriteByte((byte)20);
                 var buf = takeowncommand.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is Pistol pistol) {
-                stream.WriteByte((byte)22);
+                stream.WriteByte((byte)21);
                 var buf = pistol.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is ShotGun shotgun) {
-                stream.WriteByte((byte)23);
+                stream.WriteByte((byte)22);
                 var buf = shotgun.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is SemiautoGun semiautogun) {
-                stream.WriteByte((byte)24);
+                stream.WriteByte((byte)23);
                 var buf = semiautogun.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
             if (command is BombGun bombgun) {
-                stream.WriteByte((byte)25);
+                stream.WriteByte((byte)24);
                 var buf = bombgun.Serialize();
                 stream.Write(buf, 0, buf.Length);
             } else
@@ -161,16 +156,16 @@ namespace CommandsSystem {
         }
         
         /// <summary>
-        ///     MemoryStream РґР»СЏ РІРЅСѓС‚СЂРµРЅРЅРµРіРѕ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ (РЅСѓР¶РµРЅ РґР»СЏ СѓРјРµРЅСЊС€РµРЅРёСЏ РЅР°РіСЂСѓР·РєРё РЅР° СЃР±РѕСЂС‰РёРє РјСѓСЃРѕСЂР°)
+        ///     MemoryStream для внутреннего использования (нужен для уменьшения нагрузки на сборщик мусора)
         /// </summary>
         private static MemoryStream _stream = new MemoryStream();
         /// <summary>
-        ///     BinaryWriter РґР»СЏ РІРЅСѓС‚СЂРµРЅРЅРµРіРѕ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ (РЅСѓР¶РµРЅ РґР»СЏ СѓРјРµРЅСЊС€РµРЅРёСЏ РЅР°РіСЂСѓР·РєРё РЅР° СЃР±РѕСЂС‰РёРє РјСѓСЃРѕСЂР°)
+        ///     BinaryWriter для внутреннего использования (нужен для уменьшения нагрузки на сборщик мусора)
         /// </summary>
         private static BinaryWriter _writer = new BinaryWriter(_stream);
 
         /// <summary>
-        ///     РћС‡РёС‰Р°РµС‚ РїРѕС‚РѕРєРё РґР»СЏ Р·Р°РїРёСЃРё РєРѕРјР°РЅРґ РѕС‚ РґР°РЅРЅС‹С…
+        ///     Очищает потоки для записи команд от данных
         /// </summary>
         private void ResetWriteStreams() {
             _stream.SetLength(0);
@@ -178,13 +173,13 @@ namespace CommandsSystem {
         }
         
         /// <summary>
-        ///     РљРѕРґРёСЂСѓРµС‚ РѕР±С‹С‡РЅСѓСЋ РєРѕРјР°РЅРґСѓ
+        ///     Кодирует обычную команду
         /// </summary>
-        /// <param name="command">РљРѕРјР°РЅРґР°</param>
-        /// <param name="room">РљРѕРјРЅР°С‚Р°, РІ РєРѕС‚РѕСЂСѓСЋ РЅСѓР¶РЅРѕ РѕС‚РїСЂР°РІРёС‚СЊ РєРѕРјР°РЅРґСѓ</param>
-        /// <param name="flags">Р¤Р»Р°РіРё РѕС‚РїСЂР°РІРєРё</param>
-        /// <typeparam name="T">РўРёРї РєРѕРјР°РЅРґС‹</typeparam>
-        /// <returns>Р—Р°РєРѕРґРёСЂРѕРІРЅРЅР°СѓСЋ РІ Р±РёРЅР°СЂРЅС‹Р№ РІРёРґ РєРѕРјР°РЅРґСѓ</returns>
+        /// <param name="command">Команда</param>
+        /// <param name="room">Комната, в которую нужно отправить команду</param>
+        /// <param name="flags">Флаги отправки</param>
+        /// <typeparam name="T">Тип команды</typeparam>
+        /// <returns>Закодировннаую в бинарный вид команду</returns>
         public byte[] EncodeSimpleCommand<T>(T command, int room, MessageFlags flags) where T : ICommand {
             ResetWriteStreams();
             _writer.Write((byte) MessageType.SimpleMessage); 
@@ -196,15 +191,15 @@ namespace CommandsSystem {
         }
 
         /// <summary>
-        ///     РљРѕРґРёСЂСѓРµС‚ СѓРЅРёРєР°Р»СЊРЅСѓСЋ РєРѕРјР°РЅРґСѓ
+        ///     Кодирует уникальную команду
         /// </summary>
-        /// <param name="command">РљРѕРјР°РЅРґР°</param>
-        /// <param name="room">РљРѕРјРЅР°С‚Р°, РІ РєРѕС‚РѕСЂСѓСЋ РЅСѓР¶РЅРѕ РѕС‚РїСЂР°РІРёС‚СЊ РєРѕРјР°РЅРґСѓ</param>
-        /// <param name="code1">РџРµСЂРІР°СЏ РїРѕР»РѕРІРёРЅР° СѓРЅРёРєР°Р»СЊРЅРѕРіРѕ РєРѕРґР°</param>
-        /// <param name="code2">Р’С‚РѕСЂР°СЏ РїРѕР»РѕРІРёРЅР° СѓРЅРёРєР°Р»СЊРЅРѕРіРѕ РєРѕРґР°</param>
-        /// <param name="flags">Р¤Р»Р°РіРё РѕС‚РїСЂР°РІРєРё</param>
-        /// <typeparam name="T">РўРёРї РєРѕРјР°РЅРґС‹</typeparam>
-        /// <returns>Р—Р°РєРѕРґРёСЂРѕРІРЅРЅР°СѓСЋ РІ Р±РёРЅР°СЂРЅС‹Р№ РІРёРґ РєРѕРјР°РЅРґСѓ</returns>
+        /// <param name="command">Команда</param>
+        /// <param name="room">Комната, в которую нужно отправить команду</param>
+        /// <param name="code1">Первая половина уникального кода</param>
+        /// <param name="code2">Вторая половина уникального кода</param>
+        /// <param name="flags">Флаги отправки</param>
+        /// <typeparam name="T">Тип команды</typeparam>
+        /// <returns>Закодировннаую в бинарный вид команду</returns>
         public byte[] EncodeUniqCommand<T>(T command, int room, int code1, int code2, MessageFlags flags) where T : ICommand {
             ResetWriteStreams();
             _writer.Write((byte) MessageType.UniqMessage);
@@ -218,13 +213,13 @@ namespace CommandsSystem {
         }
 
         /// <summary>
-        ///     РљРѕРґРёСЂСѓРµС‚ РєРѕРјР°РЅРґСѓ Р·Р°РїСЂРѕСЃР° СЃРѕРѕР±С‰РµРЅРёР№ СЃ СЃРµСЂРІРµСЂР°
+        ///     Кодирует команду запроса сообщений с сервера
         /// </summary>
-        /// <param name="room">РљРѕРјРЅР°С‚Р° РёР· РєРѕС‚РѕСЂРѕР№ Р·Р°РїСЂР°С€РёРІР°СЋС‚СЃСЏ СЃРѕРѕР±С‰РµРЅРёСЏ</param>
-        /// <param name="firstIndex">РРЅРґРµРєСЃ РїРµСЂРІРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ, РєРѕС‚РѕСЂРѕРµ РЅСѓР¶РЅРѕ РѕС‚РїСЂР°РІРёС‚СЊ</param>
-        /// <param name="lastIndex">РРЅРґРµРєСЃ РїРѕСЃР»РµРґРЅРµРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ, РєРѕС‚РѕСЂРѕРµ РЅСѓР¶РЅРѕ РѕС‚РїСЂР°РІРёС‚СЊ</param>
-        /// <param name="flags">Р¤Р»Р°РіРё</param>
-        /// <returns>Р—Р°РєРѕРґРёСЂРѕРІР°РЅРЅСѓСЋ РІ Р±РёРЅР°СЂРЅС‹Р№ РІРёРґ РєРѕРјР°РЅРґСѓ</returns>
+        /// <param name="room">Комната из которой запрашиваются сообщения</param>
+        /// <param name="firstIndex">Индекс первого сообщения, которое нужно отправить</param>
+        /// <param name="lastIndex">Индекс последнего сообщения, которое нужно отправить</param>
+        /// <param name="flags">Флаги</param>
+        /// <returns>Закодированную в бинарный вид команду</returns>
         public byte[] EncodeAskMessage(int room, int firstIndex, int lastIndex, MessageFlags flags) {
             ResetWriteStreams();
             
@@ -238,11 +233,11 @@ namespace CommandsSystem {
         }
 
         /// <summary>
-        ///     РљРѕРґРёСЂСѓРµС‚ РєРѕРјР°РЅРґСѓ РїСЂРёСЃРѕРµРґРёРЅРµРЅРёСЏ Рє РёРіСЂРѕРІРѕР№ РєРѕРјРЅР°С‚Рµ
+        ///     Кодирует команду присоединения к игровой комнате
         /// </summary>
-        /// <param name="room">РљРѕРјРЅР°С‚Р°, Рє РєРѕС‚РѕСЂРѕР№ РЅСѓР¶РЅРѕ РїСЂРёСЃРѕРµРґРёРЅРёС‚СЊСЃСЏ</param>
-        /// <param name="flags">Р¤Р»Р°РіРё</param>
-        /// <returns>Р—Р°РєРѕРґРёСЂРѕРІР°РЅРЅСѓСЋ РІ Р±РёРЅР°СЂРЅС‹Р№ РІРёРґ РєРѕРјР°РЅРґСѓ</returns>
+        /// <param name="room">Комната, к которой нужно присоединиться</param>
+        /// <param name="flags">Флаги</param>
+        /// <returns>Закодированную в бинарный вид команду</returns>
         public byte[] EncodeJoinGameRoomMessage(int room, MessageFlags flags) {
             ResetWriteStreams();
             
@@ -254,11 +249,11 @@ namespace CommandsSystem {
         }
 
         /// <summary>
-        ///     РљРѕРґРёСЂСѓРµС‚ РєРѕРјР°РЅРґСѓ РїРѕРєРёРґР°РЅРёСЏ РёРіСЂРѕРІРѕР№ РєРѕРјРЅР°С‚С‹
+        ///     Кодирует команду покидания игровой комнаты
         /// </summary>
-        /// <param name="room">РљРѕРјРЅР°С‚Р°, РєРѕС‚РѕСЂСѓСЋ РЅСѓР¶РЅРѕ РїРѕРєРёРЅСѓС‚СЊ</param>
-        /// <param name="flags">Р¤Р»Р°РіРё</param>
-        /// <returns>Р—Р°РєРѕРґРёСЂРѕРІР°РЅРЅСѓСЋ РІ Р±РёРЅР°СЂРЅС‹Р№ РІРёРґ РєРѕРјР°РЅРґСѓ</returns>
+        /// <param name="room">Комната, которую нужно покинуть</param>
+        /// <param name="flags">Флаги</param>
+        /// <returns>Закодированную в бинарный вид команду</returns>
         public byte[] EncodeLeaveGameRoomMessage(int room, MessageFlags flags) {
             ResetWriteStreams();
             
@@ -270,12 +265,12 @@ namespace CommandsSystem {
         }
 
         /// <summary>
-        ///     РљРѕРґРёСЂСѓРµС‚ JSON-СЃРѕРѕР±С‰РµРЅРёРµ РЅР° СЃРµСЂРІРµСЂ
+        ///     Кодирует JSON-сообщение на сервер
         /// </summary>
-        /// <param name="json">JSON СЃС‚СЂРѕРєР°</param>
-        /// <param name="room">РљРѕРјРЅР°С‚Р°, РІ РєРѕС‚РѕСЂСѓСЋ РЅСѓР¶РЅРѕ РѕС‚РїСЂР°РІРёС‚СЊ СЃРѕРѕР±С‰РµРЅРёРµ</param>
-        /// <param name="flags">Р¤Р»Р°РіРё</param>
-        /// <returns>Р—Р°РєРѕРґРёСЂРѕРІР°РЅРЅРѕРµ РІ Р±РёРЅР°СЂРЅС‹Р№ РІРёРґ СЃРѕРѕР±С‰РµРЅРёРµ</returns>
+        /// <param name="json">JSON строка</param>
+        /// <param name="room">Комната, в которую нужно отправить сообщение</param>
+        /// <param name="flags">Флаги</param>
+        /// <returns>Закодированное в бинарный вид сообщение</returns>
         public byte[] EncodeJsonMessage(string json, int room, MessageFlags flags) {
             ResetWriteStreams();
             
@@ -289,13 +284,13 @@ namespace CommandsSystem {
         }
         
         /// <summary>
-        ///     Р”РµРєРѕРґРёСЂСѓРµС‚ РєРѕРјР°РЅРґСѓ СЃ СЃРµСЂРІРµСЂР°
-        ///     Р’ РґР°РЅРЅРѕРј РјРµС‚РѕРґРµ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РєРѕРґРѕРіРµРЅРµСЂР°С†РёСЏ
+        ///     Декодирует команду с сервера
+        ///     В данном методе используется кодогенерация
         /// </summary>
-        /// <param name="array">Р—Р°РєРѕРґРёСЂРѕРІР°РЅРЅР°СЏ РєРѕРјР°РЅРґР°</param>
-        /// <param name="num">РќРѕРјРµСЂ РєРѕРјР°РЅРґС‹</param>
-        /// <param name="room">РљРѕРјРЅР°С‚Р°, РІ РєРѕС‚РѕСЂСѓСЋ РїСЂРёС€Р»Р° РєРѕРјР°РЅРґР°</param>
-        /// <returns>Р”РµРєРѕРґРёСЂРѕРІР°РЅРЅСѓСЋ РєРѕРјР°РЅРґСѓ</returns>
+        /// <param name="array">Закодированная команда</param>
+        /// <param name="num">Номер команды</param>
+        /// <param name="room">Комната, в которую пришла команда</param>
+        /// <returns>Декодированную команду</returns>
         public ICommand DecodeCommand(byte[] array, out int num, out int room) {
             var stream = new MemoryStream(array);
             
@@ -323,42 +318,40 @@ namespace CommandsSystem {
                  case 6:
                      return CreateChatMessageCommand.Deserialize(arr);
                  case 7:
-                     return CreateGhostCommand.Deserialize(arr);
-                 case 8:
                      return DrawPositionTracerCommand.Deserialize(arr);
-                 case 9:
+                 case 8:
                      return DrawTargetedTracerCommand.Deserialize(arr);
-                 case 10:
+                 case 9:
                      return ExplodeBombCommand.Deserialize(arr);
-                 case 11:
+                 case 10:
                      return PickCoinCommand.Deserialize(arr);
-                 case 12:
+                 case 11:
                      return PickUpGunCommand.Deserialize(arr);
-                 case 13:
+                 case 12:
                      return PlayerPushCommand.Deserialize(arr);
-                 case 14:
+                 case 13:
                      return SetAfterShowResultsCommand.Deserialize(arr);
-                 case 15:
+                 case 14:
                      return SetGameMode.Deserialize(arr);
-                 case 16:
+                 case 15:
                      return SetPlatformStateCommand.Deserialize(arr);
-                 case 17:
+                 case 16:
                      return SpawnParabolaFlyingCommand.Deserialize(arr);
-                 case 18:
+                 case 17:
                      return SpawnPlayerCommand.Deserialize(arr);
-                 case 19:
+                 case 18:
                      return SpawnPrefabCommand.Deserialize(arr);
-                 case 20:
+                 case 19:
                      return StartGameCommand.Deserialize(arr);
-                 case 21:
+                 case 20:
                      return TakeOwnCommand.Deserialize(arr);
-                 case 22:
+                 case 21:
                      return Pistol.Deserialize(arr);
-                 case 23:
+                 case 22:
                      return ShotGun.Deserialize(arr);
-                 case 24:
+                 case 23:
                      return SemiautoGun.Deserialize(arr);
-                 case 25:
+                 case 24:
                      return BombGun.Deserialize(arr);
     /*END1*/
                  case 255:

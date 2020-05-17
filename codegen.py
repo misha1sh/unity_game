@@ -75,7 +75,7 @@ def pack_string(name, offset):
 
 
 def extract_fields(filename):
-    with open(filename) as file: inp = file.read()
+    with open(filename, encoding="utf-8") as file: inp = file.read()
     classname = filename.split("/")[-1].split(".")[0]
     
     inp = inp.split(classname, 1)[1].split("{")[1]
@@ -166,7 +166,7 @@ for filename, path in ffiles + [("Pistol.cs", "Character/Guns/Pistol.cs"),
                                 ("BombGun.cs", "Character/Guns/BombGun.cs")]:
     if not filename.endswith(".cs"): continue
     
-    with open(path) as file: inp = file.read()
+    with open(path, encoding="utf-8") as file: inp = file.read()
     
     command = filename.split(".")[0]
     commands.append(command)
@@ -261,7 +261,7 @@ namespace """+namespace+""" {
         }
     }
 }"""
-    with open("CommandsSystem/Generated/" + filename, "w") as file:
+    with open("CommandsSystem/Generated/" + filename, "w", encoding="utf-8") as file:
         file.write(out)
         
 
@@ -281,7 +281,7 @@ for i in range(len(commands)):
                      return """ + commands[i] + """.Deserialize(arr);
     """
 
-with open("CommandsSystem/CommandsSystem.cs", "r") as file:
+with open("CommandsSystem/CommandsSystem.cs", "r", encoding="utf-8") as file:
     commands_syst = file.read()
 
 commands_syst = re.sub("BEGIN2[^щ]*END2", "BEGIN2*/\n" + commands_system_ser + "/*END2", commands_syst)

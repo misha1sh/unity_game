@@ -15,17 +15,17 @@ namespace CommandsSystem.Commands {
 
         public SetAfterShowResultsCommand(){}
         
-        public SetAfterShowResultsCommand(int kek) {
-            this.kek = kek;
+        public SetAfterShowResultsCommand(int _) {
+            this._ = _;
         }
 
         private byte[] SerializeLittleEndian() {
             unsafe {
 var arr = new byte[4];
-arr[0] = (byte)(kek & 0x000000ff);
-   arr[1] = (byte)((kek & 0x0000ff00) >> 8);
-   arr[2] = (byte)((kek & 0x00ff0000) >> 16);
-   arr[3] = (byte)((kek & 0xff000000) >> 24);
+arr[0] = (byte)(_ & 0x000000ff);
+   arr[1] = (byte)((_ & 0x0000ff00) >> 8);
+   arr[2] = (byte)((_ & 0x00ff0000) >> 16);
+   arr[3] = (byte)((_ & 0xff000000) >> 24);
 
 
                 return arr;
@@ -43,7 +43,7 @@ arr[0] = (byte)(kek & 0x000000ff);
             var result = new SetAfterShowResultsCommand();
             Assert.AreEqual(arr.Length, 4);
             unsafe {
-result.kek = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));
+result._ = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));
 
              
                 return result;
@@ -59,7 +59,7 @@ result.kek = (arr[0] | (arr[1] << 8) | (arr[2] << 16) | (arr[3] << 24));
         
         
         public string AsJson() {
-            return $"{{'kek':{kek}}}";
+            return $"{{'_':{_}}}";
         }
         
         public override string ToString() {
